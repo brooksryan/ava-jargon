@@ -39,7 +39,7 @@ ava jargon score draft.md -l my-lexicon.json         # jargon density + coverage
 ava jargon build corpus/A corpus/B -o my-lexicon.json
 ava jargon delta before/ after/ -l my-lexicon.json
 ava jargon extend my-team slack-export.json           # profile one more approved corpus
-ava check draft.md --rules technical --extend my-team # its terms stop counting as jargon
+ava check draft.md --rules technical --extend my-team # its terms join the approved side
 ```
 
 ```
@@ -89,7 +89,7 @@ ava jargon extend my-prompts prompts.jsonl --field text --note "typed prompts, 2
 ava check spec.md --rules technical --extend my-prompts
 ```
 
-Every jargon term the corpus uses in more than its dispersion share of documents drops out. Its vocabulary joins the approved side. An extension never adds jargon. The flag repeats.
+An extension adds to the approved side only. Every term the corpus uses in more than its dispersion share of documents joins the approved vocabulary, so the lexicon stops counting it as jargon. Nothing new becomes jargon. The flag repeats.
 
 Sources: `.txt` and `.md` files count one document each. Fenced and inline code drops out of `.md` files; `--keep-code` keeps it. A `.json` or `.jsonl` file counts one document per record, and `--field` names the text field.
 

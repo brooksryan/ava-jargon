@@ -33,7 +33,7 @@ ava check spec.md --rules technical --extend my-prompts
 ava jargon score spec.md -l lexicons/universal-doc-technical.json --extend my-prompts
 ```
 
-`--extend` overlays the extension on the lexicon in use. Every jargon term the corpus uses in more than its dispersion share of documents drops out. Its vocabulary joins the approved side. An extension never adds jargon. The flag repeats.
+`--extend` overlays the extension on the lexicon in use. An extension adds to the approved side only. Every term the corpus uses in more than its dispersion share of documents joins the approved vocabulary, so the lexicon stops counting it as jargon. Nothing new becomes jargon. The flag repeats.
 
 `ava jargon extensions` lists the profiles on this machine. The stderr line `extend: NAME (N vetoed, M added)` confirms the overlay. Pass `--extend` on every `ava check` that should use it. The gate agents accept an extension input and add the flag from it; they never pick one themselves.
 

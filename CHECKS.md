@@ -33,7 +33,7 @@ Sets: all. Flags process residue in prose: ticket ids (`#57`, `FLEX-123`), slice
 Sets: all. Flags adjacent emoji and the adjacent `!!` pair. Two exclamatory sentences are not a cluster and pass.
 
 ### W-M10 jargon score
-Sets: all. Runs the jargon scorer and prints one density line on stderr. Advisory by design: never a finding, never the exit code - lexicon terms are often the document's own topic. The universal lexicon that matches the band surface loads automatically; `--lexicon PATH` overrides. `--extend NAME` overlays an extension from `ava jargon extend`: the terms its corpus uses stop counting as jargon.
+Sets: all. Runs the jargon scorer and prints one density line on stderr. Advisory by design: never a finding, never the exit code - lexicon terms are often the document's own topic. The universal lexicon that matches the band surface loads automatically; `--lexicon PATH` overrides. `--extend NAME` overlays an extension from `ava jargon extend`: the terms its corpus uses join the approved side.
 
 ### W-M11 passive voice (parser)
 Sets: technical only (demoted from the universal set 2026-08-25 - passive runs 5-19/1k in normal human messages and edited prose). Direction: human-high. Parser tier: runs whenever spacy is installed; `--no-parser` skips it. Flags passive clauses ("the file is read by the parser"). A finding is a form note for technical docs, never AI evidence.

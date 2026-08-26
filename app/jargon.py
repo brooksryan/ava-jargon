@@ -324,8 +324,9 @@ def load_lexicon(path):
 # --- extensions ------------------------------------------------------------
 #
 # An extension is the vocabulary profile of one more approved corpus. Applied
-# to a lexicon at check time, it vetoes every jargon term its audience uses
-# and joins its vocabulary to the approved side. It never adds jargon.
+# to a lexicon at check time, it adds to the approved side only: every term
+# its audience uses joins the approved vocabulary, and any such term leaves
+# the jargon list. Nothing new becomes jargon.
 
 
 def profile(docs, min_count=3, min_docs=2, n_max=3):

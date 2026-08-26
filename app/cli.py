@@ -643,8 +643,8 @@ def main():
     ck.add_argument("--lexicon", help="jargon lexicon path; enables W-M10")
     ck.add_argument("--extend", action="append", metavar="NAME",
                     help="overlay an extension (ava jargon extend) on the "
-                         "lexicon: its audience's terms stop counting as "
-                         "jargon; repeatable")
+                         "lexicon: its audience's terms join the approved "
+                         "side; repeatable")
     ck.add_argument("--field", action="append", metavar="NAME=VALUE",
                     help="an input-contract field; enables P-M5, repeatable")
     ck.add_argument("-o", "--out", help="write the report to this file")
