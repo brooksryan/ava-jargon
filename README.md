@@ -2,6 +2,15 @@
 
 Adversarial voice agents: mechanical voice checks and corpus-relative jargon scoring. Linter-style findings, exit codes, and rate bands against human and AI baselines. Built for coding agents; works by hand.
 
+# Quickstart with claude
+```
+uv tool install git+https://github.com/brooksryan/ava-jargon
+claude plugin marketplace add brooksryan/ava-jargon
+claude plugin install ava-jargon@brooksryan/ava-jargon
+
+claude "run ava technical check on my readme.md"
+```
+
 ## Install
 
 Requires [uv](https://docs.astral.sh/uv/) and git.
