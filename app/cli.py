@@ -3,7 +3,8 @@
 
 Corpus dirs hold one .txt per document. Current metric groups:
 
-  jargon   corpus-relative jargon (keyness lexicon: build / score / delta)
+  jargon   corpus-relative jargon (keyness lexicon: build / score / delta;
+           extend = one more approved corpus, applied with --extend at check time)
   check    mechanical rule checkers for the v2 gates (see app/checks/README.md)
 
 Planned: cpidr, surface stats (word/sentence/paragraph) - the audit scripts in
@@ -61,7 +62,7 @@ def cmd_jargon_build(args):
 
 
 def cmd_jargon_score(args):
-    lex = J.load_lexicon(args.lexicon)
+    lex, _ = _apply_extensions(J.load_lexicon(args.lexicon), args.extend)
     target = Path(args.target)
     if target.is_dir():
         res = J.score_dir(target, lex)
@@ -101,7 +102,7 @@ def cmd_jargon_score(args):
 
 
 def cmd_jargon_delta(args):
-    lex = J.load_lexicon(args.lexicon)
+    lex, _ = _apply_extensions(J.load_lexicon(args.lexicon), args.extend)
     res = J.delta(args.a, args.b, lex, n_boot=args.boot)
     if args.json:
         print(json.dumps(res, indent=1))
@@ -114,6 +115,188 @@ def cmd_jargon_delta(args):
           f"95% bootstrap CI [{res['ci95'][0]:+.2f}, {res['ci95'][1]:+.2f}]")
     print("CI excludes zero: " + ("YES, difference is credible" if res["credible"]
                                   else "NO, treat as noise"))
+
+
+# --- extensions: one more approved corpus, kept as a vocabulary profile -----
+
+NAME_RE = re.compile(r"^[a-z0-9][a-z0-9._-]*$")
+RECORD_SUFFIXES = (".json", ".jsonl")
+_FENCE_RE = re.compile(r"^(```|~~~).*?^\1[^\n]*$", re.M | re.S)
+_INLINE_RE = re.compile(r"`[^`\n]+`")
+
+
+def _extension_root():
+    return Path(os.environ.get("AVA_HOME") or Path.home() / ".ava") / "extensions"
+
+
+def _extension_names():
+    root = _extension_root()
+    return sorted(p.stem for p in root.glob("*.json")) if root.is_dir() else []
+
+
+def _resolve_extension(spec):
+    """An extension is a file path or a name under $AVA_HOME/extensions."""
+    p = Path(spec).expanduser()
+    if p.is_file():
+        return p
+    candidate = _extension_root() / f"{spec}.json"
+    return candidate if candidate.is_file() else None
+
+
+def _apply_extensions(lexicon, specs):
+    """Overlay each --extend on the lexicon. Returns (lexicon, labels)."""
+    labels = []
+    for spec in specs or []:
+        path = _resolve_extension(spec)
+        if path is None:
+            known = ", ".join(_extension_names()) or "none"
+            print(f"error: no such extension: {spec} (known: {known}; "
+                  "build one with ava jargon extend)", file=sys.stderr)
+            sys.exit(2)
+        lexicon = J.extend(lexicon, J.load_extension(path), name=path.stem)
+        info = lexicon["meta"]["extensions"][-1]
+        labels.append(f"{path.stem} ({len(info['vetoed'])} vetoed, "
+                      f"{info['added']} added)")
+    if labels:
+        print("extend: " + ", ".join(labels), file=sys.stderr)
+    return lexicon, labels
+
+
+def _records(obj, field):
+    """Yield the string under `field` from every object in a JSON document."""
+    if isinstance(obj, list):
+        for item in obj:
+            yield from _records(item, field)
+    elif isinstance(obj, dict):
+        value = obj.get(field)
+        if isinstance(value, str):
+            yield value
+        else:
+            for v in obj.values():
+                if isinstance(v, (list, dict)):
+                    yield from _records(v, field)
+
+
+def _record_texts(path, field):
+    text = path.read_text(errors="ignore")
+    chunks = text.splitlines() if path.suffix.lower() == ".jsonl" else [text]
+    out = []
+    for chunk in chunks:
+        if not chunk.strip():
+            continue
+        try:
+            out += list(_records(json.loads(chunk), field))
+        except ValueError:
+            continue
+    return out
+
+
+def _split_text(text, mode):
+    if mode == "blank":
+        parts = re.split(r"\n\s*\n", text)
+    elif mode == "line":
+        parts = text.splitlines()
+    else:
+        parts = [text]
+    return [p for p in parts if p.strip()]
+
+
+def _extension_documents(paths, split, field, keep_code):
+    """Return ([(name, tokens)], errors) for the sources of an extension."""
+    documents, errors = [], []
+    for entry in paths:
+        if entry == "-":
+            for i, piece in enumerate(_split_text(sys.stdin.read(), split)):
+                documents.append((f"<stdin>#{i}", J.tokenize(piece)))
+            continue
+        target = Path(entry).expanduser()
+        if target.is_dir():
+            files = sorted(p for p in target.glob("**/*") if p.is_file()
+                           and p.suffix.lower() in DOC_SUFFIXES + RECORD_SUFFIXES)
+            if not files:
+                errors.append(f"no .txt, .md, .json, or .jsonl file under {entry}")
+        elif target.is_file():
+            files = [target]
+        else:
+            errors.append(f"no such file or directory: {entry}")
+            continue
+        for path in files:
+            if path.suffix.lower() in RECORD_SUFFIXES:
+                for i, text in enumerate(_record_texts(path, field)):
+                    documents.append((f"{path}#{i}", J.tokenize(text)))
+                continue
+            text = path.read_text(errors="ignore")
+            if path.suffix.lower() == ".md" and not keep_code:
+                text = _INLINE_RE.sub(" ", _FENCE_RE.sub(" ", text))
+            for i, piece in enumerate(_split_text(text, split)):
+                documents.append((f"{path}#{i}", J.tokenize(piece)))
+    return documents, errors
+
+
+def cmd_jargon_extend(args):
+    """Profile one more approved corpus into $AVA_HOME/extensions/NAME.json."""
+    if not NAME_RE.match(args.name):
+        print(f"error: bad name {args.name!r}: lowercase letters, digits, '.', "
+              "'_', '-'", file=sys.stderr)
+        return 2
+    documents, errors = _extension_documents(args.paths, args.split, args.field,
+                                             args.keep_code)
+    for message in errors:
+        print(f"error: {message}", file=sys.stderr)
+    if errors:
+        return 2
+    kept = [(n, t) for n, t in documents if len(t) >= 3]
+    if not kept:
+        print("error: no documents found (check --split and --field)",
+              file=sys.stderr)
+        return 2
+    ext = J.profile(kept)
+    m = ext["meta"]
+    m.update({"name": args.name, "sources": args.paths, "built": J.today(),
+              "options": {"split": args.split, "field": args.field,
+                          "keep_code": args.keep_code},
+              "note": args.note})
+    out = _extension_root() / f"{args.name}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(ext, indent=1))
+    dropped = len(documents) - len(kept)
+    print(f"{args.name}: {m['docs']} docs, {m['tokens']:,} tokens, median doc "
+          f"{m['median_doc_tokens']} tokens"
+          + (f" ({dropped} docs under 3 tokens dropped)" if dropped else ""))
+    print(f"vocabulary: {len(ext['vocabulary']):,} terms (count >= 3 in >= 2 docs); "
+          f"a term vetoes jargon above {m['max_approved_dispersion']:.1%} of docs")
+    if m["tokens"] < 30000:
+        print("warning: under the ~30k-token floor - the veto will miss terms the "
+              "audience does use")
+    for surface in ("chat", "doc-shared", "doc-technical", "code"):
+        path = _universal_lexicon(surface)
+        if path is None:
+            continue
+        lex = J.load_lexicon(str(path))
+        info = J.extend(lex, ext)["meta"]["extensions"][-1]
+        top = ", ".join(info["vetoed"][:8])
+        print(f"  universal-{surface:<14} vetoes {len(info['vetoed']):>3} of "
+              f"{len(lex['jargon']):>3} jargon terms" + (f": {top}" if top else ""))
+    print(f"extension written to {out}")
+    print(f"use it: ava check FILE --rules technical --extend {args.name}")
+    return 0
+
+
+def cmd_jargon_extensions(args):
+    """List the extensions on this machine, one row each."""
+    root = _extension_root()
+    names = _extension_names()
+    if not names:
+        print(f"no extensions in {root} (build one: ava jargon extend NAME PATH...)",
+              file=sys.stderr)
+        return 0
+    print(f"{'extension':<24} {'docs':>6} {'tokens':>9} {'terms':>6}  note")
+    for name in names:
+        ext = J.load_extension(root / f"{name}.json")
+        m = ext["meta"]
+        print(f"{name:<24} {m['docs']:>6} {m['tokens']:>9,} "
+              f"{len(ext['vocabulary']):>6}  {m.get('note') or ''}")
+    return 0
 
 
 DOC_SUFFIXES = (".md", ".txt")
@@ -156,6 +339,16 @@ def _import_checks():
     return C, B
 
 
+def _universal_lexicon(surface):
+    """Path of the universal lexicon for a surface: workspace copy, then packaged."""
+    here = Path(__file__).resolve().parent
+    name = f"universal-{surface}.json"
+    for auto in (here.parent / "lexicons" / name, here / "lexicons" / name):
+        if auto.is_file():
+            return auto
+    return None
+
+
 def cmd_check(args):
     """Run the mechanical checkers. Findings go to stdout, notes to stderr."""
     C, B = _import_checks()
@@ -182,15 +375,17 @@ def cmd_check(args):
     surface = args.surface or B.RULES_TO_SURFACE.get(args.rules)
 
     if lexicon is None and surface:
-        here = Path(__file__).resolve().parent
-        name = f"universal-{surface}.json"
-        # The workspace copy wins over the packaged copy.
-        for auto in (here.parent / "lexicons" / name, here / "lexicons" / name):
-            if auto.is_file():
-                lexicon = J.load_lexicon(str(auto))
-                print(f"lexicon: universal-{surface} (auto; --lexicon overrides)",
-                      file=sys.stderr)
-                break
+        auto = _universal_lexicon(surface)
+        if auto is not None:
+            lexicon = J.load_lexicon(str(auto))
+            print(f"lexicon: universal-{surface} (auto; --lexicon overrides)",
+                  file=sys.stderr)
+    if args.extend:
+        if lexicon is None:
+            print("error: --extend needs a lexicon: pass --surface or --lexicon",
+                  file=sys.stderr)
+            return 2
+        lexicon, _ = _apply_extensions(lexicon, args.extend)
 
     ctx = C.Context(lexicon=lexicon, fields=fields)
     checkers, tiers, skipped, warning = C.select(args.rules, ctx,
@@ -384,9 +579,31 @@ def main():
                         "pass an empty string to disable)")
     b.set_defaults(fn=cmd_jargon_build)
 
+    x = jsub.add_parser("extend",
+                        help="profile one more approved corpus; apply it with "
+                             "--extend at check time")
+    x.add_argument("name", help="extension name (lowercase, digits, . _ -)")
+    x.add_argument("paths", nargs="+",
+                   help="files, directories, or - for stdin: .txt and .md are "
+                        "one document each; .json and .jsonl one per record")
+    x.add_argument("--split", choices=("none", "blank", "line"), default="none",
+                   help="none: one file = one document; blank: a blank line "
+                        "starts a new document; line: one line = one document")
+    x.add_argument("--field", default="text",
+                   help="the string field that holds one document in a .json "
+                        "or .jsonl record (default: text)")
+    x.add_argument("--keep-code", action="store_true",
+                   help="keep fenced code and inline code in .md files")
+    x.add_argument("--note", help="source note kept in the extension file")
+    x.set_defaults(fn=cmd_jargon_extend)
+    xl = jsub.add_parser("extensions", help="list the extensions on this machine")
+    xl.set_defaults(fn=cmd_jargon_extensions)
+
     s = jsub.add_parser("score", help="score a file or corpus dir against a lexicon")
     s.add_argument("target", help="a .txt file or a corpus dir")
     s.add_argument("-l", "--lexicon", required=True)
+    s.add_argument("--extend", action="append", metavar="NAME",
+                   help="extension name or path to overlay, repeatable")
     s.add_argument("--top", type=int, default=20, help="rows shown for dir scoring")
     s.add_argument("--json", action="store_true")
     s.set_defaults(fn=cmd_jargon_score)
@@ -395,6 +612,8 @@ def main():
     d.add_argument("a", help="file or dir A")
     d.add_argument("b", help="file or dir B")
     d.add_argument("-l", "--lexicon", required=True)
+    d.add_argument("--extend", action="append", metavar="NAME",
+                   help="extension name or path to overlay, repeatable")
     d.add_argument("--boot", type=int, default=2000)
     d.add_argument("--json", action="store_true")
     d.set_defaults(fn=cmd_jargon_delta)
@@ -422,6 +641,10 @@ def main():
     ck.add_argument("--no-parser", action="store_true",
                     help="skip the tier 2 checkers even when spacy is installed")
     ck.add_argument("--lexicon", help="jargon lexicon path; enables W-M10")
+    ck.add_argument("--extend", action="append", metavar="NAME",
+                    help="overlay an extension (ava jargon extend) on the "
+                         "lexicon: its audience's terms stop counting as "
+                         "jargon; repeatable")
     ck.add_argument("--field", action="append", metavar="NAME=VALUE",
                     help="an input-contract field; enables P-M5, repeatable")
     ck.add_argument("-o", "--out", help="write the report to this file")

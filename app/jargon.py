@@ -319,3 +319,65 @@ def load_lexicon(path):
     if "jargon" not in lex:
         sys.exit(f"{path} is not a lexicon file (missing 'jargon' key)")
     return lex
+
+
+# --- extensions ------------------------------------------------------------
+#
+# An extension is the vocabulary profile of one more approved corpus. Applied
+# to a lexicon at check time, it vetoes every jargon term its audience uses
+# and joins its vocabulary to the approved side. It never adds jargon.
+
+
+def profile(docs, min_count=3, min_docs=2, n_max=3):
+    """Return the vocabulary profile of a corpus: the terms that can veto jargon.
+
+    Keeps terms with count >= min_count in >= min_docs documents, the same
+    floor `build()` applies to an approved vocabulary. The dispersion bar is
+    the auto-scaled ceiling `build()` uses for "the audience says it too".
+    """
+    tf, df, total = _counts(docs, n_max)
+    n = len(docs)
+    bar, median = auto_dispersion(docs, base=0.05, ref_len=250, lo=0.01, hi=0.05,
+                                  min_docs=3)
+    bar = min(bar, 1.0)  # under 3 docs nothing can veto; keep the share readable
+    vocab = {t: {"count": c, "doc_share": round(df[t] / n, 4)}
+             for t, c in tf.items() if c >= min_count and df[t] >= min_docs}
+    return {
+        "meta": {"docs": n, "tokens": total, "median_doc_tokens": median,
+                 "max_approved_dispersion": bar},
+        "vocabulary": dict(sorted(vocab.items(), key=lambda kv: -kv[1]["count"])),
+    }
+
+
+def extend(lex, ext, name=None):
+    """Return a new lexicon with `ext` overlaid; the input stays untouched."""
+    bar = ext["meta"]["max_approved_dispersion"]
+    vocab = ext["vocabulary"]
+    vetoed = [t for t in lex["jargon"]
+              if t in vocab and vocab[t]["doc_share"] > bar]
+    gone = set(vetoed)
+    approved = dict(lex["approved_vocabulary"])
+    added = 0
+    for t, s in vocab.items():
+        if t not in approved:
+            approved[t] = {"approved_count": s["count"],
+                           "approved_doc_share": s["doc_share"]}
+            added += 1
+    meta = dict(lex["meta"])
+    meta["extensions"] = list(meta.get("extensions", [])) + [
+        {"name": name, "vetoed": vetoed, "added": added}]
+    return {"meta": meta,
+            "jargon": {t: s for t, s in lex["jargon"].items() if t not in gone},
+            "approved_vocabulary": approved}
+
+
+def today():
+    import datetime
+    return datetime.date.today().isoformat()
+
+
+def load_extension(path):
+    ext = json.loads(Path(path).read_text())
+    if "vocabulary" not in ext:
+        sys.exit(f"{path} is not an extension file (missing 'vocabulary' key)")
+    return ext

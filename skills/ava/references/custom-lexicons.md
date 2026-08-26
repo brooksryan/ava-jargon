@@ -18,6 +18,25 @@ ava jargon build corpus/APPROVED corpus/CONTRAST -o /abs/path/lexicons/my-lexico
 
 Each side accepts several directories, comma-separated. Pass an absolute `-o` path: the default resolves against your current directory.
 
+## Extend a shipped lexicon instead
+
+When the shipped lexicon fits but marks words your audience does use, add an extension. You need no clone. `ava jargon extend NAME PATH...` profiles one more approved corpus into `~/.ava/extensions/NAME.json` (`AVA_HOME` moves it). The profile holds term counts, not text.
+
+1. Collect the audience's own writing as a directory of `.txt` or `.md` files. A `.json` or `.jsonl` export also works, one document per record, with `--field` for the text field (default `text`).
+2. Pass `--split blank` when one file holds many messages with a blank line between them, `--split line` for one message per line, or `-` to read stdin.
+3. Collect 30k+ tokens. The build prints a warning below that floor.
+4. Read the build output: it lists how many terms the extension vetoes from each shipped lexicon, and the first few.
+
+```
+ava jargon extend my-prompts prompts.jsonl --note "typed prompts, all projects, 2026"
+ava check spec.md --rules technical --extend my-prompts
+ava jargon score spec.md -l lexicons/universal-doc-technical.json --extend my-prompts
+```
+
+`--extend` overlays the extension on the lexicon in use. Every jargon term the corpus uses in more than its dispersion share of documents drops out. Its vocabulary joins the approved side. An extension never adds jargon. The flag repeats.
+
+`ava jargon extensions` lists the profiles on this machine. The stderr line `extend: NAME (N vetoed, M added)` confirms the overlay. Pass `--extend` on every `ava check` that should use it. The gate agents accept an extension input and add the flag from it; they never pick one themselves.
+
 ## Use
 
 ```

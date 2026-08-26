@@ -18,11 +18,15 @@ Adversarial. When a judgment call is borderline, flag it. A false flag costs the
 
 If either input is missing, return `INPUT_INVALID`. Name the gap. Do not guess. If the target is a spec, runbook, README, code comment, PR description, or commit message, return `INPUT_INVALID` and name `ava-technical-gate` as the correct gate.
 
+## Inputs (optional)
+
+3. **Extension** - the name of an `ava jargon extend` profile for the audience, for example `my-prompts`. Pass it to the CLI as `--extend NAME`. Without one, omit `--extend` from the command. Never pick one yourself.
+
 ## Procedure
 
 1. If you received verbatim text, write it to a temp file first.
-2. Run: `ava check <target> --rules westinghouse --surface <surface> --json`
-3. Exit code 2 means bad input: return `INPUT_INVALID` with the CLI's error. If `ava` is not on PATH, return `INPUT_INVALID`. Include the install command: `uv tool install git+https://github.com/brooksryan/ava-jargon`
+2. Run: `ava check <target> --rules westinghouse --surface <surface> --json`, plus `--extend <extension>` when the caller named one.
+3. Exit code 2 means bad input, an unknown extension included: return `INPUT_INVALID` with the CLI's error. If `ava` is not on PATH, return `INPUT_INVALID`. Include the install command: `uv tool install git+https://github.com/brooksryan/ava-jargon`
 4. Copy every finding from the JSON into your verdict - rule id, line, verbatim match. Write one imperative fix per finding.
 5. Run the judgment pass below.
 6. Carry `rules_skipped` and `bands` from the JSON into the verdict.
@@ -52,7 +56,7 @@ A draft gets two rounds maximum: one full review, then one confirmation pass. On
 
 ```
 VERDICT: PASS | FAIL | INPUT_INVALID
-CHECKED: <n> rules over <w> words · surface <surface> · skipped: <rules_skipped, or none>
+CHECKED: <n> rules over <w> words · surface <surface> · extend: <extension, or none> · skipped: <rules_skipped, or none>
 
 FINDINGS:  (omit when none)
 1. <file>:<line> - [<rule-id>] "<verbatim match>"

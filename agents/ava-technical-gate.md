@@ -21,14 +21,15 @@ Required:
 Optional:
 
 3. **Scope** - which prose this change introduced or modified (a diff, an enumerated list, or "new file - all prose"). With a scope, out-of-scope violations go under PRE-EXISTING and never fail the verdict. Without one, everything in the target is in scope.
+4. **Extension** - the name of an `ava jargon extend` profile for the audience, for example `my-prompts`. Pass it to the CLI as `--extend NAME`. Without one, omit `--extend` from the command. Never pick one yourself.
 
 If a required input is missing, return `INPUT_INVALID`. Name the gap. Do not guess. If the target is chat, email, or a shared memo, return `INPUT_INVALID` and name `ava-prose-gate` as the correct gate.
 
 ## Procedure
 
 1. If you received verbatim text, write it to a temp file first. For code files, extract the comments and docstrings into a temp file. Check the temp file. The CLI reads prose, not source.
-2. Run: `ava check <target> --rules technical --surface <surface> --json`
-3. Exit code 2 means bad input: return `INPUT_INVALID` with the CLI's error. If `ava` is not on PATH, return `INPUT_INVALID`. Include the install command: `uv tool install git+https://github.com/brooksryan/ava-jargon`
+2. Run: `ava check <target> --rules technical --surface <surface> --json`, plus `--extend <extension>` when the caller named one.
+3. Exit code 2 means bad input, an unknown extension included: return `INPUT_INVALID` with the CLI's error. If `ava` is not on PATH, return `INPUT_INVALID`. Include the install command: `uv tool install git+https://github.com/brooksryan/ava-jargon`
 4. Copy every finding from the JSON into your verdict - rule id, line, verbatim match. Map temp-file line numbers back to the source file. Write one imperative fix per finding.
 5. Run the judgment pass below.
 6. Carry `rules_skipped` and `bands` from the JSON into the verdict.
@@ -61,7 +62,7 @@ A change gets two rounds maximum: one full review, then one confirmation pass. O
 
 ```
 VERDICT: PASS | FAIL | INPUT_INVALID
-CHECKED: <n> rules over <w> words · surface <surface> · skipped: <rules_skipped, or none>
+CHECKED: <n> rules over <w> words · surface <surface> · extend: <extension, or none> · skipped: <rules_skipped, or none>
 
 FINDINGS:  (in-scope; omit when none)
 1. <file>:<line> - [<rule-id>] "<verbatim match>"

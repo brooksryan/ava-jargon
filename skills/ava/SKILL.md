@@ -22,6 +22,8 @@ The Claude Code plugin installs the agents as `ava-jargon:ava-prose-gate` and `a
 
 Every gate requires a target (file paths or verbatim text) and a surface. `ava-technical-gate` also accepts a scope: the prose your change introduced. Pre-existing violations then report separately and never fail your change. A gate returns `INPUT_INVALID` when an input is missing: supply it and re-submit. Two rounds maximum per draft: one full review, then one confirmation pass on your fixes.
 
+Every gate also accepts an extension: the name of an `ava jargon extend` profile for the audience. Name one when the user or the project instructions name one for that audience; `ava jargon extensions` lists the profiles on this machine. Name none otherwise. The gate never picks one itself.
+
 ## CLI
 
 The gates run the `ava` CLI. If a gate reports it missing:

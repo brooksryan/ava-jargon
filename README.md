@@ -38,6 +38,8 @@ ava check - --surface chat < draft.txt               # read stdin
 ava jargon score draft.md -l my-lexicon.json         # jargon density + coverage
 ava jargon build corpus/A corpus/B -o my-lexicon.json
 ava jargon delta before/ after/ -l my-lexicon.json
+ava jargon extend my-team slack-export.json           # profile one more approved corpus
+ava check draft.md --rules technical --extend my-team # its terms stop counting as jargon
 ```
 
 ```
@@ -72,6 +74,21 @@ Findings go to stdout; everything else goes to stderr. Exit codes: 0 clean, 1 fi
 | `code` | READMEs, code comments, docstrings |
 
 The surface picks the baseline bands and the jargon lexicon. Band verdicts are PASS, WARN, or FAIL, colored on a terminal. On `ai-high` rules, FAIL means the text matches the AI pattern. On `human-high` rules, FAIL marks a form issue and never claims AI authorship. See [CHECKS.md](CHECKS.md) for every rule, and [lexicons/README.md](lexicons/README.md) for the shipped lexicons. This version has no `personal` rule set; a later version will let you build your own.
+
+## Extend a shipped lexicon
+
+No clone needed. `ava jargon extend NAME PATH...` profiles one more approved corpus into `~/.ava/extensions/NAME.json` (`AVA_HOME` moves it). `--extend NAME` on `ava check`, `ava jargon score`, or `ava jargon delta` overlays it on the lexicon in use.
+
+```
+ava jargon extend my-prompts prompts.jsonl --field text --note "typed prompts, 2026"
+ava check spec.md --rules technical --extend my-prompts
+```
+
+Every jargon term the corpus uses in more than its dispersion share of documents drops out. Its vocabulary joins the approved side. An extension never adds jargon. The flag repeats.
+
+Sources: `.txt` and `.md` files count one document each. Fenced and inline code drops out of `.md` files; `--keep-code` keeps it. A `.json` or `.jsonl` file counts one document per record, and `--field` names the text field.
+
+`--split blank` or `--split line` cuts one file into many documents. `-` reads stdin. Collect 30k+ tokens. The build prints how many terms the extension vetoes from each shipped lexicon. `ava jargon extensions` lists the profiles on this machine.
 
 ## Build a lexicon
 

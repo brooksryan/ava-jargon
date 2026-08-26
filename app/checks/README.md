@@ -6,14 +6,14 @@ The mechanical checkers for the v2 gate rules. `notes/mechanical-checks-plan.md`
 
 ```
 ava check [PATH ...] --rules westinghouse|technical|personal
-          [--json] [--parser] [--lexicon PATH] [--field NAME=VALUE] [-o FILE]
+          [--json] [--parser] [--lexicon PATH] [--extend NAME] [--field NAME=VALUE] [-o FILE]
 ```
 
 1. `PATH` accepts a file and a directory. A directory contributes each `.md` and each `.txt` file under it. A `-` or an empty path list reads stdin, and the report then names the path `<stdin>`.
 2. The report goes to stdout. A warning, a skipped-rule note, and a jargon density go to stderr, so a pipe stays clean.
 3. The exit code is 0 for no findings, 1 for findings, and 2 for a bad input.
 4. `--parser` adds the tier 2 rules. Without `spacy` the CLI prints a warning on stderr and runs tier 1.
-5. `--lexicon` enables W-M10. `--field` enables P-M5, and the flag repeats.
+5. `--lexicon` enables W-M10, and `--extend` overlays an extension on the lexicon. `--field` enables P-M5, and the flag repeats.
 
 The default report prints one finding per line:
 
