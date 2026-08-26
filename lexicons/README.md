@@ -9,6 +9,8 @@ One row per shipped lexicon. `ava check` picks the universal lexicon that matche
 | universal-doc-technical.json | RFCs, PostgreSQL/Django/Rust docs, arXiv, distill.pub, SRE book (pre-2022) | agent-trailer GitHub docs (post-2024) | doc-technical |
 | universal-code.json | GitHub READMEs + comments (pre-2022) | agent-trailer READMEs + comments (post-2024) | code |
 
-Caveat, stated plainly: the AI corpora write about AI, so terms like `claude`, `ai`, and `seo` top these lists. The density signal separates the sides; a single term hit does not. W-M10 stays advisory for exactly this reason.
+
+> **NOTE:** The AI corpora write about AI, so terms like `claude`, `ai`, and `seo` top these lists. The density signal separates the sides; a single term hit does not. W-M10 stays advisory for exactly this reason.
+
 
 `ava jargon extend` adds one more approved corpus to any of these at check time; see the README. The `analysis-*` files are Brooks's local research lexicons and do not ship. Rebuild any universal lexicon with the `ava jargon build` commands recorded in the project notes.
