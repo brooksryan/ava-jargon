@@ -1,0 +1,13 @@
+{
+  "name": "ava-jargon",
+  "owner": {
+    "name": "Brooks Ryan"
+  },
+  "plugins": [
+    {
+      "name": "ava-jargon",
+      "source": "./",
+      "description": "Voice gates for agent prose: two subagents and a skill that run the ava CLI"
+    }
+  ]
+}

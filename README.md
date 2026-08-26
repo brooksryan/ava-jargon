@@ -6,7 +6,7 @@ Adversarial voice agents: mechanical voice checks and corpus-relative jargon sco
 ```
 uv tool install git+https://github.com/brooksryan/ava-jargon
 claude plugin marketplace add brooksryan/ava-jargon
-claude plugin install ava-jargon@brooksryan/ava-jargon
+claude plugin install ava-jargon@ava-jargon
 
 claude "run ava technical check on my readme.md"
 ```
@@ -88,7 +88,7 @@ The approved side is the audience's vocabulary; the contrast side is the writing
 ```
 # Claude Code
 claude plugin marketplace add brooksryan/ava-jargon
-claude plugin install ava-jargon@brooksryan/ava-jargon
+claude plugin install ava-jargon@ava-jargon
 
 # Cursor
 ava setup cursor
