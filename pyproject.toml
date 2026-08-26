@@ -33,7 +33,7 @@ ava_jargon = "app"
 ava_jargon = [
     "name_stoplist.txt",
     "lexicons/*.json",
-    "assets/AGENTS.md",
+    "assets/gate-contract.md",
     "assets/agents/*.md",
     "assets/skills/ava/*.md",
     "assets/skills/ava/references/*.md",

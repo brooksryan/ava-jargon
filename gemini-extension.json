@@ -1,0 +1,6 @@
+{
+  "name": "ava-jargon",
+  "version": "0.2.0",
+  "description": "Voice gates for agent prose: skills and agents that run the ava CLI",
+  "contextFileName": "gate-contract.md"
+}

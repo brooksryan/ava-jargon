@@ -303,7 +303,7 @@ def cmd_setup(args):
             print("error: agents-md prints to stdout; redirect it where your "
                   "harness reads instructions", file=sys.stderr)
             return 2
-        sys.stdout.write((assets / "AGENTS.md").read_text())
+        sys.stdout.write((assets / "gate-contract.md").read_text())
         return 0
 
     base = Path.home() if args.global_install else Path(".")
