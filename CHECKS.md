@@ -2,7 +2,7 @@
 
 DRAFT for Brooks's review. One entry per rule that `ava check` runs. Each entry states what the rule flags, one example, and how to fix it. The word lists live at the top of each rule's file under `app/checks/`; this page describes them, and the files define them.
 
-Legend: **sets** = which `--rules` values include the rule. **needs** = an input without which the run skips the rule and names it in `rules_skipped`. **direction** = what a high rate means. `ai-high` marks an authorship signal: AI text runs high and humans run low. The band summary can call it `ai-range`. `human-high` marks a compliance dial: humans out-score AI on it everywhere. A high rate there means style drift, and the summary never claims AI authorship.
+Legend: **sets** = which `--rules` values include the rule. **needs** = an input without which the run skips the rule and names it in `rules_skipped`. **direction** = what a high rate means. `ai-high` marks an authorship signal: AI text runs high and humans run low. A band FAIL on it means the text matches the AI pattern. `human-high` marks a compliance dial: humans out-score AI on it everywhere. A band FAIL there means style drift, and the summary never claims AI authorship.
 
 ## Westinghouse rules (W-*) - every surface
 

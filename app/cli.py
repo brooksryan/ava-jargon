@@ -11,6 +11,7 @@ app/scripts/ are the basis and will fold in here.
 """
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -230,7 +231,10 @@ def cmd_check(args):
     if skipped:
         verdict += f" ({len(skipped)} skipped: {', '.join(skipped)})"
     print(verdict, file=sys.stderr)
-    band_lines, band_data = B.summarize(findings, words, surface, rules_checked)
+    color = (sys.stderr.isatty() and "NO_COLOR" not in os.environ
+             and os.environ.get("TERM") != "dumb")
+    band_lines, band_data = B.summarize(findings, words, surface, rules_checked,
+                                        color=color)
 
     if args.json:
         doc = C.report_json([n for n, _ in documents], args.rules,
@@ -247,6 +251,102 @@ def cmd_check(args):
         for line in band_lines:
             print(line, file=sys.stderr)
     return 1 if findings else 0
+
+
+GATE_AGENT_FILES = ("ava-prose-gate.md", "ava-technical-gate.md")
+
+
+def _asset_root():
+    return Path(__file__).resolve().parent / "assets"
+
+
+def _split_front_matter(text):
+    """Return (meta, body) for a markdown file with a simple YAML header."""
+    lines = text.split("\n")
+    if not lines or lines[0].strip() != "---":
+        return {}, text
+    try:
+        end = lines.index("---", 1)
+    except ValueError:
+        return {}, text
+    meta = {}
+    for line in lines[1:end]:
+        key, sep, value = line.partition(":")
+        if sep:
+            meta[key.strip()] = value.strip().strip("'\"")
+    return meta, "\n".join(lines[end + 1:]).lstrip("\n")
+
+
+def _cursor_front_matter(meta):
+    return ("---\n"
+            f"name: {meta['name']}\n"
+            f"description: {meta['description']}\n"
+            "---\n\n")
+
+
+def _opencode_front_matter(meta):
+    return ("---\n"
+            f"description: {meta['description']}\n"
+            "mode: subagent\n"
+            "---\n\n")
+
+
+def cmd_setup(args):
+    """Copy the gate files out of the package into a harness's directories."""
+    assets = _asset_root()
+    if not assets.is_dir():
+        print(f"error: package assets not found at {assets}", file=sys.stderr)
+        return 2
+
+    if args.harness == "agents-md":
+        if args.global_install:
+            print("error: agents-md prints to stdout; redirect it where your "
+                  "harness reads instructions", file=sys.stderr)
+            return 2
+        sys.stdout.write((assets / "AGENTS.md").read_text())
+        return 0
+
+    base = Path.home() if args.global_install else Path(".")
+    writes = []
+
+    skill_src = assets / "skills" / "ava"
+    skill_dst = base / ".agents" / "skills" / "ava"
+    for src in sorted(skill_src.rglob("*")):
+        if src.is_file():
+            writes.append((skill_dst / src.relative_to(skill_src),
+                           src.read_text()))
+
+    if args.harness == "cursor":
+        agents_dst = base / ".cursor" / "agents"
+        front = _cursor_front_matter
+    elif args.harness == "opencode":
+        agents_dst = (Path.home() / ".config" / "opencode" / "agents"
+                      if args.global_install else Path(".opencode") / "agents")
+        front = _opencode_front_matter
+    else:  # codex and the generic skills target ship the skill only
+        agents_dst = front = None
+
+    if agents_dst is not None:
+        for name in GATE_AGENT_FILES:
+            meta, body = _split_front_matter((assets / "agents" / name).read_text())
+            writes.append((agents_dst / name, front(meta) + body))
+
+    conflicts = [dst for dst, _ in writes if dst.exists()]
+    if conflicts and not args.force:
+        for dst in conflicts:
+            print(f"error: {dst} exists (--force overwrites)", file=sys.stderr)
+        return 2
+
+    for dst, content in writes:
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        dst.write_text(content)
+        print(dst)
+
+    if args.harness == "codex":
+        target = "~/.codex/AGENTS.md" if args.global_install else "AGENTS.md"
+        print(f"codex has no subagents; append the gate contract with: "
+              f"ava setup agents-md >> {target}", file=sys.stderr)
+    return 0
 
 
 def main():
@@ -326,6 +426,18 @@ def main():
                     help="an input-contract field; enables P-M5, repeatable")
     ck.add_argument("-o", "--out", help="write the report to this file")
     ck.set_defaults(fn=cmd_check)
+
+    st = sub.add_parser("setup", help="install the gate files for a harness")
+    st.add_argument("harness",
+                    choices=("cursor", "opencode", "codex", "skills", "agents-md"),
+                    help="cursor/opencode: skill + gate agents; codex/skills: "
+                         "skill only; agents-md: print the AGENTS.md gate "
+                         "contract to stdout")
+    st.add_argument("-g", "--global", dest="global_install", action="store_true",
+                    help="install to user space instead of the current project")
+    st.add_argument("--force", action="store_true",
+                    help="overwrite files that already exist")
+    st.set_defaults(fn=cmd_setup)
 
     args = ap.parse_args()
     sys.exit(args.fn(args) or 0)

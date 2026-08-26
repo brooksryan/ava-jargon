@@ -16,6 +16,55 @@ With the sentence-parser tier (spacy + model, ~500 MB):
 uv tool install 'ava-jargon[parser] @ git+https://github.com/brooksryan/ava-jargon'
 ```
 
+## Install the gates
+
+`ava setup` copies the gate files into the current project and prints each path it writes. `-g` installs to user space, `--force` overwrites.
+
+### Claude Code
+
+The repo is a plugin:
+
+```
+claude plugin marketplace add brooksryan/ava-jargon
+claude plugin install ava-jargon@brooksryan/ava-jargon
+```
+
+### Cursor
+
+```
+ava setup cursor
+```
+
+### OpenCode
+
+```
+ava setup opencode
+```
+
+### Codex
+
+```
+ava setup codex
+ava setup agents-md >> AGENTS.md
+```
+
+Codex has no subagents; the AGENTS.md block tells the agent to run `ava check` itself.
+
+### Gemini CLI
+
+```
+gemini extensions install https://github.com/brooksryan/ava-jargon
+```
+
+### Everything else
+
+Any harness that reads AGENTS.md:
+
+```
+ava setup skills
+ava setup agents-md >> AGENTS.md
+```
+
 ## Usage
 
 ```
@@ -34,9 +83,9 @@ draft.md:3: [W-M4] register word: "leverage"
 draft.md:3: [W-M4] register word: "seamless"
 checked 21 rules over 599 words: 7 findings
 band summary (surface: doc-technical, 599 words):
-  W-M1  1.67/1k · human 0.28-2.3 · ai ~12.5 -> human-band
-  W-M2  1.67/1k · human 0.05-0.16 · ai ~0.08 -> ai-range
-  W-M4  3.34/1k · human 0.07-1.51 · ai ~0.13 -> ai-range
+  W-M1  1.67/1k · human 0.28-2.3 · ai ~12.5 -> PASS
+  W-M2  1.67/1k · human 0.05-0.16 · ai ~0.08 -> FAIL · ai-range
+  W-M4  3.34/1k · human 0.07-1.51 · ai ~0.13 -> FAIL · ai-range
 $ echo $?
 1
 ```
@@ -57,7 +106,7 @@ Findings go to stdout; everything else goes to stderr. Exit codes: 0 clean, 1 fi
 | `doc-technical` | design docs, specs, runbooks (default for `--rules technical`) |
 | `code` | READMEs, code comments, docstrings |
 
-The surface picks the baseline bands and the jargon lexicon. On `ai-high` rules, `ai-range` means the text matches the AI pattern. `human-high` rules measure form and never claim AI authorship. See [CHECKS.md](CHECKS.md) for every rule, and [lexicons/README.md](lexicons/README.md) for the shipped lexicons. This version has no `personal` rule set; a later version will let you build your own.
+The surface picks the baseline bands and the jargon lexicon. Band verdicts are PASS, WARN, or FAIL, colored on a terminal. On `ai-high` rules, FAIL means the text matches the AI pattern. On `human-high` rules, FAIL marks a form issue and never claims AI authorship. See [CHECKS.md](CHECKS.md) for every rule, and [lexicons/README.md](lexicons/README.md) for the shipped lexicons. This version has no `personal` rule set; a later version will let you build your own.
 
 ## Build a lexicon
 

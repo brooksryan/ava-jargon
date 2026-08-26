@@ -30,5 +30,12 @@ include-package-data = false
 ava_jargon = "app"
 
 [tool.setuptools.package-data]
-ava_jargon = ["name_stoplist.txt", "lexicons/*.json"]
+ava_jargon = [
+    "name_stoplist.txt",
+    "lexicons/*.json",
+    "assets/AGENTS.md",
+    "assets/agents/*.md",
+    "assets/skills/ava/*.md",
+    "assets/skills/ava/references/*.md",
+]
 "ava_jargon.checks" = ["baselines.json"]

@@ -34,28 +34,41 @@ def rule_counts(findings):
 
 
 def _position(rate, entry):
-    """Return (position, detail) for one rule's rate against its bands."""
+    """Return (status, reason) for one rule's rate against its bands.
+
+    status is PASS, WARN, or FAIL. reason names the band position behind the
+    status, so an agent can still read why.
+    """
     hu = entry.get("human_universal")
     ai = entry.get("ai_universal", entry.get("ai_internal"))
-    if entry.get("direction") == "human-high":
-        if hu is None:
-            return "no-band", ""
-        state = "within human range" if rate <= hu[1] else "above human range (style)"
-        return state, "compliance dial"
     if hu is None:
-        return "no-band", ""
+        return "-", "no band"
+    if entry.get("direction") == "human-high":
+        if rate <= hu[1]:
+            return "PASS", "within human range"
+        return "FAIL", "above human range (style)"
     if ai is not None and rate >= ai:
-        return "ai-range", ""
+        return "FAIL", "ai-range"
     if rate > hu[1]:
-        return "elevated", ""
-    return "human-band", ""
+        return "WARN", "elevated above human band"
+    return "PASS", "human-band"
+
+
+_GREEN, _YELLOW, _RED, _RESET = "\033[32m", "\033[33m", "\033[31m", "\033[0m"
+
+
+def paint(status, color):
+    if not color:
+        return status
+    tint = {"PASS": _GREEN, "WARN": _YELLOW, "FAIL": _RED}.get(status)
+    return f"{tint}{status}{_RESET}" if tint else status
 
 
 def _fmt(v):
     return "0" if v == 0 else (f"{v:.2f}".rstrip("0").rstrip(".") if v < 10 else f"{v:.1f}")
 
 
-def summarize(findings, words, surface, rules_checked):
+def summarize(findings, words, surface, rules_checked, color=False):
     """Return (lines, data): the stderr footer lines and the --json object."""
     base = load()
     if base is None:
@@ -79,7 +92,7 @@ def summarize(findings, words, surface, rules_checked):
         if entry is None:
             continue
         rate = round(1000 * counts.get(rule, 0) / words, 2)
-        pos, note = _position(rate, entry)
+        status, reason = _position(rate, entry)
         hu = entry.get("human_universal")
         hi = entry.get("human_internal")
         ai = entry.get("ai_universal", entry.get("ai_internal"))
@@ -90,11 +103,12 @@ def summarize(findings, words, surface, rules_checked):
             parts.append(f"int {_fmt(hi[0])}-{_fmt(hi[1])}")
         if ai is not None and entry.get("direction") != "human-high":
             parts.append(f"ai ~{_fmt(ai)}")
-        if note:
-            parts.append(note)
-        lines.append(" · ".join(parts) + f" -> {pos}")
+        tail = paint(status, color)
+        if status != "PASS":
+            tail += f" · {reason}"
+        lines.append(" · ".join(parts) + f" -> {tail}")
         data["rules"][rule] = {
-            "rate_per_1k": rate, "position": pos,
+            "rate_per_1k": rate, "status": status, "position": reason,
             "direction": entry.get("direction"),
             "human_universal": hu, "human_internal": hi,
             "ai_universal": entry.get("ai_universal"),
