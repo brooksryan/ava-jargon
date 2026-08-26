@@ -16,54 +16,7 @@ With the sentence-parser tier (spacy + model, ~500 MB):
 uv tool install 'ava-jargon[parser] @ git+https://github.com/brooksryan/ava-jargon'
 ```
 
-## Install the gates
-
-`ava setup` copies the gate files into the current project and prints each path it writes. `-g` installs to user space, `--force` overwrites.
-
-### Claude Code
-
-The repo is a plugin:
-
-```
-claude plugin marketplace add brooksryan/ava-jargon
-claude plugin install ava-jargon@brooksryan/ava-jargon
-```
-
-### Cursor
-
-```
-ava setup cursor
-```
-
-### OpenCode
-
-```
-ava setup opencode
-```
-
-### Codex
-
-```
-ava setup codex
-ava setup agents-md >> AGENTS.md
-```
-
-Codex has no subagents; the AGENTS.md block tells the agent to run `ava check` itself.
-
-### Gemini CLI
-
-```
-gemini extensions install https://github.com/brooksryan/ava-jargon
-```
-
-### Everything else
-
-Any harness that reads AGENTS.md:
-
-```
-ava setup skills
-ava setup agents-md >> AGENTS.md
-```
+See below for instructions for installing skills. 
 
 ## Usage
 
@@ -117,3 +70,32 @@ In a clone: one document per `.txt` file, 30k+ tokens per side, then
 ```
 
 The approved side is the audience's vocabulary; the contrast side is the writing you test. Rules live one-per-file in `app/checks/`; after corpus or rule changes, rebuild bands with `python app/scripts/build_baselines.py`. Before you trust a rule, run it over your own writing. A rule that fires often on you is a wrong rule for you.
+
+## Install For Your Agents
+
+`ava setup -h` for details. `ava setup` copies the gate files into the current project and prints each path it writes by default. `-g` installs to user space, `--force` overwrites.
+
+### Per Harness Instructions
+```
+# Claude Code
+claude plugin marketplace add brooksryan/ava-jargon
+claude plugin install ava-jargon@brooksryan/ava-jargon
+
+# Cursor
+ava setup cursor
+
+# Open Code
+ava setup opencode
+
+# Codex
+# Codex has no subagents; the AGENTS.md block tells the agent to run `ava check` itself.
+ava setup codex
+ava setup agents-md >> AGENTS.md
+
+# Gemini
+gemini extensions install https://github.com/brooksryan/ava-jargon
+
+# Everything else
+ava setup skills
+ava setup agents-md >> AGENTS.md
+```
