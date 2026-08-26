@@ -2,9 +2,9 @@
 
 Adversarial voice agents: mechanical voice checks and corpus-relative jargon scoring. Linter-style findings, exit codes, and rate bands against human and AI baselines. Built for coding agents; works by hand.
 
-# Quickstart with claude
+## Quickstart with claude
 ```
-uv tool install git+https://github.com/brooksryan/ava-jargon
+uv tool install 'ava-jargon[parser] @ git+https://github.com/brooksryan/ava-jargon'
 claude plugin marketplace add brooksryan/ava-jargon
 claude plugin install ava-jargon@ava-jargon
 
@@ -13,17 +13,20 @@ claude "run ava technical check on my readme.md"
 
 ## Install
 
-Requires [uv](https://docs.astral.sh/uv/) and git.
+> Requires [uv](https://docs.astral.sh/uv/) and git.
 
-```
-uv tool install git+https://github.com/brooksryan/ava-jargon
-```
-
-With the sentence-parser tier (spacy + model, ~500 MB):
+With the sentence-parser tier (spacy + model, ~500 MB) (Recommended):
 
 ```
 uv tool install 'ava-jargon[parser] @ git+https://github.com/brooksryan/ava-jargon'
 ```
+
+No parser
+```
+uv tool install git+https://github.com/brooksryan/ava-jargon
+```
+
+
 
 See below for instructions for installing skills. 
 
