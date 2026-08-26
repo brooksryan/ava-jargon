@@ -193,7 +193,7 @@ def cmd_check(args):
 
     ctx = C.Context(lexicon=lexicon, fields=fields)
     checkers, tiers, skipped, warning = C.select(args.rules, ctx,
-                                                 use_parser=args.parser)
+                                                 use_parser=not args.no_parser)
     if warning:
         print(f"warning: {warning}, so the run holds tier 1 only", file=sys.stderr)
 
@@ -225,6 +225,11 @@ def cmd_check(args):
               f"/1k over {words:,} words · top: {top}", file=sys.stderr)
 
     rules_checked = [m.RULE for m in checkers]
+    verdict = (f"checked {len(checkers)} rules over {words:,} words: "
+               f"{len(findings)} findings")
+    if skipped:
+        verdict += f" ({len(skipped)} skipped: {', '.join(skipped)})"
+    print(verdict, file=sys.stderr)
     band_lines, band_data = B.summarize(findings, words, surface, rules_checked)
 
     if args.json:
@@ -312,7 +317,10 @@ def main():
     ck.add_argument("--json", action="store_true",
                     help="print one JSON object instead of one line per finding")
     ck.add_argument("--parser", action="store_true",
-                    help="also run the tier 2 checkers, which need spacy")
+                    help="kept for compatibility: the tier 2 checkers now run "
+                         "whenever spacy is installed")
+    ck.add_argument("--no-parser", action="store_true",
+                    help="skip the tier 2 checkers even when spacy is installed")
     ck.add_argument("--lexicon", help="jargon lexicon path; enables W-M10")
     ck.add_argument("--field", action="append", metavar="NAME=VALUE",
                     help="an input-contract field; enables P-M5, repeatable")

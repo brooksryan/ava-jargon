@@ -15,7 +15,7 @@ ava check README.md --rules westinghouse --surface doc-shared   # smoke test
 
 Update with `uv tool upgrade ava-jargon`. Remove with `uv tool uninstall ava-jargon`. To run once without an install: `uvx --from git+ssh://git@github.com/<org>/ava-jargon ava check draft.md`.
 
-The `--parser` checks (the T-* parser tier) need the optional extra, which adds spacy and its English model (about 500 MB):
+The parser tier (most T-* rules) runs automatically whenever spacy is present; without it those rules report as skipped. The optional extra adds spacy and its English model (about 500 MB):
 
 ```
 uv tool install 'ava-jargon[parser] @ git+ssh://git@github.com/<org>/ava-jargon'
@@ -52,10 +52,10 @@ The surface selects the baseline bands and the jargon lexicon. `CHECKS.md` defin
 ## How agents read the output
 
 1. Findings print to stdout, one per line: `path:line: [rule] label: "match"`. Everything else prints to stderr.
-2. The exit code is 0 for clean, 1 for findings, 2 for a bad input. Gate on the exit code.
+2. The exit code is 0 for no findings, 1 for findings, 2 for a bad input. Exit 0 alone does not prove a full measurement. The stderr verdict line - `checked 21 rules over 904 words: 0 findings (7 skipped: ...)` - names every rule the run did not test.
 3. The band summary on stderr compares each rule's rate to the human band and the AI reference for the surface: `W-M1  16/1k · human 0-0.49 · ai ~7.7 -> ai-range`. Read the arrow. `ai-range` on an ai-high rule means the text reads as AI-written. A `human-high` rule is a compliance dial: humans out-score AI on it, so its summary never claims AI authorship.
 4. Below 300 words the summary reports counts only. A rate from a small sample is noise.
-5. W-M10 (jargon) is advisory: one density line on stderr, never a finding, never the exit code. The matching universal lexicon loads by surface; `--lexicon` overrides.
+5. W-M10 (jargon) is advisory. It prints one density line on stderr. It never joins the findings or the exit code. The matching universal lexicon loads by surface. `--lexicon` overrides.
 6. Pass `--json` for one JSON object: findings, `rules_skipped`, and a `bands` object with rate, band, direction, and position per rule.
 
 ## Add your own corpus, build your own lexicon

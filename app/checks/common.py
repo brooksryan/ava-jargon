@@ -77,9 +77,21 @@ def blank(match):
     return re.sub(r"[^\n]", " ", match.group(0))
 
 
+def _one_token(match):
+    """Replace an inline code span with one placeholder token, same length.
+
+    STE100 counts a technical name as one word, so `some --identifier` must
+    count as one toward sentence length, never zero. The placeholder is a
+    digit: a digit is a word for the counters but never a noun for T-M7 and
+    never a word-list match.
+    """
+    span = match.group(0)
+    return "0" + " " * (len(span) - 1)
+
+
 def strip_code(text):
-    """Blank the fenced code blocks and the inline code spans."""
-    return _INLINE_RE.sub(blank, _FENCE_RE.sub(blank, text))
+    """Blank fenced code blocks; reduce each inline span to one token."""
+    return _INLINE_RE.sub(_one_token, _FENCE_RE.sub(blank, text))
 
 
 def strip_markup(text):

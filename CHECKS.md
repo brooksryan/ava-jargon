@@ -36,7 +36,7 @@ Sets: all. Flags adjacent emoji and the adjacent `!!` pair. Two exclamatory sent
 Sets: all. Runs the jargon scorer and prints one density line on stderr. Advisory by design: never a finding, never the exit code - lexicon terms are often the document's own topic. The universal lexicon that matches the band surface loads automatically; `--lexicon PATH` overrides.
 
 ### W-M11 passive voice (parser)
-Sets: technical only (demoted from the universal set 2026-08-25 - passive runs 5-19/1k in normal human messages and edited prose). Direction: human-high. Needs: `--parser`. Flags passive clauses ("the file is read by the parser"). A finding is a form note for technical docs, never AI evidence.
+Sets: technical only (demoted from the universal set 2026-08-25 - passive runs 5-19/1k in normal human messages and edited prose). Direction: human-high. Parser tier: runs whenever spacy is installed; `--no-parser` skips it. Flags passive clauses ("the file is read by the parser"). A finding is a form note for technical docs, never AI evidence.
 
 ## Personal rules (P-*) - not in this build
 
@@ -62,20 +62,20 @@ Sets: technical. In a conditional sentence the condition comes first: "If the bu
 Sets: technical. Flags a list item that joins two actions in one sentence. One action per sentence; a two-sentence item passes.
 
 ### T-M1 sentence length (parser)
-Sets: technical. Needs: `--parser`. An instruction takes 20 words maximum, a description 25. The parser classifies the sentence first, so the limits apply to the right kind. Technical names count as one word.
+Sets: technical. Parser tier: runs whenever spacy is installed; `--no-parser` skips it. An instruction takes 20 words maximum, a description 25. The parser classifies the sentence first, so the limits apply to the right kind. Technical names count as one word.
 
 ### T-M2 one instruction per sentence (parser)
-Sets: technical. Needs: `--parser`. Flags a sentence with two imperative verbs. Split it.
+Sets: technical. Parser tier: runs whenever spacy is installed; `--no-parser` skips it. Flags a sentence with two imperative verbs. Split it.
 
 ### T-M4 simple tenses (parser)
-Sets: technical. Needs: `--parser`. Flags perfect tenses: "has been completed", "had finished". Use simple present, past, or future.
+Sets: technical. Parser tier: runs whenever spacy is installed; `--no-parser` skips it. Flags perfect tenses: "has been completed", "had finished". Use simple present, past, or future.
 
 ### T-M5 no -ing main verb (parser)
-Sets: technical. Needs: `--parser`. Flags a sentence whose main verb is an -ing form ("Running the script produces..."). Technical names and approved adjectives ("the following", "warning") pass.
+Sets: technical. Parser tier: runs whenever spacy is installed; `--no-parser` skips it. Flags a sentence whose main verb is an -ing form ("Running the script produces..."). Technical names and approved adjectives ("the following", "warning") pass.
 
 ### T-M7 noun clusters (parser)
-Sets: technical. Needs: `--parser`. Flags four or more nouns in a row. Break the cluster with a preposition. Official technical names are exempt in the standard, and the checker cannot know which names are official. Expect findings on names. Judge them.
+Sets: technical. Parser tier: runs whenever spacy is installed; `--no-parser` skips it. Flags four or more nouns in a row. Break the cluster with a preposition. Official technical names are exempt in the standard, and the checker cannot know which names are official. Expect findings on names. Judge them.
 
 ### T-M10 imperative instructions (parser)
-Sets: technical. Needs: `--parser`. Flags "You should X" in a list item. Write the instruction as a command: "Confirm the scope."
+Sets: technical. Parser tier: runs whenever spacy is installed; `--no-parser` skips it. Flags "You should X" in a list item. Write the instruction as a command: "Confirm the scope."
 
