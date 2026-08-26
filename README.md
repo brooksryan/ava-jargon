@@ -1,6 +1,6 @@
 # ava
 
-Adversarial voice agents: mechanical voice checks and corpus-relative jargon scoring. Linter-style findings, exit codes, and rate bands against human and AI baselines. Built for coding agents; works by hand.
+Adversarial voice agents: mechanical voice checks and corpus-relative jargon scoring (what a mouthful). Linter-style findings, exit codes, and rate bands against human and AI baselines. Built for agents; works by hand.
 
 ## Install
 
