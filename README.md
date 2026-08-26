@@ -75,7 +75,12 @@ Findings go to stdout; everything else goes to stderr. Exit codes: 0 clean, 1 fi
 
 The surface picks the baseline bands and the jargon lexicon. Band verdicts are PASS, WARN, or FAIL, colored on a terminal. On `ai-high` rules, FAIL means the text matches the AI pattern. On `human-high` rules, FAIL marks a form issue and never claims AI authorship. See [CHECKS.md](CHECKS.md) for every rule, and [lexicons/README.md](lexicons/README.md) for the shipped lexicons. This version has no `personal` rule set; a later version will let you build your own.
 
-## Extend a shipped lexicon
+## Lexicons
+A lexicon represents the relative frequency of words between an APPROVED corpus and a CONTRAST corpus, where an approved corpus is "normal" and a contrast corpus has "too much jargon". This project ships with 4 prebuilt lexicons designed to identify words that AI frequently overuses, grouped by surface. 
+
+This project allows you to extend the prebuilt lexicons so that the words you/your company/your friends use don't get flagged when you run a jargon check. 
+
+### Extending Lexicons
 
 No clone needed. `ava jargon extend NAME PATH...` profiles one more approved corpus into `~/.ava/extensions/NAME.json` (`AVA_HOME` moves it). `--extend NAME` on `ava check`, `ava jargon score`, or `ava jargon delta` overlays it on the lexicon in use.
 
