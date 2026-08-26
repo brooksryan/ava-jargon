@@ -1,0 +1,31 @@
+# Environments and caches
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/*.whl
+dist/*.tar.gz
+
+# Corpora stay local: license notes say "local analysis only, never
+# redistributed", and several dirs hold customer/internal messages.
+corpus/
+
+# Audit data derives from internal Slack/transcripts - local only.
+audit/
+
+# Research lexicons and scratch specs stay local; only the universal
+# lexicons and the lexicon README ship.
+lexicons/*
+!lexicons/universal-*.json
+!lexicons/README.md
+tmp/
+
+# Stray local analysis outputs at the root
+brooks_slack_vs_brooks_agents.json
+
+# Local-only: pre-git snapshots and working notes
+.bak/
+notes/
+BACKLOG.md

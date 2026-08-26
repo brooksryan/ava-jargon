@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ava-jargon"
+version = "0.2.0"
+description = "ava - mechanical voice checks and corpus-relative jargon scoring"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["wordfreq>=3.0"]
+
+[project.optional-dependencies]
+parser = [
+    "spacy>=3.7",
+    "en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl",
+]
+
+[project.scripts]
+ava = "ava_jargon.cli:main"
+
+[tool.setuptools]
+# The repo keeps its flat app/ layout; the package maps onto it. The
+# `personal` subpackage is deliberately absent from this list: the P-* rules
+# are per-author and do not ship (they return in v3).
+packages = ["ava_jargon", "ava_jargon.checks", "ava_jargon.checks.parser"]
+include-package-data = false
+
+[tool.setuptools.package-dir]
+ava_jargon = "app"
+
+[tool.setuptools.package-data]
+ava_jargon = ["name_stoplist.txt", "lexicons/*.json"]
+"ava_jargon.checks" = ["baselines.json"]

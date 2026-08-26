@@ -1,0 +1,33 @@
+# People names never flagged as jargon (matched against every token of a term,
+# so "avneet buttar" and "per alexis" are covered). One name per line.
+# Internal
+brooks
+brad
+kris
+kristina
+uli
+uliana
+jason
+shane
+steve
+christian
+aaron
+leslie
+alex
+jon
+simon
+navi
+# Customer-side (FlexCare)
+alexis
+keown
+chris
+fisher
+cfisher
+ali
+aslantas
+andrew
+mays
+david
+descalso
+avneet
+buttar
