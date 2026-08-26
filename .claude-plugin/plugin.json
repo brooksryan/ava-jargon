@@ -1,5 +1,5 @@
 {
   "name": "ava-jargon",
   "description": "Voice gates for agent prose: two subagents and a skill that run the ava CLI",
-  "version": "0.2.0"
+  "version": "0.2.1"
 }

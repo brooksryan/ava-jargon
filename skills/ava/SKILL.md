@@ -1,5 +1,6 @@
 ---
-name: ava description: 'Voice gates for prose you produce. Run the matching gate agent first. Do this before you deliver, post, or commit prose a human reads. You need a PASS verdict before you deliver. Findings are contracts you must honor.'
+name: ava
+description: 'Voice gates for prose you produce. Run the matching gate agent first. Do this before you deliver, post, or commit prose a human reads. You need a PASS verdict before you deliver. Findings are contracts you must honor.'
 ---
 
 # ava - voice gates

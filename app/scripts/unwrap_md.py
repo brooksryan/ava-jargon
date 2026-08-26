@@ -30,9 +30,20 @@ def joinable_next(line):
 
 
 def unwrap(text):
+    lines = text.splitlines()
     out = []
+    start = 0
+    # YAML front matter passes through verbatim: its key: value lines would
+    # otherwise read as one wrapped paragraph and join into a single line.
+    if lines and lines[0].strip() == "---":
+        try:
+            end = lines.index("---", 1)
+            out = lines[:end + 1]
+            start = end + 1
+        except ValueError:
+            pass
     in_fence = False
-    for line in text.splitlines():
+    for line in lines[start:]:
         if FENCE.match(line):
             in_fence = not in_fence
             out.append(line)
