@@ -2,7 +2,7 @@
 
 ## What this is
 
-`ava` measures the style signals in text. The `check` command runs mechanical writing rules and reports findings like a linter, with a band summary against human and AI baselines. The `jargon` commands compare two corpora and score new text against the result. Coding agents are the intended callers, and every command also works by hand.
+`ava` (adversarial voice agents) measures the style signals in text. The `check` command runs mechanical writing rules and reports findings like a linter, with a band summary against human and AI baselines. The `jargon` commands compare two corpora and score new text against the result. Coding agents are the intended callers, and every command also works by hand.
 
 ## Install
 
