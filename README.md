@@ -7,7 +7,7 @@ Adversarial voice agents: mechanical voice checks and corpus-relative jargon sco
 Requires [uv](https://docs.astral.sh/uv/) and git.
 
 ### Quickstart with claude
-```
+```bash
 uv tool install 'ava-jargon[parser] @ git+https://github.com/brooksryan/ava-jargon'
 claude plugin marketplace add brooksryan/ava-jargon
 claude plugin install ava-jargon@ava-jargon
@@ -19,12 +19,12 @@ claude "run ava technical check on my readme.md"
 
 With the sentence-parser tier (spacy + model, ~500 MB) (Recommended):
 
-```
+```bash 
 uv tool install 'ava-jargon[parser] @ git+https://github.com/brooksryan/ava-jargon'
 ```
 
 No parser
-```
+```bash 
 uv tool install git+https://github.com/brooksryan/ava-jargon
 ```
 ### Agent Installation
@@ -32,18 +32,18 @@ See below for instructions for installing skills.
 
 ## Usage
 
+```bash
+$ ava check draft.md --rules technical                      # findings + band summary
+$ ava check - --surface chat < draft.txt                    # read stdin
+$ ava jargon score draft.md -l my-lexicon.json              # jargon density + coverage
+$ ava jargon build corpus/A corpus/B -o my-lexicon.json
+$ ava jargon delta before/ after/ -l my-lexicon.json
+$ ava jargon extend my-team slack-export.json               # profile one more approved corpus
+$ ava check draft.md --rules technical --extend my-team     # its terms join the approved side
 ```
-ava check draft.md --rules technical                 # findings + band summary
-ava check - --surface chat < draft.txt               # read stdin
-ava jargon score draft.md -l my-lexicon.json         # jargon density + coverage
-ava jargon build corpus/A corpus/B -o my-lexicon.json
-ava jargon delta before/ after/ -l my-lexicon.json
-ava jargon extend my-team slack-export.json           # profile one more approved corpus
-ava check draft.md --rules technical --extend my-team # its terms join the approved side
-```
-
-```
-$ ava check draft.md --rules technical
+### Example Output
+```bash
+$ ava check draft.md --rules technical                      # Check markdown against technical rules
 draft.md:3: [W-M1] em dash: "the deploy job — it went"
 draft.md:3: [W-M2] inverted construction: "It's not a config change, it's"
 draft.md:3: [W-M4] register word: "leverage"
@@ -84,7 +84,7 @@ This project allows you to extend the prebuilt lexicons so that the words you/yo
 
 No clone needed. `ava jargon extend NAME PATH...` profiles one more approved corpus into `~/.ava/extensions/NAME.json` (`AVA_HOME` moves it). `--extend NAME` on `ava check`, `ava jargon score`, or `ava jargon delta` overlays it on the lexicon in use.
 
-```
+```bash 
 ava jargon extend my-prompts prompts.jsonl --field text --note "typed prompts, 2026"
 ava check spec.md --rules technical --extend my-prompts
 ```
@@ -110,7 +110,7 @@ The approved side is the audience's vocabulary; the contrast side is the writing
 `ava setup -h` for details. `ava setup` copies the gate files into the current project and prints each path it writes by default. `-g` installs to user space, `--force` overwrites.
 
 ### Per Harness Instructions
-```
+```bash 
 # Claude Code
 claude plugin marketplace add brooksryan/ava-jargon
 claude plugin install ava-jargon@ava-jargon
