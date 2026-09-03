@@ -73,7 +73,7 @@ Findings go to stdout; everything else goes to stderr. Exit codes: 0 clean, 1 fi
 | `doc-technical` | design docs, specs, runbooks (default for `--rules technical`) |
 | `code` | READMEs, code comments, docstrings |
 
-The surface picks the baseline bands and the jargon lexicon. Band verdicts are PASS, WARN, or FAIL, colored on a terminal. On `ai-high` rules, FAIL means the text matches the AI pattern. On `human-high` rules, FAIL marks a form issue and never claims AI authorship. See [CHECKS.md](CHECKS.md) for every rule, and [lexicons/README.md](lexicons/README.md) for the shipped lexicons. This version has no `personal` rule set; a later version will let you build your own.
+The surface picks the baseline bands and the jargon lexicon. Band verdicts are PASS, WARN, or FAIL, colored on a terminal. On `ai-high` rules, FAIL means the text matches the AI pattern. On `human-high` rules, FAIL marks a form issue and never claims AI authorship. See [CHECKS.md](CHECKS.md) for every rule, and [lexicons/README.md](lexicons/README.md) for the shipped lexicons. There is no `personal` rule set. A voice, below, holds the rules a reviewer judges for one author or one project.
 
 ## Lexicons
 A lexicon represents the relative frequency of words between an APPROVED corpus and a CONTRAST corpus, where an approved corpus is "normal" and a contrast corpus has "too much jargon". This project ships with 4 prebuilt lexicons designed to identify words that AI frequently overuses, grouped by surface. 
@@ -94,6 +94,35 @@ An extension adds to the approved side only. Every term the corpus uses in more 
 Sources: `.txt` and `.md` files count one document each. Fenced and inline code drops out of `.md` files; `--keep-code` keeps it. A `.json` or `.jsonl` file counts one document per record, and `--field` names the text field.
 
 `--split blank` or `--split line` cuts one file into many documents. `-` reads stdin. Collect 30k+ tokens. The build prints how many terms the extension vetoes from each shipped lexicon. `ava jargon extensions` lists the profiles on this machine.
+
+## Voices
+
+A voice is one JSON document you own by name. It records the surface and the extensions the mechanical check runs under. It also holds a rubric a reviewer scores where mechanics cannot decide.
+
+The rubric lists one object per rule:
+
+1. a name
+2. a description
+3. criteria
+4. a scoring structure: pass-fail, or a numeric scale with anchors
+5. a requirement: must-pass, or a minimum score
+
+`ava voice schema` prints the shape.
+
+```bash
+ava voice schema                                  # the JSON schema
+ava voice new pm-issue voice.json                 # create ~/.ava/voices/pm-issue.json
+ava voice new pm-issue voice.json --project       # create .ava/voices/pm-issue.json, committed with the repo
+ava voice list                                    # every voice, project rows first
+ava voice rubric pm-issue                         # the rules as a reviewer reads them; --json prints the file
+echo '{"rules":[{"name":"idea-density","requirement":{"min":3}}]}' | ava voice set pm-issue
+ava voice rm pm-issue
+ava check issue.md --voice pm-issue               # the voice supplies --surface and --extend; a flag wins
+```
+
+A personal voice lives in `~/.ava/voices/` (`AVA_HOME` moves it). A project voice lives in `.ava/voices/` and travels with the repository; on a name clash the project voice wins. `new` and `set` refuse a document that misses the schema and name the field. `set` merges: rules merge by name, other fields replace.
+
+The gate agents accept a voice by name. The gate runs the check under it, reads the rubric, scores every rule, and fails the verdict when a rule misses its requirement. This repository ships its own issue voice in [.ava/voices/pm-issue.json](.ava/voices/pm-issue.json). [skills/ava/references/voices.md](skills/ava/references/voices.md) walks an agent through authoring one.
 
 ## Build a lexicon
 

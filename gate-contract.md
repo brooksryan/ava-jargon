@@ -15,6 +15,10 @@ Run `ava check` on every piece of prose you produce before you deliver it. Prose
 3. Report the band summary lines that are not PASS, and any skipped rules, with your delivery.
 4. Treat every finding as a contract. Do not argue with a finding. Rewrite the text.
 
-Pass `-` as FILE to read stdin. Add `--extend NAME` when the project names an extension for its audience; `ava jargon extensions` lists them. Exit codes: 0 clean, 1 findings, 2 bad input.
+Pass `-` as FILE to read stdin. Add `--extend NAME` when the project names an extension for its audience; `ava jargon extensions` lists them. Add `--voice NAME` when the project names a voice for the kind of document; `ava voice list` lists them. A voice supplies the surface and the extensions.
+
+`ava voice rubric NAME` prints the rubric you judge by hand. Score each rule. Fix the draft until every rule meets its requirement.
+
+Exit codes: 0 clean, 1 findings, 2 bad input.
 
 If `ava` is not on PATH, run: `uv tool install git+https://github.com/brooksryan/ava-jargon`

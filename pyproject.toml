@@ -34,8 +34,9 @@ ava_jargon = [
     "name_stoplist.txt",
     "lexicons/*.json",
     "assets/gate-contract.md",
+    "assets/voice.schema.json",
     "assets/agents/*.md",
-    "assets/skills/ava/*.md",
-    "assets/skills/ava/references/*.md",
+    "assets/skills/*/*.md",
+    "assets/skills/*/references/*.md",
 ]
 "ava_jargon.checks" = ["baselines.json"]

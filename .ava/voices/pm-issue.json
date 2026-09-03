@@ -1,0 +1,45 @@
+{
+  "name": "pm-issue",
+  "description": "Issues on this project: product framing for a reader who decides what to build next.",
+  "surface": "doc-shared",
+  "extend": [],
+  "rules": [
+    {
+      "name": "problem-not-prescription",
+      "description": "The issue states the problem or opportunity and what the user must accomplish to call it solved.",
+      "criteria": [
+        "The first section names the problem or the opportunity.",
+        "A section states what the user can do once the issue is solved.",
+        "No sentence names a technology, component, file, or implementation step."
+      ],
+      "scoring": {
+        "type": "pass-fail"
+      },
+      "requirement": {
+        "pass": true
+      }
+    },
+    {
+      "name": "idea-density",
+      "description": "Every sentence carries a new idea. An issue runs denser than a memo.",
+      "criteria": [
+        "No sentence restates an earlier sentence.",
+        "No sentence exists only to introduce the next one.",
+        "Each section adds a decision, a constraint, or an outcome."
+      ],
+      "scoring": {
+        "type": "scale",
+        "min": 1,
+        "max": 5,
+        "anchors": {
+          "1": "Most sentences restate or set up.",
+          "3": "Some filler; each section still adds one thing.",
+          "5": "No sentence can go without a loss."
+        }
+      },
+      "requirement": {
+        "min": 4
+      }
+    }
+  ]
+}
