@@ -3,4 +3,4 @@
 - Before any commit
   - Run tests with and without --parser always
   - All comments must pass technical ava check
-  - All informational content (readmes, issues, PR descriptions) must pass PM voice check
+  - All informational content (readmes, issues, PR descriptions) must pass ava-project-readmes
