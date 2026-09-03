@@ -1,22 +1,31 @@
 # ava
 
-Adversarial voice agents: mechanical voice checks and corpus-relative jargon scoring. Linter-style findings, exit codes, and rate bands against human and AI baselines. Agents run it in a harness, and a person can run it from a shell.
+Adversarial voice agents: mechanical voice checks and corpus-relative jargon scoring (what a mouthful). Linter-style findings, exit codes, and rate bands against human and AI baselines. Built for agents; works by hand.
 
 ## Install
 
-Requires [uv](https://docs.astral.sh/uv/) and git. The parser tier adds spacy and a model, about 500 MB, and runs the sentence-level rules.
+Requires [uv](https://docs.astral.sh/uv/) and git.
 
+### Quickstart with claude
 ```bash
-uv tool install 'ava-jargon[parser] @ git+https://github.com/brooksryan/ava-jargon'   # with the parser tier
-uv tool install git+https://github.com/brooksryan/ava-jargon                          # without it
-```
-
-For Claude Code, add the plugin. It installs two gate agents and the `ava` skill:
-
-```bash
+uv tool install 'ava-jargon[parser] @ git+https://github.com/brooksryan/ava-jargon'
 claude plugin marketplace add brooksryan/ava-jargon
 claude plugin install ava-jargon@ava-jargon
-claude "run ava technical check on my README.md"
+
+claude "run ava technical check on my readme.md"
+```
+
+### Install options
+
+With the sentence-parser tier (spacy + model, ~500 MB) (Recommended):
+
+```bash
+uv tool install 'ava-jargon[parser] @ git+https://github.com/brooksryan/ava-jargon'
+```
+
+No parser
+```bash
+uv tool install git+https://github.com/brooksryan/ava-jargon
 ```
 
 ## Use
