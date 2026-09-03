@@ -57,3 +57,4 @@ band summary (surface: doc-technical, 599 words):
 | Lexicons: jargon scoring, extend, build | [app/lexicons/README.md](app/lexicons/README.md) |
 | Voices: a named surface, extensions, and rubric | [app/voices/README.md](app/voices/README.md) |
 | Agents: the gates, the skill, harness setup | [agents/README.md](agents/README.md) |
+| Tests: run the suite, what the image covers | [tests/README.md](tests/README.md) |

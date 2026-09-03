@@ -1,0 +1,14 @@
+**/__pycache__
+**/*.pyc
+**/.DS_Store
+.git
+venv
+corpus
+audit
+tmp
+dist
+notes
+.bak
+*.egg-info
+lexicons
+brooks_slack_vs_brooks_agents.json
