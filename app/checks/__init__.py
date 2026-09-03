@@ -1,7 +1,7 @@
 """The mechanical-checker runner.
 
-One import line per checker and no discovery logic. Brooks adds a rule with one
-new file and one import line. Brooks removes a wrong rule the same way.
+One import line per checker and no discovery logic. A rule enters with one new
+file and one import line, and leaves the same way.
 
 Each checker declares three names:
 
@@ -14,9 +14,8 @@ need it: W-M10 reads the lexicon and P-M5 reads the fields.
 """
 from .common import Context, Finding  # noqa: F401  (the public record types)
 
-# The P-* rules are Brooks-custom and live in the `personal` subpackage,
-# which the package build does not ship (v3 brings a rebuild-your-own path).
-# These guards keep the runner working without it.
+# The P-* rules live in the optional `personal` subpackage, which the package
+# build does not include. These guards keep the runner working without it.
 try:
     from .personal import p_m1_short_names
     from .personal import p_m3_watermark

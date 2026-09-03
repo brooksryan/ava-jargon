@@ -11,7 +11,7 @@ import os
 import re
 from pathlib import Path
 
-SCHEMA_PATH = Path(__file__).resolve().parent / "assets" / "voice.schema.json"
+SCHEMA_PATH = Path(__file__).resolve().parent / "voice.schema.json"
 NAME_RE = re.compile(r"^[a-z0-9][a-z0-9._-]*$")
 PROJECT_DIR = Path(".ava") / "voices"
 

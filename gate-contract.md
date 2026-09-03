@@ -11,9 +11,8 @@ Run `ava check` on every piece of prose you produce before you deliver it. Prose
 | spec / design doc / runbook | `ava check FILE --rules technical --surface doc-technical` |
 | README / comments / docstrings / PR text / commit message | `ava check FILE --rules technical --surface code` |
 
-2. Fix every finding. Run again until the exit code is 0.
+2. Fix every finding. Do not argue with a finding. Run again until the exit code is 0.
 3. Report the band summary lines that are not PASS, and any skipped rules, with your delivery.
-4. Treat every finding as a contract. Do not argue with a finding. Rewrite the text.
 
 Pass `-` as FILE to read stdin. Add `--extend NAME` when the project names an extension for its audience; `ava jargon extensions` lists them. Add `--voice NAME` when the project names a voice for the kind of document; `ava voice list` lists them. A voice supplies the surface and the extensions.
 

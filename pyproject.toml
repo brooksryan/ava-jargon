@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ava-jargon"
-version = "0.4.0"
+version = "0.4.1"
 description = "ava - mechanical voice checks and corpus-relative jargon scoring"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -23,7 +23,7 @@ ava = "ava_jargon.cli:main"
 # The repo keeps its flat app/ layout; the package maps onto it. The
 # `personal` subpackage is deliberately absent from this list: the P-* rules
 # are per-author and do not ship (they return in v3).
-packages = ["ava_jargon", "ava_jargon.checks", "ava_jargon.checks.parser"]
+packages = ["ava_jargon", "ava_jargon.checks", "ava_jargon.checks.parser", "ava_jargon.voices"]
 include-package-data = false
 
 [tool.setuptools.package-dir]
@@ -34,7 +34,7 @@ ava_jargon = [
     "name_stoplist.txt",
     "lexicons/*.json",
     "assets/gate-contract.md",
-    "assets/voice.schema.json",
+    "voices/voice.schema.json",
     "assets/agents/*.md",
     "assets/skills/*/*.md",
     "assets/skills/*/references/*.md",

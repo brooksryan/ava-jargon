@@ -424,7 +424,7 @@ def cmd_check(args):
     for rule in skipped:
         print(f"skipped: {rule}", file=sys.stderr)
 
-    # W-M10 is advisory (see CHECKS.md): its density prints as a summary line
+    # W-M10 is advisory (see checks/CHECKS.md): its density prints as a summary line
     # and never joins the findings or the exit code.
     w10 = [f for f in findings if f.rule == "W-M10"]
     findings = [f for f in findings if f.rule != "W-M10"]
