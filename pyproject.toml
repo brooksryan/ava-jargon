@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ava-jargon"
-version = "0.3.0"
+version = "0.4.0"
 description = "ava - mechanical voice checks and corpus-relative jargon scoring"
 readme = "README.md"
 requires-python = ">=3.9"
