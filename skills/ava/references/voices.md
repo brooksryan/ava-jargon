@@ -1,6 +1,6 @@
 # Teach ava a voice
 
-A voice is one JSON document. It records the surface and the extensions the mechanical check runs under, and a rubric a gate scores where mechanics cannot decide. `ava voice schema` prints the shape. You gather the rules from the person, draft each rule, confirm it, write it through the CLI, and read the rubric back. Never write the file by hand.
+A voice is one JSON document. It records the surface and the extensions the mechanical check runs under, and a rubric a gate scores where the mechanical check cannot decide. `ava voice schema` prints the shape. Never write the file by hand.
 
 ## Shape
 
@@ -36,8 +36,8 @@ Each rule holds a `name`, a one-sentence `description`, two to four observable `
 
 - Make each criterion observable in the text, for example "No sentence names a technology." Avoid a vague criterion such as "Sounds product-minded."
 - Put one idea in each criterion.
-- Set the requirement at the standard the person holds today, not the standard they hope for.
-- Keep the rubric short. Four rules is a lot.
+- Set the requirement at the standard the person meets in their own writing.
+- Keep the rubric to four rules or fewer.
 - Before you trust a rule, score a sample of the person's own writing with it. A rule that fails often on the person is a wrong rule for that person.
 
 ## Use a voice
