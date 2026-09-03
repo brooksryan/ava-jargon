@@ -600,16 +600,21 @@ def _split_front_matter(text):
     return meta, "\n".join(lines[end + 1:]).lstrip("\n")
 
 
+def _yaml_quote(value):
+    """Single-quote a scalar: the descriptions hold ": " and "|"."""
+    return "'" + value.replace("'", "''") + "'"
+
+
 def _cursor_front_matter(meta):
     return ("---\n"
             f"name: {meta['name']}\n"
-            f"description: {meta['description']}\n"
+            f"description: {_yaml_quote(meta['description'])}\n"
             "---\n\n")
 
 
 def _opencode_front_matter(meta):
     return ("---\n"
-            f"description: {meta['description']}\n"
+            f"description: {_yaml_quote(meta['description'])}\n"
             "mode: subagent\n"
             "---\n\n")
 

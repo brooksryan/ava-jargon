@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+"""Run the test suite.
+
+  ./test                  build the test image and run every test in it
+  ./test -k setup         every other argument goes to pytest
+  ./test --parser         image with the [parser] extra (spacy + model, ~500 MB)
+  ./test --local          pytest from ./venv against an editable install:
+                          venv/bin/pip install -e '.[dev]'
+
+The image installs the package with `uv tool install`, the same path as the
+README, so the suite covers the wheel contents and every `ava setup` target.
+"""
+import argparse
+import subprocess
+import sys
+from pathlib import Path
+
+DIR = Path(__file__).resolve().parent
+IMAGE = "ava-jargon-test"
+
+
+def run_local(pytest_args):
+    py = DIR / "venv" / "bin" / "python"
+    if not py.exists():
+        py = Path(sys.executable)
+    probe = subprocess.run([str(py), "-c", "import pytest, ava_jargon"],
+                           capture_output=True)
+    if probe.returncode:
+        print("local mode needs an editable install with pytest:", file=sys.stderr)
+        print(f"  {py} -m pip install -e '.[dev]'", file=sys.stderr)
+        return 2
+    return subprocess.call([str(py), "-m", "pytest", *pytest_args])
+
+
+def run_docker(extras, tag, pytest_args):
+    build = subprocess.call(["docker", "build", "--build-arg", f"EXTRAS={extras}",
+                             "-t", tag, str(DIR)])
+    if build:
+        return build
+    tty = ["-t"] if sys.stdout.isatty() else []
+    return subprocess.call(["docker", "run", "--rm", *tty, tag, *pytest_args])
+
+
+def main(argv):
+    ap = argparse.ArgumentParser(prog="test", description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--local", action="store_true",
+                    help="run pytest from ./venv instead of Docker")
+    ap.add_argument("--parser", action="store_true",
+                    help="build the image with the [parser] extra")
+    args, pytest_args = ap.parse_known_args(argv)
+    if args.local:
+        return run_local(pytest_args)
+    if args.parser:
+        return run_docker("dev,parser", IMAGE + "-parser", pytest_args)
+    return run_docker("dev", IMAGE, pytest_args)
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main(sys.argv[1:]))
+    except KeyboardInterrupt:
+        sys.exit(130)
