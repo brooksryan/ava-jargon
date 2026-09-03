@@ -6,6 +6,8 @@ Corpus dirs hold one .txt per document. Current metric groups:
   jargon   corpus-relative jargon (keyness lexicon: build / score / delta;
            extend = one more approved corpus, applied with --extend at check time)
   check    mechanical rule checkers for the v2 gates (see app/checks/README.md)
+  voice    a named voice: surface + extensions for the check, and a rubric a
+           reviewer scores (new / list / rubric / set / rm / schema)
 
 Planned: cpidr, surface stats (word/sentence/paragraph) - the audit scripts in
 app/scripts/ are the basis and will fold in here.
@@ -19,9 +21,11 @@ from pathlib import Path
 
 try:
     from . import jargon as J  # installed package layout
+    from . import voices as V
 except ImportError:  # flat script layout via the ./ava wrapper
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     import jargon as J
+    import voices as V
 
 
 def cmd_jargon_build(args):
@@ -372,6 +376,20 @@ def cmd_check(args):
             name, _, value = pair.partition("=")
             fields[name.strip()] = value
 
+    voice = None
+    if args.voice:
+        try:
+            path, scope = V.resolve(args.voice)
+            voice = V.load(path)
+        except V.VoiceError as e:
+            print(f"error: {e}", file=sys.stderr)
+            return 2
+        # The voice fills what the flags left out; an explicit flag wins.
+        args.surface = args.surface or voice["surface"]
+        args.extend = list(args.extend or []) + [
+            e for e in voice.get("extend", []) if e not in (args.extend or [])]
+        print(f"voice: {voice['name']} ({scope})", file=sys.stderr)
+
     surface = args.surface or B.RULES_TO_SURFACE.get(args.rules)
 
     if lexicon is None and surface:
@@ -435,6 +453,8 @@ def cmd_check(args):
         doc = C.report_json([n for n, _ in documents], args.rules,
                             tiers, skipped, findings, len(checkers))
         doc["bands"] = band_data
+        if voice:
+            doc["voice"] = {"name": voice["name"], "scope": scope, "path": str(path)}
         report = json.dumps(doc, indent=1)
     else:
         report = C.report_text(findings)
@@ -446,6 +466,114 @@ def cmd_check(args):
         for line in band_lines:
             print(line, file=sys.stderr)
     return 1 if findings else 0
+
+
+# --- voices: a named surface + extensions + rubric ---------------------------
+
+def _read_json_doc(spec):
+    """A JSON document from a path or stdin (- or empty)."""
+    text = sys.stdin.read() if spec in (None, "-") else Path(spec).read_text()
+    try:
+        doc = json.loads(text)
+    except json.JSONDecodeError as e:
+        raise V.VoiceError(f"not JSON: {e.msg} at line {e.lineno}")
+    if not isinstance(doc, dict):
+        raise V.VoiceError("the document must be a JSON object")
+    return doc
+
+
+def _voice_scope(args):
+    return "project" if getattr(args, "project", False) else "personal"
+
+
+def cmd_voice_new(args):
+    """Create $AVA_HOME/voices/NAME.json (or .ava/voices/NAME.json with --project)."""
+    if not V.NAME_RE.match(args.name):
+        print(f"error: bad voice name: {args.name} (lowercase, digits, . _ -)",
+              file=sys.stderr)
+        return 2
+    try:
+        doc = _read_json_doc(args.file)
+        doc.setdefault("name", args.name)
+        if doc["name"] != args.name:
+            raise V.VoiceError(f"the document names the voice {doc['name']!r}, "
+                               f"the command names it {args.name!r}")
+        dst = V.root_for(_voice_scope(args)) / f"{args.name}.json"
+        if dst.exists() and not args.force:
+            raise V.VoiceError(f"{dst} exists (--force overwrites, "
+                               "ava voice set edits)")
+        V.save(dst, doc)
+    except (V.VoiceError, OSError) as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    print(dst)
+
+
+def cmd_voice_list(args):
+    """One row per voice on this machine."""
+    rows = V.catalog()
+    if not rows:
+        print(f"no voices in {V.personal_root()} or {V.project_root()} "
+              "(create one: ava voice new NAME FILE)", file=sys.stderr)
+        return 0
+    width = max(len(n) for n, _, _ in rows)
+    seen = set()
+    for name, scope, path in rows:
+        try:
+            doc = V.load(path)
+            detail = f"{doc['surface']:<13} {len(doc['rules'])} rules"
+        except V.VoiceError:
+            detail = "INVALID (ava voice rubric NAME shows why)"
+        if name in seen:  # a personal voice a project voice of the same name hides
+            detail += "  (shadowed)"
+        seen.add(name)
+        print(f"{name:<{width}}  {scope:<8}  {detail}  {path}")
+
+
+def cmd_voice_rubric(args):
+    """Print the rubric a reviewer reads; --json prints the document."""
+    try:
+        path, scope = V.resolve(args.name)
+        doc = V.load(path)
+    except V.VoiceError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    if args.json:
+        print(json.dumps(doc, indent=2, ensure_ascii=False))
+    else:
+        print(V.rubric(doc, scope))
+
+
+def cmd_voice_set(args):
+    """Merge a partial document into the voice and re-validate."""
+    try:
+        path, _ = V.resolve(args.name)
+        base = V.load(path)
+        patch = _read_json_doc(args.file)
+        if patch.get("name", args.name) != args.name:
+            raise V.VoiceError("a voice cannot change its name; "
+                               "create a new one")
+        V.save(path, V.merge(base, patch))
+    except (V.VoiceError, OSError) as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    print(path)
+
+
+def cmd_voice_rm(args):
+    """Delete the voice the name resolves to."""
+    try:
+        path, scope = V.resolve(args.name)
+    except V.VoiceError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    path.unlink()
+    print(f"removed {path} ({scope})")
+
+
+def cmd_voice_schema(args):
+    """Print the schema so an agent knows the shape before it writes."""
+    sys.stdout.write(V.SCHEMA_PATH.read_text())
 
 
 GATE_AGENT_FILES = ("ava-prose-gate.md", "ava-technical-gate.md")
@@ -504,12 +632,15 @@ def cmd_setup(args):
     base = Path.home() if args.global_install else Path(".")
     writes = []
 
-    skill_src = assets / "skills" / "ava"
-    skill_dst = base / ".agents" / "skills" / "ava"
-    for src in sorted(skill_src.rglob("*")):
-        if src.is_file():
-            writes.append((skill_dst / src.relative_to(skill_src),
-                           src.read_text()))
+    skills_src = assets / "skills"
+    skills_dst = base / ".agents" / "skills"
+    # One skill per directory. In the repo layout each is a symlink, and
+    # rglob does not descend into a symlinked directory, so walk each one.
+    for skill in sorted(p for p in skills_src.iterdir() if p.is_dir()):
+        for src in sorted(skill.rglob("*")):
+            if src.is_file():
+                writes.append((skills_dst / skill.name / src.relative_to(skill),
+                               src.read_text()))
 
     if args.harness == "cursor":
         agents_dst = base / ".cursor" / "agents"
@@ -647,8 +778,50 @@ def main():
                          "side; repeatable")
     ck.add_argument("--field", action="append", metavar="NAME=VALUE",
                     help="an input-contract field; enables P-M5, repeatable")
+    ck.add_argument("--voice", metavar="NAME",
+                    help="run under a voice (ava voice list): its surface and "
+                         "extensions apply where the flags left them out")
     ck.add_argument("-o", "--out", help="write the report to this file")
     ck.set_defaults(fn=cmd_check)
+
+    vc = sub.add_parser("voice", help="a named voice: surface, extensions, "
+                                      "and a rubric a reviewer scores")
+    vsub = vc.add_subparsers(dest="vcmd", required=True)
+
+    vn = vsub.add_parser("new", help="create a voice from a JSON document")
+    vn.add_argument("name", help="voice name (lowercase, digits, . _ -)")
+    vn.add_argument("file", nargs="?", default="-",
+                    help="JSON document, or - for stdin (default: stdin); "
+                         "ava voice schema prints the shape")
+    vn.add_argument("--project", action="store_true",
+                    help="write to .ava/voices/ in the project instead of "
+                         "$AVA_HOME/voices/")
+    vn.add_argument("--force", action="store_true",
+                    help="overwrite a voice that already exists")
+    vn.set_defaults(fn=cmd_voice_new)
+
+    vl = vsub.add_parser("list", help="list the voices on this machine")
+    vl.set_defaults(fn=cmd_voice_list)
+
+    vr = vsub.add_parser("rubric", help="print a voice's rubric")
+    vr.add_argument("name", help="voice name or path")
+    vr.add_argument("--json", action="store_true",
+                    help="print the JSON document instead of the rubric")
+    vr.set_defaults(fn=cmd_voice_rubric)
+
+    vs = vsub.add_parser("set", help="merge a partial JSON document into a voice")
+    vs.add_argument("name", help="voice name or path")
+    vs.add_argument("file", nargs="?", default="-",
+                    help="partial JSON document, or - for stdin; rules merge "
+                         "by name, other fields replace")
+    vs.set_defaults(fn=cmd_voice_set)
+
+    vd = vsub.add_parser("rm", help="delete a voice")
+    vd.add_argument("name", help="voice name or path")
+    vd.set_defaults(fn=cmd_voice_rm)
+
+    vh = vsub.add_parser("schema", help="print the voice JSON schema")
+    vh.set_defaults(fn=cmd_voice_schema)
 
     st = sub.add_parser("setup", help="install the gate files for a harness")
     st.add_argument("harness",

@@ -40,7 +40,7 @@ Sets: technical only (demoted from the universal set 2026-08-25 - passive runs 5
 
 ## Personal rules (P-*) - not in this build
 
-The personal-voice rules (short-name preferences, watermark detection, the message input contract) are custom per author, so this build omits them. The package runs without them, and the CLI does not offer `--rules personal`. Version 3 brings them back with a build-your-own path - each author calibrates the term lists against a corpus of their own messages.
+The personal-voice rules (short-name preferences, watermark detection, the message input contract) are custom per author, so this build omits them. The package runs without them, and the CLI does not offer `--rules personal`. Voices supersede them: a voice holds the rules a reviewer judges for one author or one project (see README, Voices).
 
 ## Technical form rules (T-*) - prose next to code, docs
 
