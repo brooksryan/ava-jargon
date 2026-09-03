@@ -1,12 +1,19 @@
 # ava
 
-Adversarial voice agents: mechanical voice checks and corpus-relative jargon scoring (what a mouthful). Linter-style findings, exit codes, and rate bands against human and AI baselines. Built for agents; works by hand.
+Adversarial voice agents (ava) is a cli tool that improves the readability of the docs created by your agents. The ava cli ships with 3 types of checks:
+
+- **Mechanical Checks**: Measures stats about a document your agent wrote, compares vs human baselines. [(1)](app/checks/CHECKS.md)
+- **Jargon Density**: Compares [jargon](https://developers.google.com/style/jargon) in a document vs general baseline. Extensible with your own jargon rules. [(2)](app/lexicons/README.md)
+- **Personal Voice**: Customizable subjective rules. [(3)](app/voices/README.md)
+
+Install the ava skills in your preferred harness, and tell your agent to use ava to check your docs, or use it yourself on docs your agents write. 
 
 ## Install
 
 Requires [uv](https://docs.astral.sh/uv/) and git.
 
 ### Quickstart with claude
+
 ```bash
 uv tool install 'ava-jargon[parser] @ git+https://github.com/brooksryan/ava-jargon'
 claude plugin marketplace add brooksryan/ava-jargon
