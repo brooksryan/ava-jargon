@@ -1,0 +1,139 @@
+{
+  "name": "ava-research-docs",
+  "description": "Studies under research/: one researcher's methodology and evidence, written for a global reader who meets the project for the first time. Casual lead-ins, technical lists; the two never mix.",
+  "surface": "doc-shared",
+  "extend": [],
+  "rules": [
+    {
+      "name": "plain-headings",
+      "description": "A one-word heading carries no article.",
+      "criteria": [
+        "No heading reads 'The X' where X is one word. Write 'X'."
+      ],
+      "scoring": {
+        "type": "pass-fail"
+      },
+      "requirement": {
+        "pass": true
+      }
+    },
+    {
+      "name": "no-assumed-context",
+      "description": "Every entity or state the study references is one a global reader meeting the project for the first time can place.",
+      "criteria": [
+        "For each term, tool, group, prior event, or state the study references, ask: does a global first-time reader know what this refers to? If no, a Background section at the start of the document establishes it before first use.",
+        "Context too long or too far off topic for the Background section goes to an appendix, with a citation."
+      ],
+      "scoring": {
+        "type": "pass-fail"
+      },
+      "requirement": {
+        "pass": true
+      }
+    },
+    {
+      "name": "shared-understanding-up-front",
+      "description": "The introduction and Background sections introduce the terminology the rest of the study uses, and the jargon load stays level across sections.",
+      "criteria": [
+        "Every term that more than one section uses appears in the introduction or the Background section first.",
+        "The jargon density of one section does not depart wildly from the density of the whole document or of the other studies."
+      ],
+      "scoring": {
+        "type": "scale",
+        "min": 1,
+        "max": 5,
+        "anchors": {
+          "1": "Terms appear without introduction and each section speaks its own dialect.",
+          "3": "Most shared terms are introduced up front; one section runs much denser than the rest.",
+          "5": "Every shared term is introduced up front and every section reads at the same density."
+        }
+      },
+      "requirement": {
+        "min": 4
+      }
+    },
+    {
+      "name": "first-person-researcher",
+      "description": "The study speaks as one individual doing the research: first person for the author's own experience, explicit third person for outside persons and communities.",
+      "criteria": [
+        "The author's own actions, corpora, observations, and decisions use first person.",
+        "Outside work names its source in explicit third person: existing research, the corpus-linguistics community, a cited author.",
+        "No sentence refers to the author's own experience as 'the author', 'one author', or 'the study' where 'I' is the actor."
+      ],
+      "scoring": {
+        "type": "pass-fail"
+      },
+      "requirement": {
+        "pass": true
+      }
+    },
+    {
+      "name": "global-audience",
+      "description": "The study names no other person, private corpus, or customer content.",
+      "criteria": [
+        "No sentence names another person, a handle, or a private corpus by its source name.",
+        "Every corpus appears by type and size.",
+        "No sentence quotes customer content."
+      ],
+      "scoring": {
+        "type": "pass-fail"
+      },
+      "requirement": {
+        "pass": true
+      }
+    },
+    {
+      "name": "five-parts",
+      "description": "Each study states the question, the method, the data by type and size, the result, and the decisions it produced. The directory index is exempt.",
+      "criteria": [
+        "A heading marks each of the five parts in every study document.",
+        "The data section gives a document count and a token or word count for each corpus.",
+        "The decisions section names the shipped behavior each decision produced.",
+        "The directory index lists the studies and carries no parts of its own."
+      ],
+      "scoring": {
+        "type": "pass-fail"
+      },
+      "requirement": {
+        "pass": true
+      }
+    },
+    {
+      "name": "evidence-first",
+      "description": "Every claim of a difference and every parameter choice rests on a measured value or a named run.",
+      "criteria": [
+        "A claim that two groups differ cites the measured rates.",
+        "A parameter value comes with the reason for that value.",
+        "A claim the study did not measure says so."
+      ],
+      "scoring": {
+        "type": "scale",
+        "min": 1,
+        "max": 5,
+        "anchors": {
+          "1": "Assertions without numbers.",
+          "3": "Most claims cite a number; some rest on impression.",
+          "5": "Every claim traces to a measurement, a count, or a named script."
+        }
+      },
+      "requirement": {
+        "min": 4
+      }
+    },
+    {
+      "name": "shipped-paths-only",
+      "description": "Every path, command, flag, and rule id the study names exists in the repository.",
+      "criteria": [
+        "No sentence points at a local-only directory or an unshipped file.",
+        "Every rule id the study names as shipped appears in the check catalog.",
+        "A rule the study names as dropped is marked as dropped in the same sentence."
+      ],
+      "scoring": {
+        "type": "pass-fail"
+      },
+      "requirement": {
+        "pass": true
+      }
+    }
+  ]
+}

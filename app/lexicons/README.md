@@ -49,4 +49,4 @@ One document per `.txt` file, 30k+ tokens per side:
 ava jargon build corpus/AUDIENCE corpus/YOURS -o /abs/path/lexicons/mine.json
 ```
 
-Each side accepts several directories, comma-separated. Pass an absolute `-o` path. `ava jargon build -h` lists the keyness thresholds: the Dunning G2 floor, the Hardie log-ratio floor, the dispersion floors, and the Zipf gate. Before you trust a lexicon, score a sample of the audience's own writing with it. High density there marks a wrong lexicon for that audience.
+Each side accepts several directories, comma-separated. Pass an absolute `-o` path. `ava jargon build -h` lists the keyness thresholds: the Dunning G2 floor, the Hardie log-ratio floor, the dispersion floors, and the Zipf gate. Before you trust a lexicon, score a sample of the audience's own writing with it. High density there marks a wrong lexicon for that audience. [The lexicon study](../../research/lexicons.md) gives the method, the value of each threshold, and the evidence behind it.

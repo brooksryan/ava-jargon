@@ -65,3 +65,4 @@ band summary (surface: doc-technical, 599 words):
 | Voices: a named surface, extensions, and rubric | [app/voices/README.md](app/voices/README.md) |
 | Agents: the gates, the skill, harness setup | [agents/README.md](agents/README.md) |
 | Tests: run the suite, what the image covers | [tests/README.md](tests/README.md) |
+| Research: the studies behind the lexicons and the checks | [research/README.md](research/README.md) |

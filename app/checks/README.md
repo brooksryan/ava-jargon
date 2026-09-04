@@ -44,7 +44,7 @@ The band summary compares each rule's rate per 1,000 words to a human range and 
 - `ai-high` rules (W-M1 through W-M9) mark authorship signals: a FAIL in the AI range means the text matches the AI pattern.
 - `human-high` rules (every T-* rule and W-M11) are form dials: a FAIL there marks a form issue and never claims AI authorship.
 
-W-M10 jargon density is advisory. It prints as a summary line and never joins the findings or the exit code. Under 300 words the summary prints counts only, with no band comparison.
+W-M10 jargon density is advisory. It prints as a summary line and never joins the findings or the exit code. Under 300 words the summary prints counts only, with no band comparison. [The mechanical checks study](../../research/mechanical-checks.md) gives the corpora behind the bands, the band rule, and the evidence for each direction.
 
 ## Add or remove a rule
 
