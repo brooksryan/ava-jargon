@@ -8,11 +8,11 @@ This study records how I chose the method behind `ava jargon build`: two corpora
 
 I work at a software company and run AI agents to help me do much of my work. The agents often create content that uses a tone, register, or voice my audience does not share. To help with this, I've built many "subagents" that a main agent can use to check whether its output matches the expected tone, register, or voice for a given document's target audience.  I call this particular flavor of subagents "judgement gates." A "judgement gate" subagent has its own prompt with a rule list that reads a draft given to it by the main agent and returns PASS or FAIL based on the rules, along with recommendations. Subjectively, I found that telling an AI agent to use a "judgement gate" on a document it was writing significantly improved its readability. 
 
-I have created over a dozen judgement gates for my different content surfaces (JIRA, notion, slack etc) and hundreds of judgement gate uses by my AI agents. One thing that "judgement gates" proved bad at checking for was *jargon* - or using the same words that my team used to refer to the things that my team worked on. The output was almost inescapably correct, referring to projects by their full name where we would abbreviate. 
+I have created over a dozen judgement gates for my different content surfaces (JIRA, notion, slack etc) and hundreds of judgement gate uses by my AI agents. One thing that "judgement gates" proved bad at checking for was *jargon* - or using the same words that my team used to refer to the things that my team worked on. I found the output almost inescapably correct: it referred to projects by their full name where we would abbreviate. 
 
 > How my team talks: "Can you push those changes to the modeler?"
 >
-> How my ai would talk "Can you push change a23a3hnsi93 to `evo-modeler-dev`"
+> How my ai would talk "Can you push change 8f3a2c1 to the `modeler-service-dev` environment"
 
 I began to think that there were simple, mechanical ways to measure the "distance" between how humans write and how agents write. A gate returns a verdict and no distance, so it cannot tell me how far a draft sits from the audience. I wanted a number.
 
