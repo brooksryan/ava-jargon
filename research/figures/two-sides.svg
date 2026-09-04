@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 394" width="860" height="394" role="img">
+<title>The gap between the two sides is 11 to 17 times on every surface</title>
+<rect width="860" height="394" fill="#f0f0f0"/>
+<text x="24" y="34" font-size="20" font-weight="700" fill="#1f2328" font-family="-apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, &#x27;Noto Sans&#x27;, Helvetica, Arial, sans-serif">The gap between the two sides is 11 to 17 times on every surface</text>
+<text x="24" y="58" font-size="13" fill="#3c3c3c" font-family="-apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, &#x27;Noto Sans&#x27;, Helvetica, Arial, sans-serif">Density of each side against its own general lexicon, self-scored. On a log scale</text>
+<text x="24" y="76" font-size="13" fill="#3c3c3c" font-family="-apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, &#x27;Noto Sans&#x27;, Helvetica, Arial, sans-serif">the length of each connector is the ratio.</text>
+<line x1="24" y1="364" x2="836" y2="364" stroke="#3c3c3c" stroke-width="2"/>
+<text x="24" y="382" font-size="11" fill="#3c3c3c" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" letter-spacing="0.5">SOURCE: THE FOUR GENERAL LEXICONS THAT SHIP, SCORED ON THE CORPORA THAT BUILT THEM</text>
+<text x="836" y="382" font-size="11" fill="#3c3c3c" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" text-anchor="end" letter-spacing="0.5">AVA RESEARCH</text>
+<rect x="24.0" y="82.0" width="12.0" height="12.0" fill="#008fd5" fill-opacity="1.0"/>
+<text x="42.0" y="92.0" font-size="12" fill="#3c3c3c" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >human side</text>
+<rect x="142.0" y="82.0" width="12.0" height="12.0" fill="#fc4f30" fill-opacity="1.0"/>
+<text x="160.0" y="92.0" font-size="12" fill="#3c3c3c" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >AI side</text>
+<line x1="250.0" y1="118.0" x2="250.0" y2="302.0" stroke="#cbcbcb" stroke-width="1" stroke-linecap="butt"/>
+<text x="250.0" y="318.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.1</text>
+<line x1="325.5" y1="118.0" x2="325.5" y2="302.0" stroke="#cbcbcb" stroke-width="1" stroke-linecap="butt"/>
+<text x="325.5" y="318.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.3</text>
+<line x1="408.2" y1="118.0" x2="408.2" y2="302.0" stroke="#cbcbcb" stroke-width="1" stroke-linecap="butt"/>
+<text x="408.2" y="318.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >1</text>
+<line x1="483.6" y1="118.0" x2="483.6" y2="302.0" stroke="#cbcbcb" stroke-width="1" stroke-linecap="butt"/>
+<text x="483.6" y="318.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >3</text>
+<line x1="566.4" y1="118.0" x2="566.4" y2="302.0" stroke="#cbcbcb" stroke-width="1" stroke-linecap="butt"/>
+<text x="566.4" y="318.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >10</text>
+<line x1="641.8" y1="118.0" x2="641.8" y2="302.0" stroke="#cbcbcb" stroke-width="1" stroke-linecap="butt"/>
+<text x="641.8" y="318.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >30</text>
+<line x1="724.5" y1="118.0" x2="724.5" y2="302.0" stroke="#cbcbcb" stroke-width="1" stroke-linecap="butt"/>
+<text x="724.5" y="318.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >100</text>
+<line x1="800.0" y1="118.0" x2="800.0" y2="302.0" stroke="#cbcbcb" stroke-width="1" stroke-linecap="butt"/>
+<text x="800.0" y="318.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >300</text>
+<text x="800.0" y="334.0" font-size="11" fill="#6e6e6e" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >jargon hits per 1,000 tokens, log scale</text>
+<line x1="350.2" y1="142.0" x2="515.6" y2="142.0" stroke="#8b8b8b" stroke-width="3" stroke-linecap="round"/>
+<circle cx="350.2" cy="142.0" r="7" fill="#008fd5" stroke="#f0f0f0" stroke-width="2"/>
+<circle cx="515.6" cy="142.0" r="7" fill="#fc4f30" stroke="#f0f0f0" stroke-width="2"/>
+<text x="238.0" y="146.0" font-size="12" fill="#1f2328" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >messages</text>
+<text x="337.2" y="146.0" font-size="11.5" fill="#1f2328" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.43</text>
+<text x="528.6" y="146.0" font-size="11.5" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >4.78</text>
+<text x="432.9" y="131.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >11x</text>
+<line x1="535.4" y1="188.0" x2="728.7" y2="188.0" stroke="#8b8b8b" stroke-width="3" stroke-linecap="round"/>
+<circle cx="535.4" cy="188.0" r="7" fill="#008fd5" stroke="#f0f0f0" stroke-width="2"/>
+<circle cx="728.7" cy="188.0" r="7" fill="#fc4f30" stroke="#f0f0f0" stroke-width="2"/>
+<text x="238.0" y="192.0" font-size="12" fill="#1f2328" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >general documents</text>
+<text x="522.4" y="192.0" font-size="11.5" fill="#1f2328" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >6.37</text>
+<text x="741.7" y="192.0" font-size="11.5" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >106.24</text>
+<text x="632.0" y="177.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >17x</text>
+<line x1="534.4" y1="234.0" x2="712.2" y2="234.0" stroke="#8b8b8b" stroke-width="3" stroke-linecap="round"/>
+<circle cx="534.4" cy="234.0" r="7" fill="#008fd5" stroke="#f0f0f0" stroke-width="2"/>
+<circle cx="712.2" cy="234.0" r="7" fill="#fc4f30" stroke="#f0f0f0" stroke-width="2"/>
+<text x="238.0" y="238.0" font-size="12" fill="#1f2328" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >technical documents</text>
+<text x="521.4" y="238.0" font-size="11.5" fill="#1f2328" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >6.28</text>
+<text x="725.2" y="238.0" font-size="11.5" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >83.57</text>
+<text x="623.3" y="223.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >13x</text>
+<line x1="496.2" y1="280.0" x2="677.0" y2="280.0" stroke="#8b8b8b" stroke-width="3" stroke-linecap="round"/>
+<circle cx="496.2" cy="280.0" r="7" fill="#008fd5" stroke="#f0f0f0" stroke-width="2"/>
+<circle cx="677.0" cy="280.0" r="7" fill="#fc4f30" stroke="#f0f0f0" stroke-width="2"/>
+<text x="238.0" y="284.0" font-size="12" fill="#1f2328" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >READMEs and code comments</text>
+<text x="483.2" y="284.0" font-size="11.5" fill="#1f2328" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >3.60</text>
+<text x="690.0" y="284.0" font-size="11.5" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >50.07</text>
+<text x="586.6" y="269.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >14x</text>
+</svg>

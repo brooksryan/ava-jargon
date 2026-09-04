@@ -19,6 +19,9 @@ COPY app ./app
 COPY agents ./agents
 COPY skills ./skills
 
+# The docs tests read the research directory beside the feature docs.
+COPY research ./research
+
 # The dev extra holds the test dependencies. EXTRAS=dev,parser adds the spacy
 # tier (~500 MB).
 ARG EXTRAS=dev

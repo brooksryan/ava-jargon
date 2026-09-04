@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 558" width="860" height="558" role="img">
+<title>Idea density counts the words that carry a claim and skips the ones that only name things</title>
+<rect width="860" height="558" fill="#f0f0f0"/>
+<text x="24" y="34" font-size="20" font-weight="700" fill="#1f2328" font-family="-apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, &#x27;Noto Sans&#x27;, Helvetica, Arial, sans-serif">Idea density counts the words that carry a claim and skips the ones that only name things</text>
+<text x="24" y="58" font-size="13" fill="#3c3c3c" font-family="-apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, &#x27;Noto Sans&#x27;, Helvetica, Arial, sans-serif">Verbs, adjectives, adverbs, prepositions, conjunctions, and numbers count as one proposition each.</text>
+<text x="24" y="76" font-size="13" fill="#3c3c3c" font-family="-apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, &#x27;Noto Sans&#x27;, Helvetica, Arial, sans-serif">Nouns, pronouns, articles, and helper verbs do not. Two sentences scored with the same port as round one.</text>
+<line x1="24" y1="528" x2="836" y2="528" stroke="#3c3c3c" stroke-width="2"/>
+<text x="24" y="546" font-size="11" fill="#3c3c3c" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" letter-spacing="0.5">SOURCE: CPIDR 3.2 PORT OVER PART-OF-SPEECH TAGS</text>
+<text x="836" y="546" font-size="11" fill="#3c3c3c" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" text-anchor="end" letter-spacing="0.5">AVA RESEARCH</text>
+<rect x="24.0" y="82.0" width="12.0" height="12.0" fill="#008fd5" fill-opacity="1.0"/>
+<text x="42.0" y="92.0" font-size="12" fill="#3c3c3c" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >counts, in the study&#x27;s sentence</text>
+<rect x="297.4" y="82.0" width="12.0" height="12.0" fill="#fc4f30" fill-opacity="1.0"/>
+<text x="315.4" y="92.0" font-size="12" fill="#3c3c3c" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >counts, in the agent-register sentence</text>
+<rect x="622.6" y="82.0" width="12.0" height="12.0" fill="#c9c9c9" fill-opacity="1.0"/>
+<text x="640.6" y="92.0" font-size="12" fill="#3c3c3c" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >does not count</text>
+<rect x="24.0" y="108.0" width="12.0" height="12.0" fill="#008fd5" fill-opacity="1.0"/>
+<text x="42.0" y="118.0" font-size="12" fill="#3c3c3c" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >a sentence from this study</text>
+<text x="58.0" y="151.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >The</text>
+<text x="58.0" y="168.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >determiner</text>
+<text x="132.0" y="151.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >parser</text>
+<text x="132.0" y="168.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >noun</text>
+<rect x="172.0" y="132.0" width="59.0" height="44.0" fill="#008fd5" fill-opacity="0.12"/>
+<rect x="172.0" y="173.0" width="59.0" height="3.0" fill="#008fd5" fill-opacity="1.0"/>
+<text x="201.5" y="151.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >joins</text>
+<text x="201.5" y="168.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >verb</text>
+<rect x="237.0" y="132.0" width="46.4" height="44.0" fill="#008fd5" fill-opacity="0.12"/>
+<rect x="237.0" y="173.0" width="46.4" height="3.0" fill="#008fd5" fill-opacity="1.0"/>
+<text x="260.2" y="151.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >two</text>
+<text x="260.2" y="168.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >number</text>
+<rect x="289.4" y="132.0" width="77.0" height="44.0" fill="#008fd5" fill-opacity="0.12"/>
+<rect x="289.4" y="173.0" width="77.0" height="3.0" fill="#008fd5" fill-opacity="1.0"/>
+<text x="327.9" y="151.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >heading</text>
+<text x="327.9" y="168.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >verb</text>
+<text x="401.9" y="151.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >lines</text>
+<text x="401.9" y="168.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >noun</text>
+<rect x="437.4" y="132.0" width="73.4" height="44.0" fill="#008fd5" fill-opacity="0.12"/>
+<rect x="437.4" y="173.0" width="73.4" height="3.0" fill="#008fd5" fill-opacity="1.0"/>
+<text x="474.1" y="151.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >into</text>
+<text x="474.1" y="168.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >preposition</text>
+<rect x="516.8" y="132.0" width="46.4" height="44.0" fill="#008fd5" fill-opacity="0.12"/>
+<rect x="516.8" y="173.0" width="46.4" height="3.0" fill="#008fd5" fill-opacity="1.0"/>
+<text x="540.0" y="151.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >one</text>
+<text x="540.0" y="168.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >number</text>
+<text x="612.2" y="151.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >sentence</text>
+<text x="612.2" y="168.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >noun</text>
+<rect x="661.2" y="132.0" width="73.4" height="44.0" fill="#008fd5" fill-opacity="0.12"/>
+<rect x="661.2" y="173.0" width="73.4" height="3.0" fill="#008fd5" fill-opacity="1.0"/>
+<text x="697.9" y="151.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >so</text>
+<text x="697.9" y="168.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >conjunction</text>
+<text x="774.6" y="151.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >the</text>
+<text x="774.6" y="168.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >determiner</text>
+<text x="62.5" y="203.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >checker</text>
+<text x="62.5" y="220.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >noun</text>
+<rect x="107.0" y="184.0" width="68.0" height="44.0" fill="#008fd5" fill-opacity="0.12"/>
+<rect x="107.0" y="225.0" width="68.0" height="3.0" fill="#008fd5" fill-opacity="1.0"/>
+<text x="141.0" y="203.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >strips</text>
+<text x="141.0" y="220.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >verb</text>
+<text x="224.0" y="203.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >headings</text>
+<text x="224.0" y="220.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >noun</text>
+<rect x="273.0" y="184.0" width="73.4" height="44.0" fill="#008fd5" fill-opacity="0.12"/>
+<rect x="273.0" y="225.0" width="73.4" height="3.0" fill="#008fd5" fill-opacity="1.0"/>
+<text x="309.7" y="203.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >before</text>
+<text x="309.7" y="220.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >preposition</text>
+<text x="378.3" y="203.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >it</text>
+<text x="378.3" y="220.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >pronoun</text>
+<rect x="410.2" y="184.0" width="68.0" height="44.0" fill="#008fd5" fill-opacity="0.12"/>
+<rect x="410.2" y="225.0" width="68.0" height="3.0" fill="#008fd5" fill-opacity="1.0"/>
+<text x="444.2" y="203.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >counts</text>
+<text x="444.2" y="220.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >verb</text>
+<text x="513.7" y="203.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >nouns</text>
+<text x="513.7" y="220.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >noun</text>
+<text x="24.0" y="250.0" font-size="13" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >9 propositions in 18 words = 0.50 ideas per word</text>
+<rect x="24.0" y="274.0" width="12.0" height="12.0" fill="#fc4f30" fill-opacity="1.0"/>
+<text x="42.0" y="284.0" font-size="12" fill="#3c3c3c" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >a sentence in the register my agents write</text>
+<rect x="24.0" y="298.0" width="68.0" height="44.0" fill="#fc4f30" fill-opacity="0.12"/>
+<rect x="24.0" y="339.0" width="68.0" height="3.0" fill="#fc4f30" fill-opacity="1.0"/>
+<text x="58.0" y="317.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >This</text>
+<text x="58.0" y="334.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >determiner</text>
+<text x="132.0" y="317.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >change</text>
+<text x="132.0" y="334.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >noun</text>
+<rect x="172.0" y="298.0" width="104.0" height="44.0" fill="#fc4f30" fill-opacity="0.12"/>
+<rect x="172.0" y="339.0" width="104.0" height="3.0" fill="#fc4f30" fill-opacity="1.0"/>
+<text x="224.0" y="317.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >introduces</text>
+<text x="224.0" y="334.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >verb</text>
+<text x="316.0" y="317.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >a</text>
+<text x="316.0" y="334.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >determiner</text>
+<rect x="356.0" y="298.0" width="77.0" height="44.0" fill="#fc4f30" fill-opacity="0.12"/>
+<rect x="356.0" y="339.0" width="77.0" height="3.0" fill="#fc4f30" fill-opacity="1.0"/>
+<text x="394.5" y="317.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >unified</text>
+<text x="394.5" y="334.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >adjective</text>
+<text x="482.0" y="317.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >approach</text>
+<text x="482.0" y="334.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >noun</text>
+<rect x="531.0" y="298.0" width="73.4" height="44.0" fill="#fc4f30" fill-opacity="0.12"/>
+<rect x="531.0" y="339.0" width="73.4" height="3.0" fill="#fc4f30" fill-opacity="1.0"/>
+<text x="567.7" y="317.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >to</text>
+<text x="567.7" y="334.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >preposition</text>
+<text x="639.9" y="317.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >error</text>
+<text x="639.9" y="334.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >noun</text>
+<text x="718.4" y="317.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >handling</text>
+<text x="718.4" y="334.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >noun</text>
+<rect x="24.0" y="350.0" width="73.4" height="44.0" fill="#fc4f30" fill-opacity="0.12"/>
+<rect x="24.0" y="391.0" width="73.4" height="3.0" fill="#fc4f30" fill-opacity="1.0"/>
+<text x="60.7" y="369.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >across</text>
+<text x="60.7" y="386.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >preposition</text>
+<text x="137.4" y="369.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >the</text>
+<text x="137.4" y="386.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >determiner</text>
+<text x="215.9" y="369.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >service</text>
+<text x="215.9" y="386.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >noun</text>
+<text x="289.9" y="369.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >layer</text>
+<text x="289.9" y="386.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >noun</text>
+<rect x="325.4" y="350.0" width="86.0" height="44.0" fill="#fc4f30" fill-opacity="0.12"/>
+<rect x="325.4" y="391.0" width="86.0" height="3.0" fill="#fc4f30" fill-opacity="1.0"/>
+<text x="368.4" y="369.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >ensuring</text>
+<text x="368.4" y="386.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >verb</text>
+<text x="473.9" y="369.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >consistency</text>
+<text x="473.9" y="386.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >noun</text>
+<rect x="536.4" y="350.0" width="73.4" height="44.0" fill="#fc4f30" fill-opacity="0.12"/>
+<rect x="536.4" y="391.0" width="73.4" height="3.0" fill="#fc4f30" fill-opacity="1.0"/>
+<text x="573.1" y="369.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >and</text>
+<text x="573.1" y="386.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >conjunction</text>
+<text x="690.3" y="369.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >maintainability</text>
+<text x="690.3" y="386.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >noun</text>
+<rect x="24.0" y="402.0" width="104.0" height="44.0" fill="#fc4f30" fill-opacity="0.12"/>
+<rect x="24.0" y="443.0" width="104.0" height="3.0" fill="#fc4f30" fill-opacity="1.0"/>
+<text x="76.0" y="421.0" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="700" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >throughout</text>
+<text x="76.0" y="438.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >preposition</text>
+<text x="168.0" y="421.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >the</text>
+<text x="168.0" y="438.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >determiner</text>
+<text x="251.0" y="421.0" font-size="15" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >codebase</text>
+<text x="251.0" y="438.0" font-size="9" fill="#8b8b8b" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >noun</text>
+<text x="24.0" y="468.0" font-size="13" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >8 propositions in 20 words = 0.40 ideas per word</text>
+<line x1="24.0" y1="472.0" x2="836.0" y2="472.0" stroke="#cbcbcb" stroke-width="1" stroke-linecap="butt"/>
+<text x="24.0" y="488.0" font-size="12" fill="#3c3c3c" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >For scale, the corpus averages from round one:</text>
+<rect x="392.0" y="478.0" width="12.0" height="12.0" fill="#008fd5" fill-opacity="1.0"/>
+<text x="410.0" y="488.0" font-size="12" fill="#3c3c3c" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >every human register 0.50 to 0.52</text>
+<rect x="660.0" y="478.0" width="12.0" height="12.0" fill="#fc4f30" fill-opacity="1.0"/>
+<text x="678.0" y="488.0" font-size="12" fill="#3c3c3c" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >agent documents 0.418</text>
+</svg>

@@ -15,5 +15,6 @@
 | `test_cli.py` | `ava check` exit codes, the linter line, `--json`, and the bundled lexicons |
 | `test_setup.py` | each `ava setup` target, `-g`, `--force`, and the packaged assets against the repo files |
 | `test_parser.py` | the tier 2 checkers; the module skips without spacy |
+| `test_docs.py` | the research directory: the index, both studies, and the links from the feature docs |
 
 The tests call the installed `ava` script. Set `AVA_BIN` to test a different one.

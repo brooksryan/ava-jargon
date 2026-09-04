@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 418" width="860" height="418" role="img">
+<title>Agent documents sit 18 percent below every human register</title>
+<rect width="860" height="418" fill="#f0f0f0"/>
+<text x="24" y="34" font-size="20" font-weight="700" fill="#1f2328" font-family="-apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, &#x27;Noto Sans&#x27;, Helvetica, Arial, sans-serif">Agent documents sit 18 percent below every human register</text>
+<text x="24" y="58" font-size="13" fill="#3c3c3c" font-family="-apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, &#x27;Noto Sans&#x27;, Helvetica, Arial, sans-serif">CPIDR idea density over about 150 documents per corpus, round one. Every human register</text>
+<text x="24" y="76" font-size="13" fill="#3c3c3c" font-family="-apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, &#x27;Noto Sans&#x27;, Helvetica, Arial, sans-serif">sits between 0.50 and 0.52 ideas per word.</text>
+<line x1="24" y1="388" x2="836" y2="388" stroke="#3c3c3c" stroke-width="2"/>
+<text x="24" y="406" font-size="11" fill="#3c3c3c" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" letter-spacing="0.5">SOURCE: CPIDR 3.2 PORT OVER PART-OF-SPEECH TAGS</text>
+<text x="836" y="406" font-size="11" fill="#3c3c3c" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" text-anchor="end" letter-spacing="0.5">AVA RESEARCH</text>
+<rect x="24.0" y="82.0" width="12.0" height="12.0" fill="#008fd5" fill-opacity="1.0"/>
+<text x="42.0" y="92.0" font-size="12" fill="#3c3c3c" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >human writers</text>
+<rect x="164.2" y="82.0" width="12.0" height="12.0" fill="#fc4f30" fill-opacity="1.0"/>
+<text x="182.2" y="92.0" font-size="12" fill="#3c3c3c" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >agent writers</text>
+<rect x="689.2" y="118.0" width="73.8" height="210.0" fill="#008fd5" fill-opacity="0.14"/>
+<text x="726.2" y="112.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >human cluster</text>
+<line x1="320.0" y1="118.0" x2="320.0" y2="328.0" stroke="#cbcbcb" stroke-width="1" stroke-linecap="butt"/>
+<text x="320.0" y="344.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.40</text>
+<line x1="393.8" y1="118.0" x2="393.8" y2="328.0" stroke="#cbcbcb" stroke-width="1" stroke-linecap="butt"/>
+<text x="393.8" y="344.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.42</text>
+<line x1="467.7" y1="118.0" x2="467.7" y2="328.0" stroke="#cbcbcb" stroke-width="1" stroke-linecap="butt"/>
+<text x="467.7" y="344.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.44</text>
+<line x1="541.5" y1="118.0" x2="541.5" y2="328.0" stroke="#cbcbcb" stroke-width="1" stroke-linecap="butt"/>
+<text x="541.5" y="344.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.46</text>
+<line x1="615.4" y1="118.0" x2="615.4" y2="328.0" stroke="#cbcbcb" stroke-width="1" stroke-linecap="butt"/>
+<text x="615.4" y="344.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.48</text>
+<line x1="689.2" y1="118.0" x2="689.2" y2="328.0" stroke="#cbcbcb" stroke-width="1" stroke-linecap="butt"/>
+<text x="689.2" y="344.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.50</text>
+<line x1="763.1" y1="118.0" x2="763.1" y2="328.0" stroke="#cbcbcb" stroke-width="1" stroke-linecap="butt"/>
+<text x="763.1" y="344.0" font-size="11" fill="#6e6e6e" text-anchor="middle" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.52</text>
+<text x="800.0" y="360.0" font-size="11" fill="#6e6e6e" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >ideas per word (CPIDR)</text>
+<line x1="320.0" y1="133.0" x2="744.6" y2="133.0" stroke="#dedede" stroke-width="1" stroke-linecap="butt"/>
+<circle cx="744.6" cy="133.0" r="7" fill="#008fd5" stroke="#f0f0f0" stroke-width="2"/>
+<text x="308.0" y="137.0" font-size="12" fill="#1f2328" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >my prompts to a coding agent</text>
+<text x="757.6" y="137.0" font-size="11.5" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.515</text>
+<line x1="320.0" y1="163.0" x2="722.5" y2="163.0" stroke="#dedede" stroke-width="1" stroke-linecap="butt"/>
+<circle cx="722.5" cy="163.0" r="7" fill="#008fd5" stroke="#f0f0f0" stroke-width="2"/>
+<text x="308.0" y="167.0" font-size="12" fill="#1f2328" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >my messages</text>
+<text x="735.5" y="167.0" font-size="11.5" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.509</text>
+<line x1="320.0" y1="193.0" x2="715.1" y2="193.0" stroke="#dedede" stroke-width="1" stroke-linecap="butt"/>
+<circle cx="715.1" cy="193.0" r="7" fill="#008fd5" stroke="#f0f0f0" stroke-width="2"/>
+<text x="308.0" y="197.0" font-size="12" fill="#1f2328" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >my team&#x27;s messages</text>
+<text x="728.1" y="197.0" font-size="11.5" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.507</text>
+<line x1="320.0" y1="223.0" x2="689.2" y2="223.0" stroke="#dedede" stroke-width="1" stroke-linecap="butt"/>
+<circle cx="689.2" cy="223.0" r="7" fill="#008fd5" stroke="#f0f0f0" stroke-width="2"/>
+<text x="308.0" y="227.0" font-size="12" fill="#1f2328" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >end users</text>
+<text x="702.2" y="227.0" font-size="11.5" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.500</text>
+<line x1="320.0" y1="253.0" x2="585.8" y2="253.0" stroke="#dedede" stroke-width="1" stroke-linecap="butt"/>
+<circle cx="585.8" cy="253.0" r="7" fill="#008fd5" stroke="#f0f0f0" stroke-width="2"/>
+<text x="308.0" y="257.0" font-size="12" fill="#1f2328" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >encyclopedia and email reference set</text>
+<text x="598.8" y="257.0" font-size="11.5" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.472</text>
+<line x1="320.0" y1="283.0" x2="552.6" y2="283.0" stroke="#dedede" stroke-width="1" stroke-linecap="butt"/>
+<circle cx="552.6" cy="283.0" r="7" fill="#fc4f30" stroke="#f0f0f0" stroke-width="2"/>
+<text x="308.0" y="287.0" font-size="12" fill="#1f2328" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >agent drafts</text>
+<text x="565.6" y="287.0" font-size="11.5" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.463</text>
+<line x1="320.0" y1="313.0" x2="386.5" y2="313.0" stroke="#dedede" stroke-width="1" stroke-linecap="butt"/>
+<circle cx="386.5" cy="313.0" r="7" fill="#fc4f30" stroke="#f0f0f0" stroke-width="2"/>
+<text x="308.0" y="317.0" font-size="12" fill="#1f2328" text-anchor="end" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >planning documents my agents wrote</text>
+<text x="399.5" y="317.0" font-size="11.5" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="ui-monospace, SFMono-Regular, &#x27;SF Mono&#x27;, Menlo, Consolas, &#x27;Liberation Mono&#x27;, monospace" >0.418</text>
+</svg>
