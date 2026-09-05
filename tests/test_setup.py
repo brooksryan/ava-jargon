@@ -8,11 +8,17 @@ from importlib.resources import files
 import pytest
 import yaml
 
+try:
+    import tomllib
+except ImportError:  # Python 3.10 and older
+    import tomli as tomllib
+
 from conftest import REPO
 
 ASSETS = files("ava_jargon") / "assets"
 SKILL_FILES = ("SKILL.md", "references/voices.md", "references/custom-lexicons.md")
 GATES = ("ava-prose-gate.md", "ava-technical-gate.md")
+CODEX_AGENTS = [f".codex/agents/{g[:-3]}.toml" for g in GATES]
 
 
 def written(root):
@@ -45,21 +51,6 @@ def test_skills_writes_the_skill_and_nothing_else(ava, project):
     for f in SKILL_FILES:
         assert ((project / ".agents/skills/ava" / f).read_text()
                 == (ASSETS / "skills/ava" / f).read_text())
-
-
-def test_codex_ships_the_skill_and_points_at_the_contract(ava, project):
-    r = ava("setup", "codex")
-    assert r.returncode == 0, r.stderr
-    assert written(project) == sorted(skill_paths())
-    assert "ava setup agents-md >> AGENTS.md" in r.stderr
-
-
-def test_codex_global_points_at_the_user_agents_md(ava, project, home):
-    r = ava("setup", "codex", "-g")
-    assert r.returncode == 0, r.stderr
-    assert written(project) == []
-    assert written(home) == sorted(skill_paths())
-    assert "~/.codex/AGENTS.md" in r.stderr
 
 
 # --- the gate agents ---------------------------------------------------------
@@ -106,6 +97,34 @@ def test_opencode_global_writes_the_xdg_config_dir(ava, project, home):
     assert written(project) == []
     assert written(home) == sorted(skill_paths()
                                    + [f".config/opencode/agents/{g}" for g in GATES])
+
+
+def test_codex_writes_the_skill_and_both_gates(ava, project):
+    r = ava("setup", "codex")
+    assert r.returncode == 0, r.stderr
+    assert written(project) == sorted(skill_paths() + CODEX_AGENTS)
+    assert sorted(r.stdout.split()) == sorted(skill_paths() + CODEX_AGENTS)
+    assert r.stderr == ""
+
+
+@pytest.mark.parametrize("name", GATES)
+def test_codex_renders_each_gate_as_a_custom_agent(ava, project, name):
+    """Codex reads a custom agent from TOML: no front matter, the body under
+    developer_instructions, and a read-only sandbox for a gate that edits nothing."""
+    r = ava("setup", "codex")
+    assert r.returncode == 0, r.stderr
+    source_meta, source_body = front_matter((ASSETS / "agents" / name).read_text())
+    doc = tomllib.loads((project / f".codex/agents/{name[:-3]}.toml").read_text())
+    assert doc == {"name": name[:-3], "description": source_meta["description"],
+                   "sandbox_mode": "read-only", "developer_instructions": source_body}
+    assert list(doc) == ["name", "description", "sandbox_mode", "developer_instructions"]
+
+
+def test_codex_global_writes_the_user_codex_dir(ava, project, home):
+    r = ava("setup", "codex", "-g")
+    assert r.returncode == 0, r.stderr
+    assert written(project) == []
+    assert written(home) == sorted(skill_paths() + CODEX_AGENTS)
 
 
 # --- the AGENTS.md contract --------------------------------------------------

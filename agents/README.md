@@ -22,13 +22,21 @@ claude plugin marketplace add brooksryan/ava-jargon
 claude plugin install ava-jargon@ava-jargon
 ```
 
+Codex reads the same plugin manifest. The plugin carries the skill alone, as `ava-jargon:ava`. The gates are Codex custom agents, TOML files that `ava setup codex` writes:
+
+```bash
+codex plugin marketplace add brooksryan/ava-jargon
+codex plugin add ava-jargon@ava-jargon
+ava setup codex -g                 # ~/.agents/skills/ava and ~/.codex/agents/*.toml
+```
+
 Gemini takes the extension; every other harness uses `ava setup`. It copies the skill into the current project, adds the two gates where the harness has subagents, and prints each path it writes. `-g` installs to user space. `--force` overwrites.
 
 ```bash
 ava setup cursor                   # .agents/skills/ava and .cursor/agents/
 ava setup opencode                 # .agents/skills/ava and .opencode/agents/
-ava setup codex                    # .agents/skills/ava only; then add the contract:
-ava setup agents-md >> AGENTS.md   # prints gate-contract.md to stdout
+ava setup codex                    # .agents/skills/ava and .codex/agents/*.toml
+ava setup agents-md >> AGENTS.md   # prints gate-contract.md to stdout, for a harness without subagents
 gemini extensions install https://github.com/brooksryan/ava-jargon
 ava setup skills                   # .agents/skills/ava only, for everything else
 ```

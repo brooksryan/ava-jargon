@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ava-jargon"
-version = "0.4.1"
+version = "0.5.0"
 description = "ava - mechanical voice checks and corpus-relative jargon scoring"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -15,7 +15,7 @@ parser = [
     "spacy>=3.7",
     "en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl",
 ]
-dev = ["pytest>=8", "pyyaml>=6"]
+dev = ["pytest>=8", "pyyaml>=6", "tomli>=2; python_version < '3.11'"]
 
 [project.scripts]
 ava = "ava_jargon.cli:main"

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Run the test suite.
 
-  ./test                  build the test image and run every test in it
+  ./test                  Build both images. Run every test in each: the image
+                          without the [parser] extra, then the one with it
+                          (spacy + model, ~500 MB)
   ./test -k setup         every other argument goes to pytest
-  ./test --parser         image with the [parser] extra (spacy + model, ~500 MB)
   ./test --local          pytest from ./venv against an editable install:
                           venv/bin/pip install -e '.[dev]'
 
@@ -38,7 +39,14 @@ def run_docker(extras, tag, pytest_args):
     if build:
         return build
     tty = ["-t"] if sys.stdout.isatty() else []
-    return subprocess.call(["docker", "run", "--rm", *tty, tag, *pytest_args])
+    try:
+        return subprocess.call(["docker", "run", "--rm", *tty, tag, *pytest_args])
+    finally:
+        # `--rm` drops the container and its volumes. This drops the image, so
+        # no stale image outlives the run. Docker's own build cache still
+        # keeps the next build fast.
+        subprocess.call(["docker", "image", "rm", "-f", tag],
+                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 def main(argv):
@@ -46,14 +54,14 @@ def main(argv):
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--local", action="store_true",
                     help="run pytest from ./venv instead of Docker")
-    ap.add_argument("--parser", action="store_true",
-                    help="build the image with the [parser] extra")
     args, pytest_args = ap.parse_known_args(argv)
     if args.local:
         return run_local(pytest_args)
-    if args.parser:
-        return run_docker("dev,parser", IMAGE + "-parser", pytest_args)
-    return run_docker("dev", IMAGE, pytest_args)
+    for extras, tag in (("dev", IMAGE), ("dev,parser", IMAGE + "-parser")):
+        code = run_docker(extras, tag, pytest_args)
+        if code:
+            return code
+    return 0
 
 
 if __name__ == "__main__":

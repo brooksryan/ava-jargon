@@ -1,12 +1,11 @@
 # Tests
 
-`./test` builds a Docker image and runs pytest inside it. The image installs the package with `uv tool install` from the working tree, the same path as the README. The suite therefore covers the wheel contents, the `ava` script, and every `ava setup` target.
+`./test` builds two Docker images and runs pytest inside each, with and without the `[parser]` extra. Each image installs the package with `uv tool install` from the working tree, the same path as the README. The suite therefore covers the wheel contents, the `ava` script, and every `ava setup` target.
 
 | Command | Effect |
 | --- | --- |
-| `./test` | build the image, run every test |
+| `./test` | build both images and run every test in each: without the `[parser]` extra, then with it |
 | `./test -k setup` | pass the arguments after the `./test` flags to pytest |
-| `./test --parser` | build the image with the `[parser]` extra and run the tier 2 tests |
 | `./test --local` | run pytest from `./venv` against an editable install: `venv/bin/pip install -e '.[dev]'` |
 
 | File | Covers |

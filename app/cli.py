@@ -605,18 +605,38 @@ def _yaml_quote(value):
     return "'" + value.replace("'", "''") + "'"
 
 
-def _cursor_front_matter(meta):
-    return ("---\n"
-            f"name: {meta['name']}\n"
-            f"description: {_yaml_quote(meta['description'])}\n"
-            "---\n\n")
+def _cursor_agent(name, meta, body):
+    """Cursor reads the gate as markdown with a name and a description."""
+    return name, ("---\n"
+                  f"name: {meta['name']}\n"
+                  f"description: {_yaml_quote(meta['description'])}\n"
+                  "---\n\n") + body
 
 
-def _opencode_front_matter(meta):
-    return ("---\n"
-            f"description: {_yaml_quote(meta['description'])}\n"
-            "mode: subagent\n"
-            "---\n\n")
+def _opencode_agent(name, meta, body):
+    """OpenCode reads the gate as markdown with a description and a mode."""
+    return name, ("---\n"
+                  f"description: {_yaml_quote(meta['description'])}\n"
+                  "mode: subagent\n"
+                  "---\n\n") + body
+
+
+def _toml_basic(value, multiline=False):
+    """This function quotes a TOML basic string. The multi-line form keeps raw newlines."""
+    text = value.replace("\\", "\\\\").replace('"', '\\"')
+    raw = "\t\n" if multiline else "\t"
+    text = "".join(c if (c >= " " and c != "\x7f") or c in raw else f"\\u{ord(c):04X}"
+                   for c in text)
+    return '"""\n' + text + '"""' if multiline else '"' + text + '"'
+
+
+def _codex_agent(name, meta, body):
+    """Codex reads the gate as a custom agent: a TOML file, no front matter.
+    A gate edits nothing, so its sandbox stays read-only."""
+    return name[:-3] + ".toml", (f"name = {_toml_basic(meta['name'])}\n"
+                                 f"description = {_toml_basic(meta['description'])}\n"
+                                 'sandbox_mode = "read-only"\n'
+                                 f"developer_instructions = {_toml_basic(body, multiline=True)}\n")
 
 
 def cmd_setup(args):
@@ -649,18 +669,22 @@ def cmd_setup(args):
 
     if args.harness == "cursor":
         agents_dst = base / ".cursor" / "agents"
-        front = _cursor_front_matter
+        render = _cursor_agent
     elif args.harness == "opencode":
         agents_dst = (Path.home() / ".config" / "opencode" / "agents"
                       if args.global_install else Path(".opencode") / "agents")
-        front = _opencode_front_matter
-    else:  # codex and the generic skills target ship the skill only
-        agents_dst = front = None
+        render = _opencode_agent
+    elif args.harness == "codex":
+        agents_dst = base / ".codex" / "agents"
+        render = _codex_agent
+    else:  # the generic skills target ships the skill only
+        agents_dst = render = None
 
     if agents_dst is not None:
         for name in GATE_AGENT_FILES:
             meta, body = _split_front_matter((assets / "agents" / name).read_text())
-            writes.append((agents_dst / name, front(meta) + body))
+            filename, content = render(name, meta, body)
+            writes.append((agents_dst / filename, content))
 
     conflicts = [dst for dst, _ in writes if dst.exists()]
     if conflicts and not args.force:
@@ -672,11 +696,6 @@ def cmd_setup(args):
         dst.parent.mkdir(parents=True, exist_ok=True)
         dst.write_text(content)
         print(dst)
-
-    if args.harness == "codex":
-        target = "~/.codex/AGENTS.md" if args.global_install else "AGENTS.md"
-        print(f"codex has no subagents; append the gate contract with: "
-              f"ava setup agents-md >> {target}", file=sys.stderr)
     return 0
 
 
@@ -831,7 +850,7 @@ def main():
     st = sub.add_parser("setup", help="install the gate files for a harness")
     st.add_argument("harness",
                     choices=("cursor", "opencode", "codex", "skills", "agents-md"),
-                    help="cursor/opencode: skill + gate agents; codex/skills: "
+                    help="cursor/opencode/codex: skill + gate agents; skills: "
                          "skill only; agents-md: print the AGENTS.md gate "
                          "contract to stdout")
     st.add_argument("-g", "--global", dest="global_install", action="store_true",

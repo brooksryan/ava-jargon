@@ -23,10 +23,11 @@ COPY skills ./skills
 COPY research ./research
 
 # The dev extra holds the test dependencies. EXTRAS=dev,parser adds the spacy
-# tier (~500 MB).
+# tier (~500 MB). The layer keeps no cache mount. A cached build of the local
+# source once shipped a stale asset. Every rebuild now starts with an empty
+# cache.
 ARG EXTRAS=dev
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv tool install "ava-jargon[${EXTRAS}] @ file:///src"
+RUN uv tool install "ava-jargon[${EXTRAS}] @ file:///src"
 
 # Tests come last, so an edit to a test does not rebuild the install.
 COPY tests ./tests

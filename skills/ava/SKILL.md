@@ -17,9 +17,11 @@ The `ava` CLI measures AI-authorship patterns in your prose; two gate agents enf
 | spec / design doc / runbook | ava-technical-gate | `doc-technical` |
 | README / code comments / docstrings / PR text / commit message | ava-technical-gate | `code` |
 
-The Claude Code plugin installs the agents as `ava-jargon:ava-prose-gate` and `ava-jargon:ava-technical-gate`.
+The Claude Code plugin installs the agents as `ava-jargon:ava-prose-gate` and `ava-jargon:ava-technical-gate`. In Codex, `ava setup codex` installs them as the custom agents `ava-prose-gate` and `ava-technical-gate`: spawn each by name.
 
 ## Invocation
+
+When the harness lists no gate agent, install one first. In Codex, run `ava setup codex -g`. Spawn the gate next. In a harness without subagents, run `ava setup agents-md` and apply the contract it prints yourself.
 
 Every gate requires a target (file paths or verbatim text) and a surface. `ava-technical-gate` also accepts a scope: the prose your change introduced. Pre-existing violations then report separately and never fail your change. A gate returns `INPUT_INVALID` when an input is missing: supply it and re-submit. Two rounds maximum per draft: one full review, then one confirmation pass on your fixes.
 
@@ -36,6 +38,8 @@ The gates run the `ava` CLI. If a gate reports it missing:
 ```
 uv tool install git+https://github.com/brooksryan/ava-jargon
 ```
+
+Without `uv`: `pip install git+https://github.com/brooksryan/ava-jargon`.
 
 ## References
 
