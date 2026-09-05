@@ -22,6 +22,15 @@ claude plugin install ava-jargon@ava-jargon
 claude "run ava technical check on my readme.md"
 ```
 
+### Quickstart with codex
+
+```bash
+uv tool install 'ava-jargon[parser] @ git+https://github.com/brooksryan/ava-jargon'
+ava setup codex -g
+
+codex "run ava technical check on my readme.md"
+```
+
 ### Install options
 
 With the sentence-parser tier (spacy + model, ~500 MB) (Recommended):
