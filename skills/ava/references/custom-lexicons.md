@@ -1,6 +1,6 @@
 # Build a custom lexicon
 
-The jargon scorer (W-M10, `ava jargon score`) compares text to a lexicon. A lexicon comes from two corpora: the **approved** side is the audience's own vocabulary; the **contrast** side is the kind of writing you test. Terms common in the contrast side but absent from the approved side become jargon. The shipped `universal-*` lexicons cover generic surfaces. Build your own for a specific audience: a customer, a team, or a community.
+The jargon scorer (W-M10, `ava jargon score`) compares text to a lexicon. A lexicon comes from two corpora: the **approved** side is the audience's own vocabulary; the **contrast** side is the kind of writing you test. Terms common in the contrast side but absent from the approved side become jargon. The shipped `universal-*` lexicons serve the four shipped voices. Build your own for a specific audience: a customer, a team, or a community.
 
 ## Collect the corpora
 
@@ -29,7 +29,7 @@ When the shipped lexicon fits but marks words your audience does use, add an ext
 
 ```
 ava jargon extend my-prompts prompts.jsonl --note "typed prompts, all projects"
-ava check spec.md --rules technical --extend my-prompts
+ava check spec.md --voice technical-docs --extend my-prompts
 ava jargon score spec.md -l lexicons/universal-doc-technical.json --extend my-prompts
 ```
 
@@ -42,7 +42,7 @@ ava jargon score spec.md -l lexicons/universal-doc-technical.json --extend my-pr
 ```
 ava jargon score draft.md -l my-lexicon.json          # density + coverage, --json for machines
 ava jargon delta before/ after/ -l my-lexicon.json    # A vs B with a bootstrap CI
-ava check draft.md --surface chat --lexicon my-lexicon.json   # overrides the auto-loaded universal lexicon
+ava check draft.md --voice westinghouse --lexicon my-lexicon.json   # overrides the lexicon the voice names
 ```
 
 ## Record it

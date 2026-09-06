@@ -5,16 +5,17 @@ The mechanical checkers behind `ava check`. Each rule lives in one file with its
 ## Run
 
 ```
-ava check [PATH ...] --rules westinghouse|technical [--surface SURFACE]
-          [--json] [--no-parser] [--lexicon PATH] [--extend NAME] [--voice NAME] [-o FILE]
+ava check [PATH ...] --voice NAME
+          [--rules SET|IDS] [--bands NAME] [--lexicon PATH] [--extend NAME]
+          [--json] [--no-parser] [-o FILE]
 ```
 
 1. `PATH` accepts a file and a directory. A directory contributes each `.md` and each `.txt` file under it. A path of `-` or an empty path list reads stdin. The report names that path `<stdin>`.
 2. Findings go to stdout, one per line. Warnings, skipped-rule notes, the jargon density, and the band summary go to stderr, so stdout carries findings only.
 3. The exit code is 0 for no findings, 1 for findings, and 2 for a bad input.
 4. The tier 2 rules run when spacy is present. `--no-parser` skips them. Without spacy the CLI prints a warning and runs tier 1.
-5. `--lexicon` sets the lexicon behind W-M10. Without it, the surface picks a universal lexicon. `--extend` overlays an extension profile, and the flag repeats.
-6. `--voice` runs the check under a named voice profile (`ava voice list`). Its surface and extensions apply where the flags leave them unset. An explicit flag wins.
+5. `--voice` runs the check under a voice (`ava voice list`). Four ship: `westinghouse`, `shared-docs`, `technical-docs`, and `code`. The voice supplies the checks, the bands, the lexicon, and the extensions where the flags leave them unset. An explicit flag wins.
+6. `--rules` names a rule set or rule ids such as `W-M1,W-M4`. `--bands` names a band table (`ava bands list`). `--lexicon` sets the lexicon behind W-M10, and `--extend` overlays an extension profile. The flag repeats.
 7. `--json` emits one object: findings, `rules_skipped`, per-rule band positions, and the voice when one ran. `-o` writes the report to a file.
 
 Each finding holds the file, the line, the rule, and the match:
@@ -23,23 +24,27 @@ Each finding holds the file, the line, the rule, and the match:
 notes/plan.md:42: [W-M1] em dash: "the timer — see below"
 ```
 
-## Rule sets and surfaces
+## Rule sets and bands
 
 | `--rules` | Use on | Contents |
 | --- | --- | --- |
 | `westinghouse` | everything | the universal rules (W-M1 through W-M10) |
 | `technical` | comments, PRs, commits, docs | W-* plus the Simplified Technical English form rules (T-*) |
 
-| `--surface` | Covers |
+A rule set is a shorthand for a list of rule ids. A voice names the ids it runs, and `--rules W-M1,W-M4` names them on the command line.
+
+| `--bands` | Covers |
 | --- | --- |
 | `chat` | DMs, threads, channel posts, email |
 | `doc-shared` | memos, guides, proposals, announcements, issues |
 | `doc-technical` | design docs, specs, runbooks (the default for `--rules technical`) |
 | `code` | READMEs, code comments, docstrings, PR text, commit messages |
 
+A band table is one file under `app/bands/`, and a project or personal table under `.ava/bands/` resolves by name after the shipped four. `ava bands list` names them, and `ava bands show NAME` prints one.
+
 ## Bands
 
-The band summary compares each rule's rate per 1,000 words to a human range and an AI point for the surface. A verdict is PASS, WARN, or FAIL, colored on a terminal. Each rule has a direction:
+The band summary compares each rule's rate per 1,000 words to a human range and an AI point from the band table. A verdict is PASS, WARN, or FAIL, colored on a terminal. Each rule has a direction:
 
 - `ai-high` rules (W-M1 through W-M9) mark authorship signals: a FAIL in the AI range means the text matches the AI pattern.
 - `human-high` rules (every T-* rule and W-M11) are form dials: a FAIL there marks a form issue and never claims AI authorship.

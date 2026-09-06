@@ -6,8 +6,9 @@ Corpus dirs hold one .txt per document. Current metric groups:
   jargon   corpus-relative jargon (keyness lexicon: build / score / delta;
            extend = one more approved corpus, applied with --extend at check time)
   check    mechanical rule checkers for the v2 gates (see app/checks/README.md)
-  voice    a named voice: surface + extensions for the check, and a rubric a
-           reviewer scores (new / list / rubric / set / rm / schema)
+  voice    a named voice: the checks, bands, lexicon, and extensions for the
+           check, and a rubric a reviewer scores (new / list / rubric / set / rm / schema)
+  bands    the band tables the summary compares against (list / show / schema)
 
 Planned: cpidr, surface stats (word/sentence/paragraph) - the audit scripts in
 app/scripts/ are the basis and will fold in here.

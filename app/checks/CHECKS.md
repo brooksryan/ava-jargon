@@ -6,7 +6,7 @@ Legend: **sets** = which `--rules` values include the rule. **needs** = an input
 
 `ai-high` marks an authorship signal: AI text runs high and humans run low. A band FAIL on it means the text matches the AI pattern. `human-high` marks a compliance dial: humans out-score AI on it everywhere. A band FAIL there means style drift, and the summary never claims AI authorship.
 
-## Westinghouse rules (W-*) - every surface
+## Westinghouse rules (W-*) - every voice
 
 This set filters common AI language. All W-* rules are ai-high.
 
@@ -35,7 +35,7 @@ Sets: all. Flags process residue in prose: ticket ids (`#57`, `FLEX-123`), slice
 Sets: all. Flags adjacent emoji and the adjacent `!!` pair. Two exclamatory sentences are not a cluster and pass.
 
 ### W-M10 jargon score
-Sets: all. Runs the jargon scorer and prints its densities on stderr: jargon, unapproved words, and unapproved bigrams, each per 1,000 content words, then the top unapproved terms. The lines are advisory: they never produce a finding and never set the exit code, because lexicon terms are often the document's own topic. The universal lexicon that matches the band surface loads automatically; `--lexicon PATH` overrides. `--extend NAME` overlays an extension from `ava jargon extend`: the terms its corpus uses join the approved side.
+Sets: all. Runs the jargon scorer and prints its densities on stderr: jargon, unapproved words, and unapproved bigrams, each per 1,000 content words, then the top unapproved terms. The lines are advisory: they never produce a finding and never set the exit code, because lexicon terms are often the document's own topic. The lexicon the voice names loads, or the universal one named after the bands; `--lexicon PATH` overrides. `--extend NAME` overlays an extension from `ava jargon extend`: the terms its corpus uses join the approved side.
 
 ## Technical form rules (T-*) - prose next to code, docs
 
