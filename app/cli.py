@@ -17,6 +17,7 @@ import json
 import os
 import re
 import sys
+from importlib import metadata
 from pathlib import Path
 
 try:
@@ -733,9 +734,18 @@ def cmd_setup(args):
     return 0
 
 
+def _installed_version():
+    try:
+        return metadata.version("ava-jargon")
+    except metadata.PackageNotFoundError:
+        return "unknown (not installed as a package)"
+
+
 def main():
     ap = argparse.ArgumentParser(prog="ava", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("-v", "--version", action="version",
+                    version=f"ava {_installed_version()}")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     jg = sub.add_parser("jargon", help="corpus-relative jargon scoring")

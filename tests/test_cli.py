@@ -1,5 +1,10 @@
-"""`ava check` end to end, through the installed script."""
+"""`ava check` and `ava -v` end to end, through the installed script."""
 import json
+import re
+
+import pytest
+
+from conftest import REPO
 
 EM_DASH = "The deploy job — it went well.\n"
 CLEAN = "The deploy job ran well.\n"
@@ -32,6 +37,17 @@ def test_a_missing_file_exits_2(ava, project):
     r = ava("check", str(project / "nope.md"))
     assert r.returncode == 2
     assert "no such file" in r.stderr
+
+
+def installed_version():
+    return re.search(r'^version = "([^"]+)"', (REPO / "pyproject.toml").read_text(), re.M).group(1)
+
+
+@pytest.mark.parametrize("flag", ["-v", "--version"])
+def test_the_version_flag_prints_the_installed_version(ava, flag):
+    r = ava(flag)
+    assert r.returncode == 0, r.stderr
+    assert r.stdout == f"ava {installed_version()}\n"
 
 
 def test_the_bundled_lexicon_loads_for_the_surface(ava):
