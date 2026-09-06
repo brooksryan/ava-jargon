@@ -34,13 +34,13 @@ ava_jargon = "app"
 ava_jargon = [
     "name_stoplist.txt",
     "lexicons/*.json",
+    "bands/*.json",
     "assets/gate-contract.md",
     "voices/voice.schema.json",
     "assets/agents/*.md",
     "assets/skills/*/*.md",
     "assets/skills/*/references/*.md",
 ]
-"ava_jargon.checks" = ["baselines.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

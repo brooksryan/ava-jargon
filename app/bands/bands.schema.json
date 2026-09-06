@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/brooksryan/ava-jargon/bands.schema.json",
+  "title": "ava bands",
+  "description": "A band table: per rule, the human range and the AI reference the check summary compares a document's rate against.",
+  "type": "object",
+  "required": [
+    "name",
+    "rules"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]*$",
+      "description": "The name you ask for the table by. Lowercase, digits, . _ -"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "One sentence: which corpora the table came from."
+    },
+    "meta": {
+      "type": "object",
+      "description": "How build_baselines.py built the table.",
+      "properties": {
+        "generated": {
+          "type": "string"
+        },
+        "script": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "band_rule": {
+          "type": "string"
+        },
+        "min_words_guard": {
+          "type": "integer"
+        },
+        "excluded_format_artifacts": {
+          "type": "array"
+        }
+      }
+    },
+    "rules": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/entry"
+      },
+      "description": "One entry per rule id, such as W-M1."
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "required": [
+        "direction"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "enum": [
+            "ai-high",
+            "human-high"
+          ],
+          "description": "ai-high: a high rate is AI evidence. human-high: a compliance dial against the human range only."
+        },
+        "human_universal": {
+          "$ref": "#/$defs/range"
+        },
+        "human_universal_n": {
+          "type": "integer"
+        },
+        "human_internal": {
+          "$ref": "#/$defs/range"
+        },
+        "human_internal_n": {
+          "type": "integer"
+        },
+        "ai_universal": {
+          "type": "number"
+        },
+        "ai_universal_n": {
+          "type": "integer"
+        },
+        "ai_internal": {
+          "type": "number"
+        },
+        "ai_internal_n": {
+          "type": "integer"
+        }
+      }
+    },
+    "range": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "number"
+      },
+      "description": "[low, high] findings per 1,000 words."
+    }
+  }
+}

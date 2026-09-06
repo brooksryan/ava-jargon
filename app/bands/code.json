@@ -1,0 +1,242 @@
+{
+ "name": "code",
+ "meta": {
+  "generated": "2026-08-25",
+  "script": "app/scripts/build_baselines.py",
+  "unit": "findings per 1,000 words, corpus-level",
+  "band_rule": "human = [min,max] across corpora; ai = median",
+  "min_words_guard": 300,
+  "excluded_format_artifacts": [
+   [
+    "brooks-claude-prompts",
+    "W-M1"
+   ],
+   [
+    "rfc-technical",
+    "W-M1"
+   ]
+  ]
+ },
+ "rules": {
+  "P-M1": {
+   "human_universal": [
+    0.0,
+    0.0
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.0,
+   "ai_universal_n": 2,
+   "direction": "ai-high"
+  },
+  "P-M3": {
+   "human_universal": [
+    0.0,
+    0.0
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.0,
+   "ai_universal_n": 2,
+   "direction": "ai-high"
+  },
+  "T-M1": {
+   "human_universal": [
+    3.95,
+    7.62
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 8.1,
+   "ai_universal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M10": {
+   "human_universal": [
+    0.07,
+    0.18
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.05,
+   "ai_universal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M11": {
+   "human_universal": [
+    0.15,
+    0.68
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.04,
+   "ai_universal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M12": {
+   "human_universal": [
+    0.02,
+    0.03
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.12,
+   "ai_universal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M2": {
+   "human_universal": [
+    0.53,
+    0.74
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.77,
+   "ai_universal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M3": {
+   "human_universal": [
+    0.02,
+    0.12
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.05,
+   "ai_universal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M4": {
+   "human_universal": [
+    0.95,
+    2.93
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.96,
+   "ai_universal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M5": {
+   "human_universal": [
+    0.97,
+    1.06
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.51,
+   "ai_universal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M7": {
+   "human_universal": [
+    0.32,
+    0.58
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 1.86,
+   "ai_universal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M8": {
+   "human_universal": [
+    0.29,
+    0.65
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.17,
+   "ai_universal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M9": {
+   "human_universal": [
+    0.01,
+    0.06
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.01,
+   "ai_universal_n": 2,
+   "direction": "human-high"
+  },
+  "W-M1": {
+   "human_universal": [
+    0.0,
+    0.12
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 9.43,
+   "ai_universal_n": 2,
+   "direction": "ai-high"
+  },
+  "W-M11": {
+   "human_universal": [
+    7.59,
+    18.73
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 9.34,
+   "ai_universal_n": 2,
+   "direction": "human-high"
+  },
+  "W-M2": {
+   "human_universal": [
+    0.03,
+    0.04
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.04,
+   "ai_universal_n": 2,
+   "direction": "ai-high"
+  },
+  "W-M3": {
+   "human_universal": [
+    0.0,
+    0.04
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.0,
+   "ai_universal_n": 2,
+   "direction": "ai-high"
+  },
+  "W-M4": {
+   "human_universal": [
+    0.1,
+    0.14
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.24,
+   "ai_universal_n": 2,
+   "direction": "ai-high"
+  },
+  "W-M6": {
+   "human_universal": [
+    0.0,
+    0.0
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.0,
+   "ai_universal_n": 2,
+   "direction": "ai-high"
+  },
+  "W-M7": {
+   "human_universal": [
+    0.0,
+    0.0
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.0,
+   "ai_universal_n": 2,
+   "direction": "ai-high"
+  },
+  "W-M8": {
+   "human_universal": [
+    0.14,
+    0.18
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.32,
+   "ai_universal_n": 2,
+   "direction": "ai-high"
+  },
+  "W-M9": {
+   "human_universal": [
+    0.0,
+    0.01
+   ],
+   "human_universal_n": 2,
+   "ai_universal": 0.07,
+   "ai_universal_n": 2,
+   "direction": "ai-high"
+  }
+ }
+}
