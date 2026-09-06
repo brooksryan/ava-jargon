@@ -35,7 +35,7 @@ Sets: all. Flags process residue in prose: ticket ids (`#57`, `FLEX-123`), slice
 Sets: all. Flags adjacent emoji and the adjacent `!!` pair. Two exclamatory sentences are not a cluster and pass.
 
 ### W-M10 jargon score
-Sets: all. Runs the jargon scorer and prints one density line on stderr. The line is advisory: it never produces a finding and never sets the exit code, because lexicon terms are often the document's own topic. The universal lexicon that matches the band surface loads automatically; `--lexicon PATH` overrides. `--extend NAME` overlays an extension from `ava jargon extend`: the terms its corpus uses join the approved side.
+Sets: all. Runs the jargon scorer and prints its densities on stderr: jargon, unapproved words, and unapproved bigrams, each per 1,000 content words, then the top unapproved terms. The lines are advisory: they never produce a finding and never set the exit code, because lexicon terms are often the document's own topic. The universal lexicon that matches the band surface loads automatically; `--lexicon PATH` overrides. `--extend NAME` overlays an extension from `ava jargon extend`: the terms its corpus uses join the approved side.
 
 ## Technical form rules (T-*) - prose next to code, docs
 

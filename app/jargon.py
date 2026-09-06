@@ -126,7 +126,8 @@ def auto_dispersion(docs, base, ref_len, lo, hi, min_docs):
 def build(approved_dir, contrast_dir,
           min_contrast_count=5, ll_threshold=15.13, lr_threshold=2.0,
           min_contrast_dispersion=None, max_approved_dispersion=None,
-          zipf_gate=5.0, min_approved_count=3, n_max=3, stoplist=None):
+          zipf_gate=5.0, min_approved_count=3, n_max=3, stoplist=None,
+          stoplist_path=None):
     """Return a lexicon dict: jargon terms overused in CONTRAST, vocabulary of APPROVED.
 
     Dispersion thresholds default to None = auto-scaled by the side's median
@@ -156,6 +157,7 @@ def build(approved_dir, contrast_dir,
     approved = {t: {"approved_count": c, "approved_doc_share": round(a_df[t] / n_ad, 4)}
                 for t, c in a_tf.items()
                 if c >= min_approved_count and a_df[t] >= 2}
+    _approve_stoplist_names(approved, stoplist, a_tf, a_df, n_ad)
 
     jargon = {}
     for t, o_c in c_tf.items():
@@ -196,30 +198,83 @@ def build(approved_dir, contrast_dir,
                        "max_approved_dispersion": max_approved_dispersion,
                        "dispersion_auto": dispersion_auto or None,
                        "zipf_gate": zipf_gate if HAVE_WORDFREQ else None,
-                       "min_approved_count": min_approved_count},
+                       "min_approved_count": min_approved_count,
+                       "stoplist": {"path": stoplist_path, "terms": sorted(stoplist)}},
+            "stopwords": sorted(STOPWORDS),
         },
         "jargon": dict(sorted(jargon.items(), key=lambda kv: -kv[1]["log_likelihood"])),
         "approved_vocabulary": approved,
     }
 
 
+def _approve_stoplist_names(approved, stoplist, term_counts, doc_counts, n_docs):
+    for name in sorted(stoplist or ()):
+        approved.setdefault(name, {
+            "approved_count": term_counts.get(name, 0),
+            "approved_doc_share": round(doc_counts.get(name, 0) / max(n_docs, 1), 4),
+            "source": "stoplist"})
+
+
+DIGIT_RE = re.compile(r"\d")
+
+
+def _is_code_fragment(term):
+    return bool(DIGIT_RE.search(term))
+
+
+def _unapproved_terms(tokens, lex):
+    """The terms in neither list, as (unigram counts, bigram counts)."""
+    approved = lex["approved_vocabulary"]
+    jargon = lex["jargon"]
+    stoplist_names = set(lex["meta"]["params"]["stoplist"]["terms"])
+    zipf_gate = lex["meta"]["params"]["zipf_gate"]
+
+    def is_ordinary_english(unigram):
+        return HAVE_WORDFREQ and zipf_frequency(unigram, "en") >= zipf_gate
+
+    def is_known(term):
+        return term in approved or term in jargon
+
+    def is_unapproved_unigram(term):
+        return (not is_known(term) and not _is_code_fragment(term)
+                and term not in stoplist_names and not is_ordinary_english(term))
+
+    def is_unapproved_bigram(term):
+        halves = term.split()
+        return (not is_known(term)
+                and not any(_is_code_fragment(h) or h in stoplist_names for h in halves))
+
+    unigrams = Counter(t for t in tokens if t not in STOPWORDS and is_unapproved_unigram(t))
+    bigrams = Counter(g for g in ngrams(tokens, 2) if " " in g and is_unapproved_bigram(g))
+    return unigrams, bigrams
+
+
 def score_tokens(tokens, lex, n_max=3):
+    """Score one token list. Every rate is per 1,000 content words."""
     grams = ngrams(tokens, n_max)
     jargon = lex["jargon"]
     approved = lex["approved_vocabulary"]
     hits = Counter(g for g in grams if g in jargon)
     content = [t for t in tokens if t not in STOPWORDS]
     covered = sum(1 for t in content if t in approved)
-    n = max(len(tokens), 1)
+    unapproved_unigrams, unapproved_bigrams = _unapproved_terms(tokens, lex)
+    per_1k = 1000 / max(len(content), 1)
     return {
         "tokens": len(tokens),
+        "content_words": len(content),
         "jargon_hits": sum(hits.values()),
-        "jargon_density_per_1k": round(1000 * sum(hits.values()) / n, 2),
+        "jargon_density_per_1k": round(per_1k * sum(hits.values()), 2),
+        "unapproved_unigram_hits": sum(unapproved_unigrams.values()),
+        "unapproved_bigram_hits": sum(unapproved_bigrams.values()),
+        "unapproved_unigram_density_per_1k": round(per_1k * sum(unapproved_unigrams.values()), 2),
+        "unapproved_bigram_density_per_1k": round(per_1k * sum(unapproved_bigrams.values()), 2),
         "approved_coverage": round(covered / max(len(content), 1), 4),
         "flagged": {t: {"count": c,
                         "log_ratio": jargon[t]["log_ratio"],
                         "approved_count": jargon[t]["approved_count"]}
                     for t, c in hits.most_common()},
+        "unapproved_unigrams": dict(unapproved_unigrams.most_common()),
+        "unapproved_bigrams": dict(unapproved_bigrams.most_common()),
     }
 
 
@@ -234,46 +289,81 @@ def score_file(path, lex):
     res["sentences_with_jargon"] = []
     for s in split_sentences(text):
         r = score_tokens(tokenize(s), lex)
-        if r["jargon_hits"]:
+        if r["jargon_hits"] or r["unapproved_unigram_hits"] or r["unapproved_bigram_hits"]:
             res["sentences_with_jargon"].append(
-                {"sentence": s.strip()[:160], "terms": list(r["flagged"])})
+                {"sentence": s.strip()[:160], "terms": list(r["flagged"]),
+                 "unapproved": list(r["unapproved_unigrams"]) + list(r["unapproved_bigrams"])})
     return res
+
+
+def _rank_by_document_count(doc_counts, hit_counts, limit=15):
+    ranked = sorted(doc_counts, key=lambda t: (-doc_counts[t], -hit_counts[t], t))
+    return [[t, doc_counts[t], hit_counts[t]] for t in ranked[:limit]]
+
+
+PER_FILE_FIELDS = ("tokens", "content_words", "jargon_hits", "jargon_density_per_1k",
+                   "unapproved_unigram_hits", "unapproved_unigram_density_per_1k",
+                   "unapproved_bigram_density_per_1k", "approved_coverage")
 
 
 def score_dir(path, lex):
     """Score every .txt in a dir: per-file rows plus corpus-level aggregate."""
     docs = load_corpus(path)
-    rows, agg_hits, agg_tokens, agg_content, agg_covered = [], 0, 0, 0, 0
+    rows = []
+    totals = Counter()
     flagged = Counter()
+    unigram_hits, unigram_docs = Counter(), Counter()
+    bigram_hits, bigram_docs = Counter(), Counter()
     approved = lex["approved_vocabulary"]
     for name, toks in docs:
         r = score_tokens(toks, lex)
-        rows.append({"file": name, **{k: r[k] for k in
-                     ("tokens", "jargon_hits", "jargon_density_per_1k",
-                      "approved_coverage")},
-                     "top_terms": list(r["flagged"])[:3]})
-        agg_hits += r["jargon_hits"]
-        agg_tokens += r["tokens"]
+        rows.append({"file": name, **{k: r[k] for k in PER_FILE_FIELDS},
+                     "top_terms": list(r["flagged"])[:3],
+                     "top_unapproved": list(r["unapproved_unigrams"])[:3]})
         content = [t for t in toks if t not in STOPWORDS]
-        agg_content += len(content)
-        agg_covered += sum(1 for t in content if t in approved)
+        totals["tokens"] += r["tokens"]
+        totals["content"] += len(content)
+        totals["covered"] += sum(1 for t in content if t in approved)
+        totals["jargon"] += r["jargon_hits"]
+        totals["unigrams"] += r["unapproved_unigram_hits"]
+        totals["bigrams"] += r["unapproved_bigram_hits"]
         for t, s in r["flagged"].items():
             flagged[t] += s["count"]
+        for t, c in r["unapproved_unigrams"].items():
+            unigram_hits[t] += c
+            unigram_docs[t] += 1
+        for t, c in r["unapproved_bigrams"].items():
+            bigram_hits[t] += c
+            bigram_docs[t] += 1
+    per_1k = 1000 / max(totals["content"], 1)
     return {
         "dir": str(path),
         "docs": len(rows),
-        "tokens": agg_tokens,
-        "jargon_hits": agg_hits,
-        "jargon_density_per_1k": round(1000 * agg_hits / max(agg_tokens, 1), 2),
-        "approved_coverage": round(agg_covered / max(agg_content, 1), 4),
+        "tokens": totals["tokens"],
+        "content_words": totals["content"],
+        "jargon_hits": totals["jargon"],
+        "jargon_density_per_1k": round(per_1k * totals["jargon"], 2),
+        "unapproved_unigram_hits": totals["unigrams"],
+        "unapproved_bigram_hits": totals["bigrams"],
+        "unapproved_unigram_density_per_1k": round(per_1k * totals["unigrams"], 2),
+        "unapproved_bigram_density_per_1k": round(per_1k * totals["bigrams"], 2),
+        "approved_coverage": round(totals["covered"] / max(totals["content"], 1), 4),
         "docs_with_jargon": sum(1 for r in rows if r["jargon_hits"]),
+        "docs_with_unapproved_unigrams": sum(1 for r in rows if r["unapproved_unigram_hits"]),
         "top_flagged": flagged.most_common(15),
+        "top_unapproved_unigrams": _rank_by_document_count(unigram_docs, unigram_hits),
+        "top_unapproved_bigrams": _rank_by_document_count(bigram_docs, bigram_hits),
         "files": sorted(rows, key=lambda r: -r["jargon_density_per_1k"]),
     }
 
 
+DELTA_CLASSES = (("jargon", "jargon_hits"),
+                 ("unapproved_unigrams", "unapproved_unigram_hits"),
+                 ("unapproved_bigrams", "unapproved_bigram_hits"))
+
+
 def delta(a_path, b_path, lex, n_boot=2000, seed=7):
-    """A vs B jargon density with a bootstrap CI.
+    """A vs B density per class with a bootstrap CI.
 
     Files resample sentences; dirs resample documents.
     """
@@ -283,42 +373,59 @@ def delta(a_path, b_path, lex, n_boot=2000, seed=7):
     def units(path):
         p = Path(path)
         if p.is_dir():
-            return [(score_tokens(toks, lex)["jargon_hits"], len(toks))
-                    for _, toks in load_corpus(p)]
-        sents = split_sentences(p.read_text(errors="ignore"))
-        return [(score_tokens(tokenize(s), lex)["jargon_hits"], len(tokenize(s)))
-                for s in sents]
+            return [score_tokens(toks, lex) for _, toks in load_corpus(p)]
+        return [score_tokens(tokenize(s), lex)
+                for s in split_sentences(p.read_text(errors="ignore"))]
 
     A, B = units(a_path), units(b_path)
+    resamples = [([A[rng.randrange(len(A))] for _ in A], [B[rng.randrange(len(B))] for _ in B])
+                 for _ in range(n_boot)]
 
-    def density(sample):
-        h = sum(x for x, _ in sample)
-        n = sum(y for _, y in sample)
-        return 1000 * h / max(n, 1)
+    def density(sample, hits_key):
+        hits = sum(r[hits_key] for r in sample)
+        content = sum(r["content_words"] for r in sample)
+        return 1000 * hits / max(content, 1)
 
-    obs = density(A) - density(B)
-    diffs = []
-    for _ in range(n_boot):
-        a = [A[rng.randrange(len(A))] for _ in A]
-        b = [B[rng.randrange(len(B))] for _ in B]
-        diffs.append(density(a) - density(b))
-    diffs.sort()
-    lo, hi = diffs[int(0.025 * n_boot)], diffs[int(0.975 * n_boot)]
-    return {
-        "a": {"path": str(a_path), "units": len(A), "density": round(density(A), 2)},
-        "b": {"path": str(b_path), "units": len(B), "density": round(density(B), 2)},
-        "delta": round(obs, 2),
-        "ci95": [round(lo, 2), round(hi, 2)],
-        "credible": bool(lo > 0 or hi < 0),
+    result = {
         "unit": "documents" if Path(a_path).is_dir() else "sentences",
+        "a": {"path": str(a_path), "units": len(A)},
+        "b": {"path": str(b_path), "units": len(B)},
     }
+    for cls, hits_key in DELTA_CLASSES:
+        observed = density(A, hits_key) - density(B, hits_key)
+        diffs = sorted(density(a, hits_key) - density(b, hits_key) for a, b in resamples)
+        lo, hi = diffs[int(0.025 * n_boot)], diffs[int(0.975 * n_boot)]
+        result[cls] = {
+            "a_density": round(density(A, hits_key), 2),
+            "b_density": round(density(B, hits_key), 2),
+            "delta": round(observed, 2),
+            "ci95": [round(lo, 2), round(hi, 2)],
+            "credible": bool(lo > 0 or hi < 0),
+        }
+    return result
+
+
+DEFAULT_STOPLIST_PATH = Path(__file__).resolve().parent / "name_stoplist.txt"
 
 
 def load_lexicon(path):
     lex = json.loads(Path(path).read_text())
     if "jargon" not in lex:
         sys.exit(f"{path} is not a lexicon file (missing 'jargon' key)")
+    _backfill_fields_older_files_lack(lex)
     return lex
+
+
+def _backfill_fields_older_files_lack(lex):
+    meta, params = lex["meta"], lex["meta"]["params"]
+    meta.setdefault("stopwords", sorted(STOPWORDS))
+    if not params.get("zipf_gate"):
+        params["zipf_gate"] = 5.0
+    stoplist = params.get("stoplist") or {}
+    if not isinstance(stoplist.get("terms"), list):
+        names = load_stoplist(DEFAULT_STOPLIST_PATH)
+        params["stoplist"] = {"path": str(DEFAULT_STOPLIST_PATH), "terms": sorted(names)}
+        _approve_stoplist_names(lex["approved_vocabulary"], names, {}, {}, 1)
 
 
 # --- extensions ------------------------------------------------------------

@@ -28,7 +28,7 @@ The study uses these definitions throughout:
 4. A *lexicon* is the dictionary that is built when you compare an *audience* and a *tested* corpus. It contains
    1. The jargon words the tested side over-uses
    2. The approved vocabulary of the audience.
-5. *Density* is jargon hits per 1,000 tokens of a scored text. *Coverage* is the share of its content words inside the approved vocabulary.
+5. *Density* is jargon hits per 1,000 tokens of a scored text, the denominator the scorer used when I ran these studies. The scorer now divides by content words, so a rerun gives larger numbers. *Coverage* is the share of its content words inside the approved vocabulary.
 6. A *surface* is the kind of text under check. I use four: messages, general documents such as memos and essays, technical documents such as specs and papers, and READMEs with code comments. The command line calls them `chat`, `doc-shared`, `doc-technical`, and `code`. Each surface has its own lexicon.
 7. A *resampled range* is a 95 percent range for a difference between two densities, from 2,000 random redraws of the documents behind each (a bootstrap). A difference is credible where the range excludes zero.
 8. *Idea density* is a separate measure from jargon density: propositions per word. It comes from CPIDR, a computerized rater of propositional idea density by Brown and others (2008). Human prose sits near 0.5.

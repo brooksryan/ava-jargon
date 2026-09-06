@@ -48,13 +48,15 @@ class Context:
 
     `lexicon` enables W-M10. `fields` enables P-M5. The runner skips each rule
     when its value is None. A checker appends an advisory line to `notes`, and
-    the runner prints each note on stderr.
+    the runner prints each note on stderr. W-M10 stores its score result in
+    `jargon_summary` for the runner's advisory line.
     """
 
     path: str = "<stdin>"
     lexicon: object = None
     fields: object = None
     notes: list = field(default_factory=list)
+    jargon_summary: object = None
 
 
 # --- the strippers ----------------------------------------------------------

@@ -17,6 +17,7 @@ import json
 import os
 import re
 import sys
+from importlib import metadata
 from pathlib import Path
 
 try:
@@ -37,8 +38,7 @@ def cmd_jargon_build(args):
                   max_approved_dispersion=args.max_approved_dispersion,
                   zipf_gate=args.zipf_gate,
                   min_approved_count=args.min_approved_count,
-                  stoplist=stop)
-    lex["meta"]["params"]["stoplist"] = {"path": args.stoplist, "terms": len(stop)}
+                  stoplist=stop, stoplist_path=args.stoplist)
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(lex, indent=1))
@@ -58,11 +58,28 @@ def cmd_jargon_build(args):
         print("warning: wordfreq not installed - Zipf gate disabled "
               "(ordinary English words may be flagged)")
     print(f"jargon terms: {len(lex['jargon'])}   "
-          f"approved vocabulary: {len(lex['approved_vocabulary'])}")
+          f"approved vocabulary: {len(lex['approved_vocabulary'])} "
+          f"({len(stop)} from the stoplist)")
     print(f"lexicon written to {out}")
     for t, s in list(lex["jargon"].items())[:15]:
         print(f"  {t:<28} G2={s['log_likelihood']:>8}  LR={s['log_ratio']:>5}  "
               f"contrast_docs={s['contrast_doc_share']:.0%}")
+
+
+def _print_term_counts(heading, counts):
+    if not counts:
+        return
+    print(heading)
+    for term, count in counts:
+        print(f"  {term:<28} x{count}")
+
+
+def _print_terms_with_document_counts(heading, ranked):
+    if not ranked:
+        return
+    print(heading)
+    for term, docs, hits in ranked:
+        print(f"  {term:<28} x{hits} in {docs} docs")
 
 
 def cmd_jargon_score(args):
@@ -73,36 +90,56 @@ def cmd_jargon_score(args):
         if args.json:
             print(json.dumps(res, indent=1))
             return
-        print(f"{res['dir']}: {res['docs']} docs, {res['tokens']:,} tokens")
-        print(f"jargon density: {res['jargon_density_per_1k']} per 1,000 tokens   "
+        print(f"{res['dir']}: {res['docs']} docs, {res['tokens']:,} tokens, "
+              f"{res['content_words']:,} content words")
+        print(f"jargon density: {res['jargon_density_per_1k']} per 1,000 content words   "
+              f"unapproved unigrams: {res['unapproved_unigram_density_per_1k']}   "
+              f"unapproved bigrams: {res['unapproved_bigram_density_per_1k']}   "
               f"approved coverage: {res['approved_coverage']:.0%}   "
               f"docs with jargon: {res['docs_with_jargon']}/{res['docs']}")
-        if res["top_flagged"]:
-            print("top flagged terms across corpus:")
-            for t, c in res["top_flagged"]:
-                print(f"  {t:<28} x{c}")
-        print(f"{'file':<52} {'tokens':>6} {'dens/1k':>8} {'coverage':>8}  top terms")
+        _print_term_counts("top flagged terms across corpus:", res["top_flagged"])
+        _print_terms_with_document_counts("top unapproved unigrams across corpus:",
+                                          res["top_unapproved_unigrams"])
+        _print_terms_with_document_counts("top unapproved bigrams across corpus:",
+                                          res["top_unapproved_bigrams"])
+        print(f"{'file':<44} {'tokens':>6} {'jarg/1k':>8} {'unap/1k':>8} {'coverage':>8}"
+              "  top terms | top unapproved")
         for r in res["files"][:args.top]:
-            terms = ", ".join(r["top_terms"])
-            print(f"{r['file'][:52]:<52} {r['tokens']:>6} "
-                  f"{r['jargon_density_per_1k']:>8} {r['approved_coverage']:>8.0%}  {terms}")
+            terms = ", ".join(r["top_terms"]) + " | " + ", ".join(r["top_unapproved"])
+            print(f"{r['file'][:44]:<44} {r['tokens']:>6} "
+                  f"{r['jargon_density_per_1k']:>8} "
+                  f"{r['unapproved_unigram_density_per_1k']:>8} "
+                  f"{r['approved_coverage']:>8.0%}  {terms}")
         if len(res["files"]) > args.top:
             print(f"... {len(res['files']) - args.top} more files (use --top N or --json)")
-    else:
-        res = J.score_file(target, lex)
-        if args.json:
-            print(json.dumps(res, indent=1))
-            return
-        print(f"tokens: {res['tokens']}")
-        print(f"jargon density: {res['jargon_density_per_1k']} per 1,000 tokens")
-        print(f"approved coverage: {res['approved_coverage']:.0%} of content words")
-        if res["flagged"]:
-            print("flagged terms:")
-            for t, s in res["flagged"].items():
-                print(f"  {t:<28} x{s['count']}  (approved corpus used it "
-                      f"{s['approved_count']} times)")
-        for row in res["sentences_with_jargon"]:
-            print(f"  -> {row['terms']}: \"{row['sentence']}\"")
+        return
+    res = J.score_file(target, lex)
+    if args.json:
+        print(json.dumps(res, indent=1))
+        return
+    print(f"content words: {res['content_words']} of {res['tokens']} tokens")
+    print(f"jargon density: {res['jargon_density_per_1k']} per 1,000 content words")
+    print(f"unapproved unigrams: {res['unapproved_unigram_density_per_1k']} "
+          "per 1,000 content words")
+    print(f"unapproved bigrams: {res['unapproved_bigram_density_per_1k']} "
+          "per 1,000 content words")
+    print(f"approved coverage: {res['approved_coverage']:.0%} of content words")
+    if res["flagged"]:
+        print("flagged terms:")
+        for t, stats in res["flagged"].items():
+            print(f"  {t:<28} x{stats['count']}  (approved corpus used it "
+                  f"{stats['approved_count']} times)")
+    _print_term_counts("unapproved unigrams (in neither list):",
+                       res["unapproved_unigrams"].items())
+    _print_term_counts("unapproved bigrams (in neither list):",
+                       res["unapproved_bigrams"].items())
+    for row in res["sentences_with_jargon"]:
+        print(f"  -> {row['terms']} + unapproved {row['unapproved']}: \"{row['sentence']}\"")
+
+
+DELTA_LABELS = (("jargon", "jargon"),
+                ("unapproved_unigrams", "unapproved unigrams"),
+                ("unapproved_bigrams", "unapproved bigrams"))
 
 
 def cmd_jargon_delta(args):
@@ -111,14 +148,14 @@ def cmd_jargon_delta(args):
     if args.json:
         print(json.dumps(res, indent=1))
         return
-    print(f"A: {res['a']['path']}  ({res['a']['units']} {res['unit']})  "
-          f"density {res['a']['density']} /1k")
-    print(f"B: {res['b']['path']}  ({res['b']['units']} {res['unit']})  "
-          f"density {res['b']['density']} /1k")
-    print(f"delta (A - B): {res['delta']:+.2f} per 1,000 tokens, "
-          f"95% bootstrap CI [{res['ci95'][0]:+.2f}, {res['ci95'][1]:+.2f}]")
-    print("CI excludes zero: " + ("YES, difference is credible" if res["credible"]
-                                  else "NO, treat as noise"))
+    print(f"A: {res['a']['path']}  ({res['a']['units']} {res['unit']})")
+    print(f"B: {res['b']['path']}  ({res['b']['units']} {res['unit']})")
+    for cls, label in DELTA_LABELS:
+        r = res[cls]
+        verdict = "credible" if r["credible"] else "noise"
+        print(f"{label} (A - B): {r['delta']:+.2f} per 1,000 content words, "
+              f"A {r['a_density']} vs B {r['b_density']}, "
+              f"95% bootstrap CI [{r['ci95'][0]:+.2f}, {r['ci95'][1]:+.2f}]: {verdict}")
 
 
 # --- extensions: one more approved corpus, kept as a vocabulary profile -----
@@ -426,17 +463,15 @@ def cmd_check(args):
 
     # W-M10 is advisory (see checks/CHECKS.md): its density prints as a summary line
     # and never joins the findings or the exit code.
-    w10 = [f for f in findings if f.rule == "W-M10"]
     findings = [f for f in findings if f.rule != "W-M10"]
-    if w10:
-        hits = []
-        for f in w10:
-            m = re.search(r"x(\d+)$", f.label)
-            hits.append((int(m.group(1)) if m else 1, f.match))
-        total = sum(n for n, _ in hits)
-        top = ", ".join(f"{t}×{n}" for n, t in sorted(hits, reverse=True)[:5])
-        print(f"jargon (W-M10, advisory): {round(1000 * total / max(words, 1), 1)}"
-              f"/1k over {words:,} words · top: {top}", file=sys.stderr)
+    if ctx.jargon_summary:
+        summary = ctx.jargon_summary
+        top = ", ".join(f"{t}×{v['count']}" for t, v in list(summary["flagged"].items())[:5])
+        print(f"jargon (W-M10, advisory): {summary['jargon_density_per_1k']}/1k · "
+              f"unapproved {summary['unapproved_unigram_density_per_1k']}/1k unigrams, "
+              f"{summary['unapproved_bigram_density_per_1k']}/1k bigrams over "
+              f"{summary['content_words']:,} content words"
+              + (f" · top: {top}" if top else ""), file=sys.stderr)
 
     rules_checked = [m.RULE for m in checkers]
     verdict = (f"checked {len(checkers)} rules over {words:,} words: "
@@ -699,9 +734,18 @@ def cmd_setup(args):
     return 0
 
 
+def _installed_version():
+    try:
+        return metadata.version("ava-jargon")
+    except metadata.PackageNotFoundError:
+        return "unknown (not installed as a package)"
+
+
 def main():
     ap = argparse.ArgumentParser(prog="ava", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("-v", "--version", action="version",
+                    version=f"ava {_installed_version()}")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     jg = sub.add_parser("jargon", help="corpus-relative jargon scoring")
