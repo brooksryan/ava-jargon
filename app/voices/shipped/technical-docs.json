@@ -1,0 +1,31 @@
+{
+  "name": "technical-docs",
+  "description": "Specs, design docs, and runbooks: prose beside code that a future reader follows.",
+  "checks": [
+    "W-M1",
+    "W-M2",
+    "W-M3",
+    "W-M4",
+    "W-M6",
+    "W-M7",
+    "W-M8",
+    "W-M9",
+    "W-M10",
+    "W-M11",
+    "T-M1",
+    "T-M2",
+    "T-M3",
+    "T-M4",
+    "T-M5",
+    "T-M7",
+    "T-M8",
+    "T-M9",
+    "T-M10",
+    "T-M11",
+    "T-M12"
+  ],
+  "bands": "doc-technical",
+  "lexicon": "universal-doc-technical",
+  "extend": [],
+  "rubric": []
+}

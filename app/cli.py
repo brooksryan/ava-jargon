@@ -380,6 +380,29 @@ def _import_checks():
     return C, B
 
 
+def _rules_to_run(flag, voice):
+    """(rules, label): a set name, or a list of rule ids, and the name the report carries."""
+    if flag is None and voice:
+        return list(voice["checks"]), voice["name"]
+    flag = flag or "westinghouse"
+    if flag in ("westinghouse", "technical", "personal"):
+        return flag, flag
+    ids = [r.strip() for r in flag.split(",") if r.strip()]
+    return ids, ",".join(ids)
+
+
+def _lexicon_by_name(spec):
+    """A lexicon path, or a shipped name such as universal-code."""
+    p = Path(spec).expanduser()
+    if p.suffix == ".json" and p.is_file():
+        return p
+    here = Path(__file__).resolve().parent
+    for candidate in (here.parent / "lexicons" / f"{spec}.json", here / "lexicons" / f"{spec}.json"):
+        if candidate.is_file():
+            return candidate
+    return None
+
+
 def _universal_lexicon(bands_name):
     """Path of the universal lexicon named after a band table: workspace copy, then packaged."""
     here = Path(__file__).resolve().parent
@@ -422,12 +445,13 @@ def cmd_check(args):
             print(f"error: {e}", file=sys.stderr)
             return 2
         # The voice fills what the flags left out; an explicit flag wins.
-        args.bands = args.bands or voice["surface"]
+        args.bands = args.bands or voice["bands"]
         args.extend = list(args.extend or []) + [
             e for e in voice.get("extend", []) if e not in (args.extend or [])]
         print(f"voice: {voice['name']} ({scope})", file=sys.stderr)
 
-    bands_name = args.bands or B.RULES_TO_BANDS.get(args.rules)
+    rules, rules_label = _rules_to_run(args.rules, voice)
+    bands_name = args.bands or (B.RULES_TO_BANDS.get(rules) if isinstance(rules, str) else None)
     if bands_name:
         try:
             B.load_by_name(bands_name)
@@ -435,6 +459,14 @@ def cmd_check(args):
             print(f"error: {e}", file=sys.stderr)
             return 2
 
+    if lexicon is None and voice and voice.get("lexicon"):
+        named = _lexicon_by_name(voice["lexicon"])
+        if named is None:
+            print(f"error: the voice names a lexicon that is absent: {voice['lexicon']}",
+                  file=sys.stderr)
+            return 2
+        lexicon = J.load_lexicon(str(named))
+        print(f"lexicon: {voice['lexicon']} (voice; --lexicon overrides)", file=sys.stderr)
     if lexicon is None and bands_name:
         auto = _universal_lexicon(bands_name)
         if auto is not None:
@@ -449,8 +481,12 @@ def cmd_check(args):
         lexicon, _ = _apply_extensions(lexicon, args.extend)
 
     ctx = C.Context(lexicon=lexicon, fields=fields)
-    checkers, tiers, skipped, warning = C.select(args.rules, ctx,
-                                                 use_parser=not args.no_parser)
+    try:
+        checkers, tiers, skipped, warning = C.select(rules, ctx,
+                                                     use_parser=not args.no_parser)
+    except ValueError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
     if warning:
         print(f"warning: {warning}, so the run holds tier 1 only", file=sys.stderr)
 
@@ -491,7 +527,7 @@ def cmd_check(args):
                                         color=color)
 
     if args.json:
-        doc = C.report_json([n for n, _ in documents], args.rules,
+        doc = C.report_json([n for n, _ in documents], rules_label,
                             tiers, skipped, findings, len(checkers))
         doc["bands"] = band_data
         if voice:
@@ -565,7 +601,7 @@ def cmd_bands_schema(args):
     sys.stdout.write(B.SCHEMA_PATH.read_text())
 
 
-# --- voices: a named surface + extensions + rubric ---------------------------
+# --- voices: checks, bands, lexicon, extensions, and a rubric -----------------
 
 def _read_json_doc(spec):
     """A JSON document from a path or stdin (- or empty)."""
@@ -583,6 +619,12 @@ def _voice_scope(args):
     return "project" if getattr(args, "project", False) else "personal"
 
 
+def _refuse_shipped(scope, name):
+    if scope == "shipped":
+        raise V.VoiceError(f"{name} is a shipped voice; copy it under a new name "
+                           "with ava voice rubric NAME --json and ava voice new")
+
+
 def cmd_voice_new(args):
     """Create $AVA_HOME/voices/NAME.json (or .ava/voices/NAME.json with --project)."""
     if not V.NAME_RE.match(args.name):
@@ -592,6 +634,8 @@ def cmd_voice_new(args):
     try:
         doc = _read_json_doc(args.file)
         doc.setdefault("name", args.name)
+        if args.checks and "checks" not in doc:
+            doc["checks"] = C_rule_ids_in_set(args.checks)
         if doc["name"] != args.name:
             raise V.VoiceError(f"the document names the voice {doc['name']!r}, "
                                f"the command names it {args.name!r}")
@@ -618,10 +662,11 @@ def cmd_voice_list(args):
     for name, scope, path in rows:
         try:
             doc = V.load(path)
-            detail = f"{doc['surface']:<13} {len(doc['rules'])} rules"
+            detail = (f"{doc['bands']:<13} {len(doc['checks']):>2} checks  "
+                      f"{len(doc.get('rubric') or []):>2} rubric")
         except V.VoiceError:
             detail = "INVALID (ava voice rubric NAME shows why)"
-        if name in seen:  # a personal voice a project voice of the same name hides
+        if name in seen:  # a voice an earlier scope of the same name hides
             detail += "  (shadowed)"
         seen.add(name)
         print(f"{name:<{width}}  {scope:<8}  {detail}  {path}")
@@ -642,15 +687,23 @@ def cmd_voice_rubric(args):
 
 
 def cmd_voice_set(args):
-    """Merge a partial document into the voice and re-validate."""
+    """Edit one field from the command line. You can also merge a partial JSON document."""
     try:
-        path, _ = V.resolve(args.name)
+        path, scope = V.resolve(args.name)
+        _refuse_shipped(scope, args.name)
         base = V.load(path)
-        patch = _read_json_doc(args.file)
-        if patch.get("name", args.name) != args.name:
-            raise V.VoiceError("a voice cannot change its name; "
-                               "create a new one")
-        V.save(path, V.merge(base, patch))
+        if args.file_or_field in V.LIST_FIELDS + V.SCALAR_FIELDS:
+            edited = V.set_field(base, args.file_or_field, args.values)
+        else:
+            if args.values:
+                raise V.VoiceError(f"{args.file_or_field!r} is not an editable field "
+                                   f"(one of: {', '.join(V.LIST_FIELDS + V.SCALAR_FIELDS)})")
+            patch = _read_json_doc(args.file_or_field)
+            if patch.get("name", args.name) != args.name:
+                raise V.VoiceError("a voice cannot change its name; "
+                                   "create a new one")
+            edited = V.merge(base, patch)
+        V.save(path, edited)
     except (V.VoiceError, OSError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 2
@@ -661,11 +714,17 @@ def cmd_voice_rm(args):
     """Delete the voice the name resolves to."""
     try:
         path, scope = V.resolve(args.name)
+        _refuse_shipped(scope, args.name)
     except V.VoiceError as e:
         print(f"error: {e}", file=sys.stderr)
         return 2
     path.unlink()
     print(f"removed {path} ({scope})")
+
+
+def C_rule_ids_in_set(name):
+    C, _ = _import_checks()
+    return C.rule_ids_in_set(name)
 
 
 def cmd_voice_schema(args):
@@ -883,12 +942,10 @@ def main():
     ck.add_argument("paths", nargs="*",
                     help="files, directories, or - for stdin (default: stdin)")
     C, _ = _import_checks()
-    rule_sets = ("westinghouse", "technical")
-    if C.p_m1_short_names is not None:  # the personal subpackage is installed
-        rule_sets += ("personal",)
-    ck.add_argument("--rules", default="westinghouse", choices=rule_sets,
-                    help="rule set; the non-westinghouse sets include the "
-                         "Westinghouse rules (default: westinghouse)")
+    ck.add_argument("--rules", metavar="SET|IDS",
+                    help="a rule set (westinghouse, technical, personal) or rule ids "
+                         "such as W-M1,W-M4 (default: the voice's checks, else "
+                         "westinghouse)")
     ck.add_argument("--bands", metavar="NAME",
                     help="band table for the rate summary (ava bands list; default: "
                          "inferred from --rules, none for westinghouse)")
@@ -909,8 +966,8 @@ def main():
     ck.add_argument("--field", action="append", metavar="NAME=VALUE",
                     help="an input-contract field; enables P-M5, repeatable")
     ck.add_argument("--voice", metavar="NAME",
-                    help="run under a voice (ava voice list): its surface and "
-                         "extensions apply where the flags left them out")
+                    help="run under a voice (ava voice list): its checks, bands, "
+                         "lexicon, and extensions apply where the flags left them out")
     ck.add_argument("-o", "--out", help="write the report to this file")
     ck.set_defaults(fn=cmd_check)
 
@@ -924,8 +981,8 @@ def main():
     bh = bsub.add_parser("schema", help="print the bands JSON schema")
     bh.set_defaults(fn=cmd_bands_schema)
 
-    vc = sub.add_parser("voice", help="a named voice: surface, extensions, "
-                                      "and a rubric a reviewer scores")
+    vc = sub.add_parser("voice", help="a named voice: checks, bands, lexicon, "
+                                      "extensions, and a rubric a reviewer scores")
     vsub = vc.add_subparsers(dest="vcmd", required=True)
 
     vn = vsub.add_parser("new", help="create a voice from a JSON document")
@@ -938,6 +995,9 @@ def main():
                          "$AVA_HOME/voices/")
     vn.add_argument("--force", action="store_true",
                     help="overwrite a voice that already exists")
+    vn.add_argument("--checks", choices=("westinghouse", "technical", "personal"),
+                    metavar="SET", help="seed the checks from a rule set when the "
+                                        "document names none")
     vn.set_defaults(fn=cmd_voice_new)
 
     vl = vsub.add_parser("list", help="list the voices on this machine")
@@ -949,11 +1009,16 @@ def main():
                     help="print the JSON document instead of the rubric")
     vr.set_defaults(fn=cmd_voice_rubric)
 
-    vs = vsub.add_parser("set", help="merge a partial JSON document into a voice")
+    vs = vsub.add_parser("set", help="edit one field of a voice, or merge a partial "
+                                     "JSON document into it")
     vs.add_argument("name", help="voice name or path")
-    vs.add_argument("file", nargs="?", default="-",
-                    help="partial JSON document, or - for stdin; rules merge "
-                         "by name, other fields replace")
+    vs.add_argument("file_or_field", nargs="?", default="-",
+                    help="a field (checks, extend, bands, lexicon, description) "
+                         "followed by its values, or a partial JSON document "
+                         "(- for stdin; rubric rules merge by name, other fields "
+                         "replace)")
+    vs.add_argument("values", nargs=argparse.REMAINDER,
+                    help="for checks and extend: +ID adds, -ID drops, bare ids replace")
     vs.set_defaults(fn=cmd_voice_set)
 
     vd = vsub.add_parser("rm", help="delete a voice")

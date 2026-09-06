@@ -1,0 +1,19 @@
+{
+  "name": "shared-docs",
+  "description": "Memos, proposals, announcements, and issues: prose a group reads once and acts on.",
+  "checks": [
+    "W-M1",
+    "W-M2",
+    "W-M3",
+    "W-M4",
+    "W-M6",
+    "W-M7",
+    "W-M8",
+    "W-M9",
+    "W-M10"
+  ],
+  "bands": "doc-shared",
+  "lexicon": "universal-doc-shared",
+  "extend": [],
+  "rubric": []
+}
