@@ -13,6 +13,7 @@
 | `test_checks.py` | the tier 1 checkers and the runner, as a library |
 | `test_cli.py` | `ava check` exit codes, the linter line, `--json`, and the bundled lexicons |
 | `test_setup.py` | each `ava setup` target, `-g`, `--force`, and the packaged assets against the repo files |
+| `test_jargon.py` | `ava jargon build`, `score`, and `delta`: the three classes, the stoplist on the approved side, and the content-word denominator |
 | `test_parser.py` | the tier 2 checkers; the module skips without spacy |
 | `test_docs.py` | the research directory: the index, both studies, and the links from the feature docs |
 

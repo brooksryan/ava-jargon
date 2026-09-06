@@ -1,8 +1,9 @@
 """W-M10 jargon score.
 
 The checker calls the scoring engine in `app/jargon.py` directly. `--lexicon`
-enables the rule, and the runner skips the rule without that path. The density
-goes to stderr as a note, because stdout holds findings only.
+enables the rule, and the runner skips the rule without that path. The densities
+go to stderr as notes, because stdout holds findings only. Unapproved terms are
+notes as well, never findings.
 """
 import sys
 from pathlib import Path
@@ -27,9 +28,17 @@ def check(text, ctx):
         res = J.score_file(path, ctx.lexicon)
     else:
         res = J.score_tokens(J.tokenize(text), ctx.lexicon)
+    ctx.jargon_summary = res
     ctx.notes.append(
-        f"{ctx.path}: jargon density {res['jargon_density_per_1k']} per 1,000 "
-        f"tokens, approved coverage {res['approved_coverage']:.0%}")
+        f"{ctx.path}: jargon density {res['jargon_density_per_1k']}, "
+        f"unapproved unigrams {res['unapproved_unigram_density_per_1k']}, "
+        f"unapproved bigrams {res['unapproved_bigram_density_per_1k']} "
+        f"per 1,000 content words, approved coverage {res['approved_coverage']:.0%}")
+    for label, terms in (("unapproved unigrams", res["unapproved_unigrams"]),
+                         ("unapproved bigrams", res["unapproved_bigrams"])):
+        if terms:
+            top = ", ".join(f"{t}×{c}" for t, c in list(terms.items())[:5])
+            ctx.notes.append(f"{ctx.path}: {label}: {top}")
     body = strip_code(text)
     lower = body.lower()
     starts = line_starts(body)

@@ -1,6 +1,14 @@
 # Lexicons
 
-A lexicon compares two corpora. The **approved** side is the audience's own vocabulary. The **contrast** side is the writing under test. A term common on the contrast side and absent from the approved side is jargon. The `ava jargon score` command reports jargon density and approved-vocabulary coverage for a file or a corpus. The `ava check` command reports the same density on the W-M10 advisory line.
+A lexicon compares two corpora. The **approved** side is the audience's own vocabulary. The **contrast** side is the writing under test. A term the contrast side overuses, and the audience says in at most 1 document in 100, is jargon. The `ava jargon score` command reports three classes for a file or a corpus. The `ava check` command reports the same numbers on the W-M10 advisory line.
+
+| Class | Definition | Where it lives |
+| --- | --- | --- |
+| jargon | a term the contrast corpus overuses against the audience, past every build threshold | the `jargon` list in the lexicon file |
+| approved | every content term the audience used 3 or more times in 2 or more documents, plus every name on the stoplist | the `approved_vocabulary` list in the lexicon file |
+| unapproved | a content word or bigram in neither list; a word must also sit under the Zipf gate, and neither may hold a digit or a stoplist name | computed by the scorer per document |
+
+Every rate divides by content words, the tokens left after the function-word list. The lexicon file records that list under `meta.stopwords`. Unapproved measures distance from the audience. It cannot show who wrote a document: text from another company scores high on it too.
 
 ## Shipped lexicons
 
@@ -20,9 +28,9 @@ The files beside this document are the packaged copies. The `lexicons/` director
 ## Score and compare
 
 ```bash
-ava jargon score draft.md -l app/lexicons/universal-code.json   # density and coverage for one file
+ava jargon score draft.md -l app/lexicons/universal-code.json   # the three classes and coverage for one file
 ava jargon score corpus/dir -l LEXICON --top 20                  # one row per document
-ava jargon delta before/ after/ -l LEXICON                       # A versus B density with a bootstrap CI
+ava jargon delta before/ after/ -l LEXICON                       # A versus B density per class, with a bootstrap CI
 ```
 
 Add `--json` to either command for one object instead of text.
