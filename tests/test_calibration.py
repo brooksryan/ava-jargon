@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -12,6 +13,16 @@ SCRIPT = REPO / "app/scripts/build_baselines.py"
 spec = importlib.util.spec_from_file_location("calibration", SCRIPT)
 calibration = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(calibration)
+
+
+@pytest.fixture(autouse=True)
+def personal_store(tmp_path, monkeypatch):
+    home = tmp_path / "home"
+    home.mkdir()
+    store = tmp_path / "personal-store"
+    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setenv("AVA_HOME", str(store))
+    return store
 
 
 @pytest.fixture
@@ -41,8 +52,59 @@ def ready(monkeypatch):
                         lambda *args, **kwargs: (modules, ["1", "1b", "2"], [], ""))
 
 
-def run(inputs, output, *extra):
-    return calibration.main(["--manifest", str(inputs), "--output", str(output), *extra])
+def run(inputs, output=None, *extra):
+    arguments = ["--manifest", str(inputs)]
+    if output is not None:
+        arguments += ["--output", str(output)]
+    return calibration.main([*arguments, *extra])
+
+
+def test_default_output_uses_personal_store_and_source_version(inputs, personal_store, ready, monkeypatch):
+    monkeypatch.setattr(calibration.metadata, "version", lambda package: "0.0.1")
+    assert run(inputs) == 0
+    outputs = list((personal_store / "bands/generated").iterdir())
+    assert len(outputs) == 1
+    assert (outputs[0] / "baselines_run.json").is_file()
+    assert {p.name for p in (outputs[0] / "bands").iterdir()} == {
+        "chat.json", "code.json", "doc-shared.json", "doc-technical.json"}
+    version = re.search(r'^version = "([^"]+)"',
+                        (REPO / "pyproject.toml").read_text(), re.M).group(1)
+    assert json.loads((personal_store / "config.json").read_text())["ava"] == version
+    for table in (outputs[0] / "bands").glob("*.json"):
+        assert json.loads(table.read_text())["meta"]["ava"] == version
+
+
+def test_default_runs_are_unique_and_preserve_active_bands(inputs, tmp_path, personal_store, ready, monkeypatch):
+    active = personal_store / "bands/code.json"
+    active.parent.mkdir(parents=True)
+    active.write_text("reviewed personal bands")
+    project_active = tmp_path / ".ava/bands/code.json"
+    project_active.parent.mkdir(parents=True)
+    project_active.write_text("reviewed project bands")
+    monkeypatch.chdir(tmp_path)
+    assert run(inputs) == 0
+    generated = personal_store / "bands/generated"
+    first = next(generated.iterdir())
+    original = (first / "baselines_run.json").read_bytes()
+    assert run(inputs) == 0
+    assert len(list(generated.iterdir())) == 2
+    assert (first / "baselines_run.json").read_bytes() == original
+    assert active.read_text() == "reviewed personal bands"
+    assert project_active.read_text() == "reviewed project bands"
+
+
+def test_default_store_uses_home_when_ava_home_is_unset(inputs, tmp_path, ready, monkeypatch):
+    monkeypatch.delenv("AVA_HOME")
+    assert run(inputs) == 0
+    assert len(list((tmp_path / "home/.ava/bands/generated").iterdir())) == 1
+
+
+def test_explicit_output_overrides_default(inputs, tmp_path, personal_store, ready):
+    output = tmp_path / "chosen-output"
+    assert run(inputs, output) == 0
+    assert (output / "baselines_run.json").is_file()
+    assert not (personal_store / "bands/generated").exists()
+    assert (personal_store / "config.json").is_file()
 
 
 def test_complete_run_has_rates_and_provenance(inputs, tmp_path, ready):

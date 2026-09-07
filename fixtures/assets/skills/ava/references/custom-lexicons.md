@@ -16,7 +16,7 @@ The jargon scorer (W-M10, `ava jargon score`) compares text to a lexicon. A lexi
 ava jargon build corpus/APPROVED corpus/CONTRAST -o /abs/path/lexicons/my-lexicon.json
 ```
 
-Each side accepts several directories, comma-separated. Pass an absolute `-o` path: the default resolves against your current directory.
+Each side accepts several directories, comma-separated. The default output is `~/.ava/lexicons/lexicon.json`; `AVA_HOME` moves the store. `--project` writes into the project `.ava/lexicons/` directory. An explicit `-o` path takes precedence.
 
 ## Extend a shipped lexicon instead
 

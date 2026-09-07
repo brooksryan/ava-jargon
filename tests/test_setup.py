@@ -19,7 +19,13 @@ ASSETS = files("ava_jargon.fixtures") / "assets"
 SKILL_FILES = ("SKILL.md", "references/voices.md", "references/custom-lexicons.md")
 GATES = ("ava-prose-gate.md", "ava-technical-gate.md")
 CODEX_AGENTS = [f".codex/agents/{g[:-3]}.toml" for g in GATES]
-STORE = [".ava/config.json"]
+STORE = [".ava/config.json", ".ava/.fixtures.json"]
+STORE += [f".ava/voices/{name}.json" for name in
+          ("code", "shared-docs", "technical-docs", "westinghouse")]
+STORE += [f".ava/bands/{name}.json" for name in
+          ("chat", "code", "doc-shared", "doc-technical")]
+STORE += [f".ava/lexicons/universal-{name}.json" for name in
+          ("chat", "code", "doc-shared", "doc-technical")]
 
 
 def store_note(home):
@@ -140,7 +146,7 @@ def test_agents_md_prints_the_contract_and_writes_nothing(ava, project, home):
     r = ava("setup", "agents-md")
     assert r.returncode == 0, r.stderr
     assert r.stdout == (ASSETS / "gate-contract.md").read_text()
-    assert written(project) == [] and written(home) == STORE
+    assert written(project) == [] and written(home) == sorted(STORE)
 
 
 def test_agents_md_refuses_global(ava):

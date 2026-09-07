@@ -40,7 +40,7 @@ A rule set is a shorthand for a list of rule ids. A voice names the ids it runs,
 | `doc-technical` | design docs, specs, runbooks (the default for `--rules technical`) |
 | `code` | READMEs, code comments, docstrings, PR text, commit messages |
 
-A band table is one file under `fixtures/bands/`, and a project or personal table under `.ava/bands/` resolves by name after the shipped four. `ava bands list` names them, and `ava bands show NAME` prints one.
+The first normal command copies the four shipped band tables from `fixtures/bands/` into `~/.ava/bands/`. `AVA_HOME` moves the personal store. A name resolves project first, then personal, then packaged. Project tables live in `.ava/bands/` in the working directory or a parent directory. `ava bands list` names them, and `ava bands show NAME` prints one.
 
 ## Bands
 
@@ -74,12 +74,14 @@ An entry can name `exclude_rules`, such as `["W-M1"]` for a corpus whose format 
 The example shows one entry. Add the remaining corpora before you run the command. Keep private corpus manifests outside version control.
 
 ```bash
-python app/scripts/build_baselines.py --manifest /path/to/inputs.json --output tmp/calibration/review-1
+python app/scripts/build_baselines.py --manifest /path/to/inputs.json
 ```
 
-The rebuild requires the parser extra and all 22 calibration checks. It stops if a required input or check is unavailable. The output directory must be new and outside `fixtures/` and `app/`. It contains `baselines_run.json` and four tables under `bands/`. The run records the analysis time, input hashes, document and word counts, and completed checks. Review the tables before copying them to `fixtures/bands/`.
+The rebuild requires the parser extra and all 22 calibration checks. It stops if a required input or check is unavailable. It initializes the personal store on its first run and writes each complete result to a new directory under `~/.ava/bands/generated/`. `AVA_HOME` moves the personal store. Each result contains `baselines_run.json` and four tables under `bands/`. The run records the analysis time, input hashes, document and word counts, and completed checks.
 
-For a complete cached run, add `--reuse tmp/calibration/review-1/baselines_run.json`. Choose a new output directory. The sources, manifest, and analysis code must match the cached run. Before you trust a rule, run it over a sample of the audience's own writing. A rule that fires often there is a wrong rule for that audience.
+Review the generated tables, then copy the ones you accept into `~/.ava/bands/` to use them as personal bands. With `AVA_HOME`, copy them into `$AVA_HOME/bands/`. Generating a result leaves active band tables intact. To choose another review directory, pass `--output tmp/calibration/review-1`; the directory must be new and outside `fixtures/` and `app/`.
+
+For a complete cached run, add `--reuse /path/to/result/baselines_run.json`. Each reuse gets a new result directory unless you supply `--output`. The sources, manifest, and analysis code must match the cached run. Before you trust a rule, run it over a sample of the audience's own writing. A rule that fires often there is a wrong rule for that audience.
 
 ## The rules that run
 

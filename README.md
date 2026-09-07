@@ -67,7 +67,9 @@ band summary (bands: doc-technical, 599 words):
 
 ## Configure
 
-`ava` writes `~/.ava/config.json` on its first run, with the version that wrote your store. Each run reads that stamp before it changes a file shape. A project config at `.ava/config.json` sets defaults for the repository and takes precedence over the personal one:
+`ava` prepares your personal store on the first command that runs after argument parsing. It copies the shipped defaults into `~/.ava/voices/`, `~/.ava/lexicons/`, and `~/.ava/bands/`, and creates `~/.ava/extensions/`. `AVA_HOME` moves the whole store. `--help` and `--version` do not create it.
+
+Each run fills missing defaults, including stores that already carry the current version. Upgrades refresh untouched copies and preserve your edits. The store records fixture hashes in `.fixtures.json` and its version in `config.json` after the copies succeed. A project config at `.ava/config.json` sets defaults for the repository and takes precedence over the personal one:
 
 ```json
 {"voice": "code", "extend": [], "bands": "code"}

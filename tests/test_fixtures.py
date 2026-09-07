@@ -61,6 +61,8 @@ def test_plugin_entries_use_the_fixture_sources():
 def test_workspace_lexicons_cannot_shadow_shipped_defaults(tmp_path, monkeypatch):
     from ava_jargon import cli
 
+    monkeypatch.setenv("AVA_HOME", str(tmp_path / "store"))
+    monkeypatch.chdir(tmp_path)
     workspace = tmp_path / "lexicons"
     workspace.mkdir()
     (workspace / "universal-code.json").write_text("{}")
@@ -91,5 +93,5 @@ def test_release_archives_contain_only_the_selected_fixture_data():
         assert "tests/conftest.py" in names
         for name in EXPECTED:
             assert source.extractfile(root + "fixtures/" + name).read() == (REPO / "fixtures" / name).read_bytes()
-        assert not any(n.split("/")[0] in {"corpus", "audit", "lexicons", "notes", "tmp"}
+        assert not any(n.split("/")[0] in {".ava", "corpus", "audit", "lexicons", "notes", "tmp"}
                        for n in names)

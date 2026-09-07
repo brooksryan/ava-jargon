@@ -46,7 +46,8 @@ def cmd_jargon_build(args):
                   min_approved_count=args.min_approved_count,
                   stoplist=stop, stoplist_path=args.stoplist)
     lex["meta"]["ava"] = _installed_version()
-    out = Path(args.out)
+    out = (Path(args.out).expanduser() if args.out else
+           _data_root("lexicons", args.project) / "lexicon.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(lex, indent=1))
     m = lex["meta"]
@@ -90,7 +91,7 @@ def _print_terms_with_document_counts(heading, ranked):
 
 
 def cmd_jargon_score(args):
-    lex, _ = _apply_extensions(J.load_lexicon(args.lexicon), args.extend)
+    lex, _ = _apply_extensions(_load_lexicon(args.lexicon), args.extend)
     target = Path(args.target)
     if target.is_dir():
         res = J.score_dir(target, lex)
@@ -150,7 +151,7 @@ DELTA_LABELS = (("jargon", "jargon"),
 
 
 def cmd_jargon_delta(args):
-    lex, _ = _apply_extensions(J.load_lexicon(args.lexicon), args.extend)
+    lex, _ = _apply_extensions(_load_lexicon(args.lexicon), args.extend)
     res = J.delta(args.a, args.b, lex, n_boot=args.boot)
     if args.json:
         print(json.dumps(res, indent=1))
@@ -173,8 +174,21 @@ _FENCE_RE = re.compile(r"^(```|~~~).*?^\1[^\n]*$", re.M | re.S)
 _INLINE_RE = re.compile(r"`[^`\n]+`")
 
 
+def _data_root(kind, project=False):
+    if project:
+        ancestors = CFG.project_ancestors()
+        for directory in ancestors:
+            if (directory / ".ava" / kind).is_dir():
+                return directory / ".ava" / kind
+        for directory in ancestors:
+            if (directory / ".ava").is_dir():
+                return directory / ".ava" / kind
+        return Path.cwd() / ".ava" / kind
+    return CFG.personal_path().parent / kind
+
+
 def _extension_root():
-    return Path(os.environ.get("AVA_HOME") or Path.home() / ".ava") / "extensions"
+    return _data_root("extensions")
 
 
 def _extension_names():
@@ -399,18 +413,31 @@ def _rules_to_run(flag, voice):
 
 
 def _lexicon_by_name(spec):
-    """A lexicon path, or a shipped name such as universal-code."""
+    """A lexicon path or a name in the project, personal store, or package."""
     p = Path(spec).expanduser()
-    if p.suffix == ".json" and p.is_file():
+    if p.is_file():
         return p
-    candidate = FIXTURES / "lexicons" / f"{spec}.json"
-    return candidate if candidate.is_file() else None
+    if not NAME_RE.fullmatch(spec):
+        return None
+    for root in (_data_root("lexicons", project=True), _data_root("lexicons"),
+                 FIXTURES / "lexicons"):
+        candidate = root / f"{spec}.json"
+        if candidate.is_file():
+            return candidate
+    return None
 
 
 def _universal_lexicon(bands_name):
-    """The shipped lexicon for the named bands."""
-    candidate = FIXTURES / "lexicons" / f"universal-{bands_name}.json"
-    return candidate if candidate.is_file() else None
+    """The default lexicon for the named bands."""
+    return _lexicon_by_name(f"universal-{bands_name}")
+
+
+def _load_lexicon(spec):
+    path = _lexicon_by_name(spec)
+    if path is None:
+        print(f"error: no such lexicon: {spec}", file=sys.stderr)
+        sys.exit(2)
+    return J.load_lexicon(path)
 
 
 def cmd_check(args):
@@ -425,10 +452,7 @@ def cmd_check(args):
 
     lexicon = None
     if args.lexicon:
-        if not Path(args.lexicon).is_file():
-            print(f"error: no such lexicon: {args.lexicon}", file=sys.stderr)
-            return 2
-        lexicon = J.load_lexicon(args.lexicon)
+        lexicon = _load_lexicon(args.lexicon)
     fields = None
     if args.field:
         fields = {}
@@ -915,7 +939,8 @@ def main():
                    help="dir(s) of the audience's own words, comma-separated")
     b.add_argument("contrast",
                    help="dir(s) of the writing under suspicion, comma-separated")
-    b.add_argument("-o", "--out", default="lexicons/lexicon.json")
+    b.add_argument("-o", "--out", help="output path (default: personal lexicons/lexicon.json)")
+    b.add_argument("--project", action="store_true", help="build into the project .ava/lexicons directory")
     b.add_argument("--min-contrast-count", type=int, default=5)
     b.add_argument("--min-approved-count", type=int, default=3)
     b.add_argument("--ll", type=float, default=15.13,

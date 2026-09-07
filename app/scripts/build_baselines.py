@@ -13,10 +13,12 @@ import sys
 import tempfile
 from datetime import datetime, timezone
 from importlib import metadata
+from uuid import uuid4
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from app import checks
+from app import config as CFG
 from app.checks import Context, bands
 
 SURFACES = {"chat", "code", "doc-shared", "doc-technical"}
@@ -202,7 +204,8 @@ def make_tables(run):
                     entry[f"{key}_n"] = len(values)
             entries[rule] = entry
         table = {"name": surface, "rules": entries,
-                 "meta": {"generated": run["provenance"]["generated"],
+                 "meta": {"ava": source_version(),
+                          "generated": run["provenance"]["generated"],
                           "script": "app/scripts/build_baselines.py",
                           "unit": "findings per 1,000 words, corpus-level",
                           "band_rule": "human = [min,max] across corpora; ai = median",
@@ -224,6 +227,18 @@ def output_path(path):
     return resolved
 
 
+def source_version():
+    text = (ROOT / "pyproject.toml").read_text()
+    match = re.search(r'^version = "([^"]+)"', text, re.M)
+    if not match:
+        raise ValueError("pyproject.toml lacks the source version")
+    return match.group(1)
+
+
+def default_output():
+    return CFG.personal_path().parent / "bands" / "generated" / uuid4().hex
+
+
 def write_results(output, run, tables):
     output.parent.mkdir(parents=True, exist_ok=True)
     staging = Path(tempfile.mkdtemp(prefix=".calibration-", dir=output.parent))
@@ -242,11 +257,14 @@ def write_results(output, run, tables):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", required=True, type=Path, help="local JSON corpus manifest")
-    parser.add_argument("--output", required=True, type=Path, help="new directory for review")
+    parser.add_argument("--output", type=Path,
+                        help="new review directory (default: $AVA_HOME/bands/generated/<run>)")
     parser.add_argument("--reuse", type=Path, help="complete cached run with unchanged inputs and checks")
     args = parser.parse_args(argv)
     try:
-        output = output_path(args.output)
+        output = output_path(args.output if args.output is not None else default_output())
+        for note in CFG.ensure_store(source_version()):
+            print(f"note: {note}", file=sys.stderr)
         manifest_hash, sources, documents = read_inputs(args.manifest.resolve())
         selected = required_checks()
         identity = {"manifest_sha256": manifest_hash, "engine": engine_identity(),
@@ -260,10 +278,11 @@ def main(argv=None):
         validate_run(run, sources, identity)
         tables = make_tables(run)
         write_results(output, run, tables)
-    except (OSError, ValueError, UnicodeError) as error:
+    except (OSError, ValueError, UnicodeError, CFG.ConfigError) as error:
         print(f"calibration: {error}", file=sys.stderr)
         return 2
-    print(f"Wrote complete calibration to {output}. Review bands before copying them to fixtures/bands/.")
+    print(f"Wrote complete calibration to {output}. Review bands before copying them to "
+          f"{CFG.personal_path().parent / 'bands'}.")
     return 0
 
 
