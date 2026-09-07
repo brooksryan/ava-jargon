@@ -5,23 +5,22 @@ against, and the extensions the audience accepts. It also records the rubric
 a reviewer scores where mechanics cannot decide. Four voices ship with the
 package. A personal voice lives in $AVA_HOME/voices/NAME.json; a project
 voice lives in .ava/voices/NAME.json and travels with the repository. A name
-resolves shipped first, then project, then personal.
+resolves project first, then personal, then shipped.
 """
 import json
-import os
 import re
 from pathlib import Path
 
 try:
     from ..schema_check import validate_against
     from ..resources import FIXTURES
-    from ..config import project_ancestors
+    from ..config import project_ancestors, personal_path
     from ..checks import all_rule_ids, rule_ids_in_set
     from ..checks import bands as B
 except ImportError:
     from schema_check import validate_against
     from resources import FIXTURES
-    from config import project_ancestors
+    from config import project_ancestors, personal_path
     from checks import all_rule_ids, rule_ids_in_set
     from checks import bands as B
 
@@ -123,11 +122,11 @@ def validate(doc):
 # --- storage ----------------------------------------------------------------
 
 SHIPPED_ROOT = FIXTURES / "voices" / "shipped"
-SCOPES = ("shipped", "project", "personal")
+SCOPES = ("project", "personal", "shipped")
 
 
 def personal_root():
-    return Path(os.environ.get("AVA_HOME") or Path.home() / ".ava") / "voices"
+    return personal_path().parent / "voices"
 
 
 def project_root():
@@ -155,7 +154,7 @@ def catalog():
 
 
 def resolve(spec):
-    """A voice is a file path or a name: shipped first, then project, then personal."""
+    """A voice is a file path or a name: project first, then personal, then shipped."""
     p = Path(spec).expanduser()
     if p.suffix == ".json" and p.is_file():
         return p, "file"

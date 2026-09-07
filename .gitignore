@@ -26,5 +26,6 @@ brooks_slack_vs_brooks_agents.json
 
 # Local-only: pre-git snapshots and working notes
 .bak/
+.ava/
 notes/
 BACKLOG.md

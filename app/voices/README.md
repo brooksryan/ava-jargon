@@ -39,7 +39,7 @@ ava voice schema                    # the JSON schema
 ava voice new NAME FILE             # create ~/.ava/voices/NAME.json from a JSON document; - reads stdin
 ava voice new NAME FILE --project   # create .ava/voices/NAME.json in the project
 ava voice new NAME FILE --checks technical   # seed the checks from a rule set when the document names none
-ava voice list                      # every voice, shipped rows first
+ava voice list                      # every voice, project rows first
 ava voice rubric NAME               # the settings and the rules as a reviewer reads them; --json prints the document
 ava voice set NAME checks +W-M11 -T-M3       # add and drop rule ids; bare ids replace the list
 ava voice set NAME bands code       # bands, lexicon, and description take one value; extend takes ids like checks
@@ -48,12 +48,14 @@ ava voice rm NAME                   # delete the voice the name resolves to
 ava check FILE --voice NAME         # the voice supplies --rules, --bands, --lexicon, and --extend; an explicit flag overrides it
 ```
 
-`new` and `set` validate the document against the schema. They refuse a document that misses the schema, name the failed field, and exit with code 2. They also refuse a rule id no checker carries and a band table no file carries. The `new` command refuses a name that exists unless you pass `--force`. `set` and `rm` refuse a shipped voice.
+`new` and `set` validate the document against the schema. They refuse a document that misses the schema, name the failed field, and exit with code 2. They also refuse a rule id no checker carries and a band table no file carries. The `new` command refuses a name that exists unless you pass `--force`.
+
+`set` can edit a personal copy of a shipped voice. Removing that copy resets it: the next normal command restores the default. Both commands refuse files inside the package.
 
 ## Where a voice lives
 
-The shipped voices live in the package. A personal voice lives in `~/.ava/voices/` (`AVA_HOME` moves it). A project voice lives in `.ava/voices/` in the working directory or a parent directory and travels with the repository. A name resolves shipped first, then project, then personal. A path that ends in `.json` also names a voice.
+The first normal command copies shipped voices from the package into `~/.ava/voices/` (`AVA_HOME` moves it). Custom personal voices live there too. A project voice lives in `.ava/voices/` in the working directory or a parent directory and travels with the repository. A name resolves project first, then personal, then packaged. A path that ends in `.json` also names a voice.
 
 ## Gates
 
-Both gate agents accept a voice by name. The gate runs the check under the voice and scores every rubric rule. It quotes the sentence that cost a score and fails the verdict when a rule misses its requirement. [skills/ava/references/voices.md](../../skills/ava/references/voices.md) gives an agent the steps to author one. This repository's issue voice is [.ava/voices/pm-issue.json](../../.ava/voices/pm-issue.json).
+Both gate agents accept a voice by name. The gate runs the check under the voice and scores every rubric rule. It quotes the sentence that cost a score and fails the verdict when a rule misses its requirement. [skills/ava/references/voices.md](../../skills/ava/references/voices.md) gives an agent the steps to author one.

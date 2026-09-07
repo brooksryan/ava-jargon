@@ -63,8 +63,9 @@ def project(tmp_path):
 @pytest.fixture
 def ava(ava_bin, project, home):
     """Run `ava` with the given arguments; returns the CompletedProcess."""
-    def run(*args, stdin=None, cwd=None):
+    def run(*args, stdin=None, cwd=None, env=None):
         return subprocess.run([ava_bin, *args], cwd=cwd or project, input=stdin,
                               text=True, capture_output=True,
-                              env={**os.environ, "HOME": str(home)})
+                              env={**{k: v for k, v in os.environ.items() if k != "AVA_HOME"},
+                                   "HOME": str(home), **(env or {})})
     return run

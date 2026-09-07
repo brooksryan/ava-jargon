@@ -7,7 +7,6 @@ human-high rule is a compliance dial and only ever compares against the human
 band, so its wording can never call a high rate AI evidence.
 """
 import json
-import os
 import re
 import sys
 from collections import Counter
@@ -16,12 +15,12 @@ from pathlib import Path
 try:
     from ..schema_check import validate_against
     from ..resources import FIXTURES
-    from ..config import project_ancestors
+    from ..config import project_ancestors, personal_path
 except ImportError:  # flat script layout: the module sits one directory up
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from schema_check import validate_against
     from resources import FIXTURES
-    from config import project_ancestors
+    from config import project_ancestors, personal_path
 
 MIN_WORDS = 300  # below this a rate is noise: one dash in 200 words reads 5/1k
 
@@ -42,7 +41,7 @@ def schema():
 
 
 def personal_root():
-    return Path(os.environ.get("AVA_HOME") or Path.home() / ".ava") / "bands"
+    return personal_path().parent / "bands"
 
 
 def project_root():
@@ -53,9 +52,9 @@ def project_root():
     return Path.cwd() / PROJECT_DIR
 
 
-SCOPE_ROOTS = (("shipped", lambda: SHIPPED_ROOT),
-               ("project", project_root),
-               ("personal", personal_root))
+SCOPE_ROOTS = (("project", project_root),
+               ("personal", personal_root),
+               ("shipped", lambda: SHIPPED_ROOT))
 
 
 def catalog():
@@ -70,7 +69,7 @@ def catalog():
 
 
 def resolve(name):
-    """A table name resolves shipped first, then project, then personal."""
+    """A table name resolves project first, then personal, then shipped."""
     for scope, root_of in SCOPE_ROOTS:
         candidate = root_of() / f"{name}.json"
         if candidate.is_file() and candidate.name != SCHEMA_PATH.name:
