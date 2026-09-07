@@ -63,7 +63,23 @@ Each checker file declares three names:
 
 The runner blanks each fenced code block and each inline code span before every test. The blank keeps the length of the span, so line numbers stay correct.
 
-After a corpus or rule change, rebuild the bands with `python app/scripts/build_baselines.py`. Before you trust a rule, run it over a sample of the audience's own writing. A rule that fires often there is a wrong rule for that audience.
+After a corpus or rule change, prepare a local JSON manifest with a `corpora` list. Each entry needs `label`, `path`, `surface`, `side`, and `origin`. Labels must be unique. Paths resolve relative to the manifest. Use `chat`, `code`, `doc-shared`, or `doc-technical` for the surface; `human` or `ai` for the side; and `universal` or `internal` for the origin. Include a human and an AI universal corpus for each surface.
+
+An entry can name `exclude_rules`, such as `["W-M1"]` for a corpus whose format excludes dash characters. Preserve the required exclusions for each corpus format. Every configured comparison group must retain at least one corpus for each rule.
+
+```json
+{"corpora": [{"label": "public-human-chat", "path": "samples/human", "surface": "chat", "side": "human", "origin": "universal", "exclude_rules": []}]}
+```
+
+The example shows one entry. Add the remaining corpora before you run the command. Keep private corpus manifests outside version control.
+
+```bash
+python app/scripts/build_baselines.py --manifest /path/to/inputs.json --output tmp/calibration/review-1
+```
+
+The rebuild requires the parser extra and all 22 calibration checks. It stops if a required input or check is unavailable. The output directory must be new and outside `fixtures/` and `app/`. It contains `baselines_run.json` and four tables under `bands/`. The run records the analysis time, input hashes, document and word counts, and completed checks. Review the tables before copying them to `fixtures/bands/`.
+
+For a complete cached run, add `--reuse tmp/calibration/review-1/baselines_run.json`. Choose a new output directory. The sources, manifest, and analysis code must match the cached run. Before you trust a rule, run it over a sample of the audience's own writing. A rule that fires often there is a wrong rule for that audience.
 
 ## The rules that run
 
