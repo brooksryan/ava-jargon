@@ -13,12 +13,18 @@ try:
 except ImportError:  # Python 3.10 and older
     import tomli as tomllib
 
-from conftest import REPO
+from conftest import REPO, installed_version
 
 ASSETS = files("ava_jargon") / "assets"
 SKILL_FILES = ("SKILL.md", "references/voices.md", "references/custom-lexicons.md")
 GATES = ("ava-prose-gate.md", "ava-technical-gate.md")
 CODEX_AGENTS = [f".codex/agents/{g[:-3]}.toml" for g in GATES]
+STORE = [".ava/config.json"]
+
+
+def store_note(home):
+    """The first run of any command stamps the personal store and says so."""
+    return f"note: wrote {home / '.ava' / 'config.json'} (ava {installed_version()})\n"
 
 
 def written(root):
@@ -88,7 +94,7 @@ def test_cursor_global_writes_under_home(ava, project, home):
     r = ava("setup", "cursor", "-g")
     assert r.returncode == 0, r.stderr
     assert written(project) == []
-    assert written(home) == sorted(skill_paths() + [f".cursor/agents/{g}" for g in GATES])
+    assert written(home) == sorted(skill_paths() + [f".cursor/agents/{g}" for g in GATES] + STORE)
 
 
 def test_opencode_global_writes_the_xdg_config_dir(ava, project, home):
@@ -96,15 +102,15 @@ def test_opencode_global_writes_the_xdg_config_dir(ava, project, home):
     assert r.returncode == 0, r.stderr
     assert written(project) == []
     assert written(home) == sorted(skill_paths()
-                                   + [f".config/opencode/agents/{g}" for g in GATES])
+                                   + [f".config/opencode/agents/{g}" for g in GATES] + STORE)
 
 
-def test_codex_writes_the_skill_and_both_gates(ava, project):
+def test_codex_writes_the_skill_and_both_gates(ava, project, home):
     r = ava("setup", "codex")
     assert r.returncode == 0, r.stderr
     assert written(project) == sorted(skill_paths() + CODEX_AGENTS)
     assert sorted(r.stdout.split()) == sorted(skill_paths() + CODEX_AGENTS)
-    assert r.stderr == ""
+    assert r.stderr == store_note(home)
 
 
 @pytest.mark.parametrize("name", GATES)
@@ -124,7 +130,7 @@ def test_codex_global_writes_the_user_codex_dir(ava, project, home):
     r = ava("setup", "codex", "-g")
     assert r.returncode == 0, r.stderr
     assert written(project) == []
-    assert written(home) == sorted(skill_paths() + CODEX_AGENTS)
+    assert written(home) == sorted(skill_paths() + CODEX_AGENTS + STORE)
 
 
 # --- the AGENTS.md contract --------------------------------------------------
@@ -134,7 +140,7 @@ def test_agents_md_prints_the_contract_and_writes_nothing(ava, project, home):
     r = ava("setup", "agents-md")
     assert r.returncode == 0, r.stderr
     assert r.stdout == (ASSETS / "gate-contract.md").read_text()
-    assert written(project) == [] and written(home) == []
+    assert written(project) == [] and written(home) == STORE
 
 
 def test_agents_md_refuses_global(ava):

@@ -9,6 +9,7 @@ Corpus dirs hold one .txt per document. Current metric groups:
   voice    a named voice: the checks, bands, lexicon, and extensions for the
            check, and a rubric a reviewer scores (new / list / rubric / set / rm / schema)
   bands    the band tables the summary compares against (list / show / schema)
+  config   the store stamp and the run defaults (show / schema)
 
 Planned: cpidr, surface stats (word/sentence/paragraph) - the audit scripts in
 app/scripts/ are the basis and will fold in here.
@@ -22,10 +23,12 @@ from importlib import metadata
 from pathlib import Path
 
 try:
+    from . import config as CFG
     from . import jargon as J  # installed package layout
     from . import voices as V
 except ImportError:  # flat script layout via the ./ava wrapper
     sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import config as CFG
     import jargon as J
     import voices as V
 
@@ -40,6 +43,7 @@ def cmd_jargon_build(args):
                   zipf_gate=args.zipf_gate,
                   min_approved_count=args.min_approved_count,
                   stoplist=stop, stoplist_path=args.stoplist)
+    lex["meta"]["ava"] = _installed_version()
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(lex, indent=1))
@@ -297,7 +301,7 @@ def cmd_jargon_extend(args):
     m.update({"name": args.name, "sources": args.paths, "built": J.today(),
               "options": {"split": args.split, "field": args.field,
                           "keep_code": args.keep_code},
-              "note": args.note})
+              "note": args.note, "ava": _installed_version()})
     out = _extension_root() / f"{args.name}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(ext, indent=1))
@@ -437,6 +441,15 @@ def cmd_check(args):
             name, _, value = pair.partition("=")
             fields[name.strip()] = value
 
+    try:
+        settings, _ = CFG.resolved()
+    except CFG.ConfigError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    voice_from_config = not args.voice and "voice" in settings
+    if voice_from_config:
+        args.voice = settings["voice"][0]
+
     voice = None
     if args.voice:
         try:
@@ -449,7 +462,13 @@ def cmd_check(args):
         args.bands = args.bands or voice["bands"]
         args.extend = list(args.extend or []) + [
             e for e in voice.get("extend", []) if e not in (args.extend or [])]
-        print(f"voice: {voice['name']} ({scope})", file=sys.stderr)
+        print(f"voice: {voice['name']} ({scope}{', from config' if voice_from_config else ''})",
+              file=sys.stderr)
+    if "bands" in settings:
+        args.bands = args.bands or settings["bands"][0]
+    if "extend" in settings:
+        args.extend = list(args.extend or []) + [
+            e for e in settings["extend"][0] if e not in (args.extend or [])]
 
     rules, rules_label = _rules_to_run(args.rules, voice)
     bands_name = args.bands or (B.RULES_TO_BANDS.get(rules) if isinstance(rules, str) else None)
@@ -521,7 +540,7 @@ def cmd_check(args):
                f"{len(findings)} findings")
     if skipped:
         verdict += f" ({len(skipped)} skipped: {', '.join(skipped)})"
-    print(verdict, file=sys.stderr)
+    print(f"{verdict} · ava {_installed_version()}", file=sys.stderr)
     color = (sys.stderr.isatty() and "NO_COLOR" not in os.environ
              and os.environ.get("TERM") != "dumb")
     band_lines, band_data = B.summarize(findings, words, bands_name, rules_checked,
@@ -531,6 +550,7 @@ def cmd_check(args):
         doc = C.report_json([n for n, _ in documents], rules_label,
                             tiers, skipped, findings, len(checkers))
         doc["bands"] = band_data
+        doc["ava"] = _installed_version()
         if voice:
             doc["voice"] = {"name": voice["name"], "scope": scope, "path": str(path)}
         report = json.dumps(doc, indent=1)
@@ -602,6 +622,26 @@ def cmd_bands_schema(args):
     sys.stdout.write(B.SCHEMA_PATH.read_text())
 
 
+# --- config: the store stamp and the run defaults ----------------------------
+
+
+def cmd_config_show(args):
+    try:
+        settings, paths = CFG.resolved()
+    except CFG.ConfigError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    for scope in ("personal", "project"):
+        print(f"{scope}: {paths[scope] or 'none'}")
+    for field, (value, scope) in settings.items():
+        shown = ", ".join(value) if isinstance(value, list) else value
+        print(f"{field:<8} {shown}  ({scope})")
+
+
+def cmd_config_schema(args):
+    sys.stdout.write(CFG.SCHEMA_PATH.read_text())
+
+
 # --- voices: checks, bands, lexicon, extensions, and a rubric -----------------
 
 def _read_json_doc(spec):
@@ -644,6 +684,7 @@ def cmd_voice_new(args):
         if dst.exists() and not args.force:
             raise V.VoiceError(f"{dst} exists (--force overwrites, "
                                "ava voice set edits)")
+        doc["ava"] = _installed_version()
         V.save(dst, doc)
     except (V.VoiceError, OSError) as e:
         print(f"error: {e}", file=sys.stderr)
@@ -704,6 +745,7 @@ def cmd_voice_set(args):
                 raise V.VoiceError("a voice cannot change its name; "
                                    "create a new one")
             edited = V.merge(base, patch)
+        edited["ava"] = _installed_version()
         V.save(path, edited)
     except (V.VoiceError, OSError) as e:
         print(f"error: {e}", file=sys.stderr)
@@ -972,6 +1014,14 @@ def main():
     ck.add_argument("-o", "--out", help="write the report to this file")
     ck.set_defaults(fn=cmd_check)
 
+    cf = sub.add_parser("config", help="the store stamp and the run defaults: "
+                                       "~/.ava/config.json and .ava/config.json")
+    csub = cf.add_subparsers(dest="ccmd", required=True)
+    cs = csub.add_parser("show", help="print the settings a run takes and where each came from")
+    cs.set_defaults(fn=cmd_config_show)
+    ch = csub.add_parser("schema", help="print the config JSON schema")
+    ch.set_defaults(fn=cmd_config_schema)
+
     bd = sub.add_parser("bands", help="the band tables: shipped, project, and personal")
     bsub = bd.add_subparsers(dest="bcmd", required=True)
     bl = bsub.add_parser("list", help="list the band tables on this machine")
@@ -1042,6 +1092,12 @@ def main():
     st.set_defaults(fn=cmd_setup)
 
     args = ap.parse_args()
+    try:
+        for note in CFG.ensure_store(_installed_version()):
+            print(f"note: {note}", file=sys.stderr)
+    except CFG.ConfigError as e:
+        print(f"error: {e}", file=sys.stderr)
+        sys.exit(2)
     sys.exit(args.fn(args) or 0)
 
 

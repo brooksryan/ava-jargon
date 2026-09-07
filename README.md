@@ -65,6 +65,16 @@ band summary (bands: doc-technical, 599 words):
   W-M4  1.67/1k · human 0.07-1.51 · ai ~0.13 -> FAIL · ai-range
 ```
 
+## Configure
+
+`ava` writes `~/.ava/config.json` on its first run, with the version that wrote your store. Each run reads that stamp before it changes a file shape. A project config at `.ava/config.json` sets defaults for the repository and takes precedence over the personal one:
+
+```json
+{"voice": "code", "extend": [], "bands": "code"}
+```
+
+`ava config show` prints the settings a run takes and where each came from. `ava config schema` prints the shape.
+
 ## Read more
 
 | Feature | Document |

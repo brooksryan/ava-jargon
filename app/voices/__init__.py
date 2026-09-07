@@ -14,10 +14,12 @@ from pathlib import Path
 
 try:
     from ..schema_check import validate_against
+    from ..config import project_ancestors
     from ..checks import all_rule_ids, rule_ids_in_set
     from ..checks import bands as B
 except ImportError:
     from schema_check import validate_against
+    from config import project_ancestors
     from checks import all_rule_ids, rule_ids_in_set
     from checks import bands as B
 
@@ -74,7 +76,7 @@ def _cross_checks(doc, errors):
 
 SET_FOR_BANDS = {"chat": "westinghouse", "doc-shared": "westinghouse",
                  "doc-technical": "technical", "code": "technical"}
-KEY_ORDER = ("name", "description", "checks", "bands", "lexicon", "extend", "rubric")
+KEY_ORDER = ("name", "description", "checks", "bands", "lexicon", "extend", "rubric", "ava")
 
 
 def upgrade(doc):
@@ -128,11 +130,10 @@ def personal_root():
 
 def project_root():
     """The nearest .ava/voices at or above the working directory, else ./.ava/voices."""
-    here = Path.cwd()
-    for d in (here, *here.parents):
+    for d in project_ancestors():
         if (d / PROJECT_DIR).is_dir():
             return d / PROJECT_DIR
-    return here / PROJECT_DIR
+    return Path.cwd() / PROJECT_DIR
 
 
 def root_for(scope):

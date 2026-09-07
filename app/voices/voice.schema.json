@@ -54,6 +54,10 @@
         "$ref": "#/$defs/rule"
       },
       "description": "The rubric. A reviewer scores every rule; the verdict fails when any rule misses its requirement."
+    },
+    "ava": {
+      "type": "string",
+      "description": "The ava version that wrote the file."
     }
   },
   "$defs": {
