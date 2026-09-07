@@ -1,11 +1,11 @@
 # Agents
 
-Two gate agents and one skill run the `ava` CLI inside an agent harness. The skill routes prose to a gate. The gate runs the mechanical check, judges the partial rules, scores a voice's rubric when the caller names one, and returns a verdict.
+Two gate agents and one skill run the `ava` CLI inside an agent harness. The skill routes prose to a gate and names the voice. The gate runs the mechanical check under that voice, judges the partial rules, scores the rubric when the voice carries one, and returns a verdict.
 
 | File | Role |
 | --- | --- |
-| [ava-prose-gate.md](ava-prose-gate.md) | chat, email, memos, proposals, announcements, issues: surfaces `chat` and `doc-shared` |
-| [ava-technical-gate.md](ava-technical-gate.md) | specs, runbooks, READMEs, comments, docstrings, PR text, commit messages: surfaces `doc-technical` and `code` |
+| [ava-prose-gate.md](ava-prose-gate.md) | chat, email, memos, proposals, announcements, issues: the `westinghouse` and `shared-docs` voices |
+| [ava-technical-gate.md](ava-technical-gate.md) | specs, runbooks, READMEs, comments, docstrings, PR text, commit messages: the `technical-docs` and `code` voices |
 | [../skills/ava/SKILL.md](../skills/ava/SKILL.md) | routing, invocation rules, the CLI install line, and references for lexicons and voices |
 | [../gate-contract.md](../gate-contract.md) | the AGENTS.md block for a harness without subagents |
 

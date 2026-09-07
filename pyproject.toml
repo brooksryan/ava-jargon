@@ -37,6 +37,7 @@ ava_jargon = [
     "bands/*.json",
     "assets/gate-contract.md",
     "voices/voice.schema.json",
+    "voices/shipped/*.json",
     "assets/agents/*.md",
     "assets/skills/*/*.md",
     "assets/skills/*/references/*.md",

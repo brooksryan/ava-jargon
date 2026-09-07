@@ -12,7 +12,7 @@ Every rate divides by content words, the tokens left after the function-word lis
 
 ## Shipped lexicons
 
-`ava check` picks the universal lexicon that matches the surface when the caller passes no `--lexicon`.
+`ava check` picks the universal lexicon the voice names, or the one named after the bands, when the caller passes no `--lexicon`.
 
 | File | Approved side (the audience) | Contrast side (scored against) | Surface |
 | --- | --- | --- | --- |
@@ -41,7 +41,7 @@ Add `--json` to either command for one object instead of text.
 
 ```bash
 ava jargon extend my-prompts prompts.jsonl --field text --note "typed prompts"
-ava check spec.md --rules technical --extend my-prompts
+ava check spec.md --voice technical-docs --extend my-prompts
 ava jargon extensions                                            # the profiles on this machine
 ```
 

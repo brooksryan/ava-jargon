@@ -1,10 +1,11 @@
 """Voices: one JSON document per voice, validated against voice.schema.json.
 
-A voice records the surface and the vocabulary extensions the mechanical
-check runs under, and the rubric a reviewer scores where mechanics cannot
-decide. A personal voice lives in $AVA_HOME/voices/NAME.json; a project
-voice lives in .ava/voices/NAME.json and travels with the repository. On a
-name clash the project voice wins.
+A voice records the checks that run, the band table and lexicon they run
+against, and the extensions the audience accepts. It also records the rubric
+a reviewer scores where mechanics cannot decide. Four voices ship with the
+package. A personal voice lives in $AVA_HOME/voices/NAME.json; a project
+voice lives in .ava/voices/NAME.json and travels with the repository. A name
+resolves shipped first, then project, then personal.
 """
 import json
 import os
@@ -13,8 +14,12 @@ from pathlib import Path
 
 try:
     from ..schema_check import validate_against
+    from ..checks import all_rule_ids, rule_ids_in_set
+    from ..checks import bands as B
 except ImportError:
     from schema_check import validate_against
+    from checks import all_rule_ids, rule_ids_in_set
+    from checks import bands as B
 
 SCHEMA_PATH = Path(__file__).resolve().parent / "voice.schema.json"
 NAME_RE = re.compile(r"^[a-z0-9][a-z0-9._-]*$")
@@ -34,7 +39,7 @@ def schema():
 def _cross_checks(doc, errors):
     """The rules the schema language cannot state."""
     seen = set()
-    for i, rule in enumerate(doc.get("rules", [])):
+    for i, rule in enumerate(doc.get("rubric", [])):
         if not isinstance(rule, dict):
             continue
         path = f"rules[{i}]"
@@ -67,16 +72,55 @@ def _cross_checks(doc, errors):
                                   f"{json.dumps(key)} is outside the scale")
 
 
+SET_FOR_BANDS = {"chat": "westinghouse", "doc-shared": "westinghouse",
+                 "doc-technical": "technical", "code": "technical"}
+KEY_ORDER = ("name", "description", "checks", "bands", "lexicon", "extend", "rubric")
+
+
+def upgrade(doc):
+    """A document from before this schema: `surface` becomes `bands`, `rules`
+    becomes `rubric`, and the checks come from the set the surface implied."""
+    doc = dict(doc)
+    older_shape = "surface" in doc or "rules" in doc
+    if "surface" in doc:
+        doc.setdefault("bands", doc.pop("surface"))
+    if "rules" in doc:
+        doc.setdefault("rubric", doc.pop("rules"))
+    if older_shape and "checks" not in doc and doc.get("bands") in SET_FOR_BANDS:
+        doc["checks"] = rule_ids_in_set(SET_FOR_BANDS[doc["bands"]])
+    return doc
+
+
+def _checks_cross_checks(doc, errors):
+    checks = doc.get("checks") or []
+    known = set(all_rule_ids())
+    for i, rule_id in enumerate(checks):
+        if rule_id not in known:
+            errors.append(f"voice.checks[{i}]: unknown rule id: {rule_id}")
+    if len(set(checks)) != len(checks):
+        errors.append("voice.checks: a rule id repeats")
+    if isinstance(doc.get("bands"), str):
+        try:
+            B.resolve(doc["bands"])
+        except B.BandsError as e:
+            errors.append(f"voice.bands: {e}")
+
+
 def validate(doc):
     """Return the list of schema errors for `doc`; empty means valid."""
     errors = []
     validate_against(doc, schema(), schema(), "voice", errors)
     if not errors:
+        _checks_cross_checks(doc, errors)
         _cross_checks(doc, errors)
     return errors
 
 
 # --- storage ----------------------------------------------------------------
+
+SHIPPED_ROOT = Path(__file__).resolve().parent / "shipped"
+SCOPES = ("shipped", "project", "personal")
+
 
 def personal_root():
     return Path(os.environ.get("AVA_HOME") or Path.home() / ".ava") / "voices"
@@ -92,13 +136,15 @@ def project_root():
 
 
 def root_for(scope):
+    if scope == "shipped":
+        return SHIPPED_ROOT
     return project_root() if scope == "project" else personal_root()
 
 
 def catalog():
-    """Every voice on this machine as (name, scope, path), project rows first."""
+    """Every voice on this machine as (name, scope, path), in resolution order."""
     rows = []
-    for scope in ("project", "personal"):
+    for scope in SCOPES:
         root = root_for(scope)
         if root.is_dir():
             rows += [(p.stem, scope, p) for p in sorted(root.glob("*.json"))]
@@ -106,11 +152,11 @@ def catalog():
 
 
 def resolve(spec):
-    """A voice is a file path or a name: project first, then personal."""
+    """A voice is a file path or a name: shipped first, then project, then personal."""
     p = Path(spec).expanduser()
     if p.suffix == ".json" and p.is_file():
         return p, "file"
-    for scope in ("project", "personal"):
+    for scope in SCOPES:
         candidate = root_for(scope) / f"{spec}.json"
         if candidate.is_file():
             return candidate, scope
@@ -124,6 +170,7 @@ def load(path):
         doc = json.loads(Path(path).read_text())
     except json.JSONDecodeError as e:
         raise VoiceError(f"{path}: not JSON ({e.msg} at line {e.lineno})")
+    doc = upgrade(doc)
     errors = validate(doc)
     if errors:
         raise VoiceError(f"{path} fails the voice schema:\n  " + "\n  ".join(errors))
@@ -131,12 +178,12 @@ def load(path):
 
 
 def save(path, doc):
+    doc = upgrade(doc)
     errors = validate(doc)
     if errors:
         raise VoiceError("the voice fails the schema:\n  " + "\n  ".join(errors))
-    order = ("name", "description", "surface", "extend", "rules")
-    doc = {**{k: doc[k] for k in order if k in doc},
-           **{k: v for k, v in doc.items() if k not in order}}
+    doc = {**{k: doc[k] for k in KEY_ORDER if k in doc},
+           **{k: v for k, v in doc.items() if k not in KEY_ORDER}}
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n")
@@ -144,23 +191,57 @@ def save(path, doc):
 
 
 def merge(base, patch):
-    """Overlay `patch` on `base`. Rules merge by name; other keys replace."""
+    """Overlay `patch` on `base`. Rubric entries merge by name; other keys replace."""
     out = dict(base)
-    for key, value in patch.items():
-        if key == "rules" and isinstance(value, list) and isinstance(base.get("rules"), list):
-            rules = {r.get("name"): r for r in base["rules"] if isinstance(r, dict)}
+    for key, value in upgrade(patch).items():
+        if key == "rubric" and isinstance(value, list) and isinstance(base.get("rubric"), list):
+            rules = {r.get("name"): r for r in base["rubric"] if isinstance(r, dict)}
             for r in value:
                 if isinstance(r, dict) and r.get("name") in rules:
                     rules[r["name"]] = {**rules[r["name"]], **r}
                 else:
                     rules[r.get("name") if isinstance(r, dict) else id(r)] = r
-            out["rules"] = list(rules.values())
+            out["rubric"] = list(rules.values())
         else:
             out[key] = value
     return out
 
 
+LIST_FIELDS = ("checks", "extend")
+SCALAR_FIELDS = ("bands", "lexicon", "description")
+
+
+def set_field(doc, field, values):
+    """Edit one field from the command line: `+id` adds, `-id` drops, bare
+    values replace a list; a scalar field takes one value."""
+    out = dict(doc)
+    if field in LIST_FIELDS:
+        current = list(out.get(field) or [])
+        if all(v[:1] in "+-" for v in values):
+            for v in values:
+                if v[0] == "+" and v[1:] not in current:
+                    current.append(v[1:])
+                elif v[0] == "-":
+                    current = [c for c in current if c != v[1:]]
+        else:
+            current = list(values)
+        out[field] = current
+    elif field in SCALAR_FIELDS:
+        if len(values) != 1:
+            raise VoiceError(f"{field} takes one value")
+        out[field] = values[0]
+    else:
+        raise VoiceError(f"no editable field {field!r} (one of: "
+                         f"{', '.join(LIST_FIELDS + SCALAR_FIELDS)})")
+    return out
+
+
 # --- rubric -----------------------------------------------------------------
+
+def lexicon_name(doc):
+    """The lexicon the voice names, or the universal one named after its bands."""
+    return doc.get("lexicon") or f"universal-{doc['bands']}"
+
 
 def _scoring_label(rule):
     s = rule["scoring"]
@@ -179,13 +260,14 @@ def rubric(doc, scope=None):
     head = f"voice: {doc['name']}"
     if scope:
         head += f" ({scope})"
-    head += f" · surface {doc['surface']}"
+    head += f" · bands {doc['bands']} · lexicon {lexicon_name(doc)}"
+    head += f" · checks {len(doc['checks'])}"
     ext = doc.get("extend") or []
     head += " · extend: " + (", ".join(ext) if ext else "none")
     lines = [head]
     if doc.get("description"):
         lines.append(doc["description"])
-    for i, rule in enumerate(doc["rules"], 1):
+    for i, rule in enumerate(doc.get("rubric") or [], 1):
         lines.append(f"{i}. {rule['name']} · {_scoring_label(rule)} · "
                      f"{_requirement_label(rule)}")
         lines.append(f"   {rule['description']}")

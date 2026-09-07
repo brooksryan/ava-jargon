@@ -106,37 +106,57 @@ def load_tier_2():
     return checkers, ready, reason
 
 
+def _rule_order(rule_id):
+    prefix, number = rule_id.split("-M")
+    return ("WTP".index(prefix), int(number))
+
+
+def all_rule_ids():
+    """Every rule id a checker carries, tier 2 included, in W, T, P order."""
+    ids = [m.RULE for m in TIER_1 + TIER_1B] + [rule for rule, _ in TIER_2_RULES]
+    return sorted(ids, key=_rule_order)
+
+
+def rule_ids_in_set(name):
+    if name not in RULE_SETS:
+        raise ValueError(f"unknown rule set: {name}")
+    ids = ([m.RULE for m in TIER_1 + TIER_1B if name in m.SETS]
+           + [rule for rule, sets in TIER_2_RULES if name in sets])
+    return sorted(ids, key=_rule_order)
+
+
 def select(rules, ctx, use_parser=False):
     """Return (checkers, tiers_run, rules_skipped, warning) for one run.
 
-    A rule is skipped when its input is absent: W-M10 needs a lexicon, P-M5
-    needs the input fields, and every tier 2 rule needs the parser.
+    `rules` is a set name or a list of rule ids. A rule is skipped when its
+    input is absent: W-M10 needs a lexicon, P-M5 needs the input fields, and
+    every tier 2 rule needs the parser.
     """
-    if rules not in RULE_SETS:
-        raise ValueError(f"unknown rule set: {rules}")
-    chosen = [m for m in TIER_1 + TIER_1B if rules in m.SETS]
+    wanted = set(rule_ids_in_set(rules)) if isinstance(rules, str) else set(rules)
+    unknown = sorted(wanted - set(all_rule_ids()), key=_rule_order)
+    if unknown:
+        raise ValueError(f"unknown rule id: {', '.join(unknown)}")
+    chosen = [m for m in TIER_1 + TIER_1B if m.RULE in wanted]
     tiers, skipped, warning = ["1", "1b"], [], ""
 
-    if ctx.lexicon is None:
-        chosen = [m for m in chosen if m is not w_m10_jargon_score]
+    if ctx.lexicon is None and w_m10_jargon_score in chosen:
+        chosen.remove(w_m10_jargon_score)
         skipped.append(w_m10_jargon_score.RULE)
-    if (p_m5_input_contract is not None and ctx.fields is None
-            and rules in p_m5_input_contract.SETS):
-        chosen = [m for m in chosen if m is not p_m5_input_contract]
+    if p_m5_input_contract is not None and ctx.fields is None and p_m5_input_contract in chosen:
+        chosen.remove(p_m5_input_contract)
         skipped.append(p_m5_input_contract.RULE)
 
-    wanted = [rule for rule, sets in TIER_2_RULES if rules in sets]
-    if use_parser:
+    wanted_tier_2 = [rule for rule, _ in TIER_2_RULES if rule in wanted]
+    if use_parser and wanted_tier_2:
         tier_2, ready, warning = load_tier_2()
-        run_now = [m for m in tier_2 if rules in m.SETS]
-        if ready and run_now:
+        if ready:
             tiers.append("2")
-            chosen += run_now
+            chosen += [m for m in tier_2 if m.RULE in wanted]
         else:
-            skipped += wanted
+            skipped += wanted_tier_2
     else:
-        skipped += wanted
-    return chosen, tiers, sorted(set(skipped)), warning
+        skipped += wanted_tier_2
+    return chosen, tiers, sorted(set(skipped), key=_rule_order), warning
 
 
 def check_document(text, ctx, checkers):

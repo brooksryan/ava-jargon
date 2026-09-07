@@ -48,19 +48,19 @@ uv tool install git+https://github.com/brooksryan/ava-jargon
 
 | Content | Command |
 | --- | --- |
-| chat message, DM, email | `ava check FILE --rules westinghouse --surface chat` |
-| memo, proposal, announcement, issue | `ava check FILE --rules westinghouse --surface doc-shared` |
-| spec, design doc, runbook | `ava check FILE --rules technical --surface doc-technical` |
-| README, comments, docstrings, PR text, commit message | `ava check FILE --rules technical --surface code` |
+| chat message, DM, email | `ava check FILE --voice westinghouse` |
+| memo, proposal, announcement, issue | `ava check FILE --voice shared-docs` |
+| spec, design doc, runbook | `ava check FILE --voice technical-docs` |
+| README, comments, docstrings, PR text, commit message | `ava check FILE --voice code` |
 
 Pass `-` as FILE to read stdin. Exit codes: 0 clean, 1 findings, 2 bad input. Findings go to stdout, everything else to stderr. `--json` emits one object.
 
 ```bash
-$ ava check draft.md --rules technical
+$ ava check draft.md --voice technical-docs
 draft.md:3: [W-M1] em dash: "the deploy job — it went"
 draft.md:3: [W-M4] register word: "leverage"
 checked 21 rules over 599 words: 2 findings
-band summary (surface: doc-technical, 599 words):
+band summary (bands: doc-technical, 599 words):
   W-M1  1.67/1k · human 0.28-2.3 · ai ~12.5 -> PASS
   W-M4  1.67/1k · human 0.07-1.51 · ai ~0.13 -> FAIL · ai-range
 ```
@@ -69,9 +69,9 @@ band summary (surface: doc-technical, 599 words):
 
 | Feature | Document |
 | --- | --- |
-| Rules, surfaces, bands, and how to add a rule | [app/checks/README.md](app/checks/README.md); every rule in [app/checks/CHECKS.md](app/checks/CHECKS.md) |
+| Rules, bands, and how to add a rule | [app/checks/README.md](app/checks/README.md); every rule in [app/checks/CHECKS.md](app/checks/CHECKS.md) |
 | Lexicons: jargon scoring, extend, build | [app/lexicons/README.md](app/lexicons/README.md) |
-| Voices: a named surface, extensions, and rubric | [app/voices/README.md](app/voices/README.md) |
+| Voices: checks, bands, lexicon, extensions, and a rubric | [app/voices/README.md](app/voices/README.md) |
 | Agents: the gates, the skill, harness setup | [agents/README.md](agents/README.md) |
 | Tests: run the suite, what the image covers | [tests/README.md](tests/README.md) |
 | Research: the studies behind the lexicons and the checks | [research/README.md](research/README.md) |

@@ -1,0 +1,19 @@
+{
+  "name": "westinghouse",
+  "description": "Chat messages, direct messages, and email: prose a person reads in a conversation.",
+  "checks": [
+    "W-M1",
+    "W-M2",
+    "W-M3",
+    "W-M4",
+    "W-M6",
+    "W-M7",
+    "W-M8",
+    "W-M9",
+    "W-M10"
+  ],
+  "bands": "chat",
+  "lexicon": "universal-chat",
+  "extend": [],
+  "rubric": []
+}

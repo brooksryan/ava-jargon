@@ -1,6 +1,6 @@
 # Teach ava a voice
 
-A voice is one JSON document. It records the surface and the extensions the mechanical check runs under, and a rubric a gate scores where the mechanical check cannot decide. `ava voice schema` prints the shape. Never write the file by hand.
+A voice is one JSON document. It records the checks that run, the band table and lexicon they run against, and the extensions the audience accepts. It also records a rubric a gate scores where the mechanical check cannot decide. `ava voice schema` prints the shape. Never write the file by hand.
 
 ## Shape
 
@@ -8,9 +8,11 @@ A voice is one JSON document. It records the surface and the extensions the mech
 | --- | --- |
 | `name` | the name you ask for the voice by: lowercase, digits, `. _ -` |
 | `description` | one sentence: what the voice covers and who reads it |
-| `surface` | `chat`, `doc-shared`, `doc-technical`, or `code`; the routing table in SKILL.md maps a document to one |
+| `checks` | the rule ids that run; `ava voice new NAME FILE --checks SET` seeds them from a rule set |
+| `bands` | the band table: `chat`, `doc-shared`, `doc-technical`, or `code`; the routing table in SKILL.md maps a document to one |
+| `lexicon` | a shipped lexicon name such as `universal-code`, or a path; absent, the universal lexicon named after the bands |
 | `extend` | extension names whose vocabulary the audience accepts; `ava jargon extensions` lists them |
-| `rules` | the rubric, one object per rule |
+| `rubric` | the rubric, one object per rule |
 
 Each rule holds a `name`, a one-sentence `description`, two to four observable `criteria`, a `scoring` structure, and a `requirement`:
 
@@ -42,5 +44,5 @@ Each rule holds a `name`, a one-sentence `description`, two to four observable `
 
 ## Use a voice
 
-- Mechanical check: `ava check FILE --voice NAME`. The voice supplies the surface and the extensions; an explicit flag wins.
+- Mechanical check: `ava check FILE --voice NAME`. The voice supplies the checks, the bands, the lexicon, and the extensions; an explicit flag wins.
 - Gate review: name the voice in the invocation of `ava-prose-gate` or `ava-technical-gate`. The gate scores every rule and fails the verdict when a rule misses its requirement.

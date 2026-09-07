@@ -14,6 +14,7 @@
 | `test_cli.py` | `ava check` exit codes, the linter line, `--json`, the bundled lexicons, and `ava -v` |
 | `test_setup.py` | each `ava setup` target, `-g`, `--force`, and the packaged assets against the repo files |
 | `test_bands.py` | `ava bands` and `--bands`: the shipped tables, resolution across the three scopes, the alias, and the JSON report |
+| `test_voices.py` | `ava voice` and `--voice`: the shipped voices, a voice under `ava check`, the older file shape, and the edits |
 | `test_jargon.py` | `ava jargon build`, `score`, and `delta`: the three classes, the stoplist on the approved side, and the content-word denominator |
 | `test_parser.py` | the tier 2 checkers; the module skips without spacy |
 | `test_docs.py` | the research directory: the index, both studies, and the links from the feature docs |

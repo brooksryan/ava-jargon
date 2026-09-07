@@ -6,15 +6,15 @@ Run `ava check` on every piece of prose you produce before you deliver it. Prose
 
 | Content | Command |
 | --- | --- |
-| chat message / DM / email | `ava check FILE --rules westinghouse --surface chat` |
-| memo / proposal / announcement | `ava check FILE --rules westinghouse --surface doc-shared` |
-| spec / design doc / runbook | `ava check FILE --rules technical --surface doc-technical` |
-| README / comments / docstrings / PR text / commit message | `ava check FILE --rules technical --surface code` |
+| chat message / DM / email | `ava check FILE --voice westinghouse` |
+| memo / proposal / announcement | `ava check FILE --voice shared-docs` |
+| spec / design doc / runbook | `ava check FILE --voice technical-docs` |
+| README / comments / docstrings / PR text / commit message | `ava check FILE --voice code` |
 
 2. Fix every finding. Do not argue with a finding. Run again until the exit code is 0.
 3. Report the band summary lines that are not PASS, and any skipped rules, with your delivery.
 
-Pass `-` as FILE to read stdin. Add `--extend NAME` when the project names an extension for its audience; `ava jargon extensions` lists them. Add `--voice NAME` when the project names a voice for the kind of document; `ava voice list` lists them. A voice supplies the surface and the extensions.
+Pass `-` as FILE to read stdin. Add `--extend NAME` when the project names an extension for its audience; `ava jargon extensions` lists them. Use the project's own voice in place of the shipped one when the project names one for the kind of document; `ava voice list` lists them. A voice supplies the checks, the bands, the lexicon, and the extensions.
 
 `ava voice rubric NAME` prints the rubric you judge by hand. Score each rule. Fix the draft until every rule meets its requirement.
 
