@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/brooksryan/ava-jargon/config.schema.json",
+  "title": "ava config",
+  "description": "The ava version that wrote a store, and the defaults a run takes when the flags leave them out.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "ava": {
+      "type": "string",
+      "description": "The ava version that last wrote this store. A migration reads it."
+    },
+    "voice": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]*$",
+      "description": "The voice a run takes when --voice is absent."
+    },
+    "extend": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$"},
+      "description": "Extension names a run adds to --extend."
+    },
+    "bands": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]*$",
+      "description": "The band table a run takes when neither --bands nor the voice names one."
+    }
+  }
+}

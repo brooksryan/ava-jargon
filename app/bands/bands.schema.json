@@ -50,6 +50,10 @@
         "$ref": "#/$defs/entry"
       },
       "description": "One entry per rule id, such as W-M1."
+    },
+    "ava": {
+      "type": "string",
+      "description": "The ava version that wrote the file."
     }
   },
   "$defs": {

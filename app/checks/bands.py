@@ -15,9 +15,11 @@ from pathlib import Path
 
 try:
     from ..schema_check import validate_against
+    from ..config import project_ancestors
 except ImportError:  # flat script layout: the module sits one directory up
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from schema_check import validate_against
+    from config import project_ancestors
 
 MIN_WORDS = 300  # below this a rate is noise: one dash in 200 words reads 5/1k
 
@@ -43,11 +45,10 @@ def personal_root():
 
 def project_root():
     """The nearest .ava/bands at or above the working directory, else ./.ava/bands."""
-    here = Path.cwd()
-    for d in (here, *here.parents):
+    for d in project_ancestors():
         if (d / PROJECT_DIR).is_dir():
             return d / PROJECT_DIR
-    return here / PROJECT_DIR
+    return Path.cwd() / PROJECT_DIR
 
 
 SCOPE_ROOTS = (("shipped", lambda: SHIPPED_ROOT),

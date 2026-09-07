@@ -8,6 +8,7 @@ pytest inside that install, so a failure here is a failure a user sees.
 test interpreter, then the first `ava` on PATH.
 """
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -16,6 +17,11 @@ from pathlib import Path
 import pytest
 
 REPO = Path(__file__).resolve().parents[1]
+
+
+def installed_version():
+    """The version in pyproject.toml, which the installed script reports."""
+    return re.search(r'^version = "([^"]+)"', (REPO / "pyproject.toml").read_text(), re.M).group(1)
 
 
 def _find_ava():
