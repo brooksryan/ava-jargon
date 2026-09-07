@@ -1,0 +1,396 @@
+{
+ "name": "chat",
+ "meta": {
+  "generated": "2026-08-25",
+  "script": "app/scripts/build_baselines.py",
+  "unit": "findings per 1,000 words, corpus-level",
+  "band_rule": "human = [min,max] across corpora; ai = median",
+  "min_words_guard": 300,
+  "excluded_format_artifacts": [
+   [
+    "brooks-claude-prompts",
+    "W-M1"
+   ],
+   [
+    "rfc-technical",
+    "W-M1"
+   ]
+  ]
+ },
+ "rules": {
+  "P-M1": {
+   "human_universal": [
+    0.0,
+    0.0
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.0,
+    0.74
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.0,
+   "ai_universal_n": 4,
+   "ai_internal": 4.55,
+   "ai_internal_n": 2,
+   "direction": "ai-high"
+  },
+  "P-M3": {
+   "human_universal": [
+    0.0,
+    0.0
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.0,
+    0.0
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.0,
+   "ai_universal_n": 4,
+   "ai_internal": 0.0,
+   "ai_internal_n": 2,
+   "direction": "ai-high"
+  },
+  "T-M1": {
+   "human_universal": [
+    10.02,
+    13.28
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    5.63,
+    10.39
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 9.18,
+   "ai_universal_n": 4,
+   "ai_internal": 9.91,
+   "ai_internal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M10": {
+   "human_universal": [
+    0.0,
+    0.08
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.0,
+    0.14
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.14,
+   "ai_universal_n": 4,
+   "ai_internal": 0.28,
+   "ai_internal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M11": {
+   "human_universal": [
+    0.13,
+    0.46
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.11,
+    0.62
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.21,
+   "ai_universal_n": 4,
+   "ai_internal": 0.12,
+   "ai_internal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M12": {
+   "human_universal": [
+    0.0,
+    0.04
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.0,
+    0.09
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.1,
+   "ai_universal_n": 4,
+   "ai_internal": 0.0,
+   "ai_internal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M2": {
+   "human_universal": [
+    0.18,
+    0.78
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.46,
+    1.15
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.8,
+   "ai_universal_n": 4,
+   "ai_internal": 0.24,
+   "ai_internal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M3": {
+   "human_universal": [
+    0.12,
+    2.95
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.0,
+    0.38
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.0,
+   "ai_universal_n": 4,
+   "ai_internal": 0.0,
+   "ai_internal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M4": {
+   "human_universal": [
+    4.23,
+    6.66
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    2.75,
+    4.26
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 4.64,
+   "ai_universal_n": 4,
+   "ai_internal": 2.05,
+   "ai_internal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M5": {
+   "human_universal": [
+    2.15,
+    4.16
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    2.97,
+    8.82
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 3.09,
+   "ai_universal_n": 4,
+   "ai_internal": 1.35,
+   "ai_internal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M7": {
+   "human_universal": [
+    0.9,
+    3.63
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.4,
+    1.95
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.46,
+   "ai_universal_n": 4,
+   "ai_internal": 0.66,
+   "ai_internal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M8": {
+   "human_universal": [
+    0.16,
+    0.62
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.06,
+    0.32
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.1,
+   "ai_universal_n": 4,
+   "ai_internal": 0.0,
+   "ai_internal_n": 2,
+   "direction": "human-high"
+  },
+  "T-M9": {
+   "human_universal": [
+    0.02,
+    0.08
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.0,
+    0.28
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.03,
+   "ai_universal_n": 4,
+   "ai_internal": 0.0,
+   "ai_internal_n": 2,
+   "direction": "human-high"
+  },
+  "W-M1": {
+   "human_universal": [
+    0.0,
+    0.49
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.0,
+    0.45
+   ],
+   "human_internal_n": 4,
+   "ai_universal": 7.68,
+   "ai_universal_n": 4,
+   "ai_internal": 14.04,
+   "ai_internal_n": 2,
+   "direction": "ai-high"
+  },
+  "W-M11": {
+   "human_universal": [
+    5.93,
+    10.2
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    5.33,
+    12.11
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 6.51,
+   "ai_universal_n": 4,
+   "ai_internal": 7.7,
+   "ai_internal_n": 2,
+   "direction": "human-high"
+  },
+  "W-M2": {
+   "human_universal": [
+    0.03,
+    0.17
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.0,
+    0.12
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.23,
+   "ai_universal_n": 4,
+   "ai_internal": 0.0,
+   "ai_internal_n": 2,
+   "direction": "ai-high"
+  },
+  "W-M3": {
+   "human_universal": [
+    0.1,
+    0.31
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.0,
+    0.21
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.19,
+   "ai_universal_n": 4,
+   "ai_internal": 0.12,
+   "ai_internal_n": 2,
+   "direction": "ai-high"
+  },
+  "W-M4": {
+   "human_universal": [
+    0.07,
+    0.32
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.08,
+    0.28
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.32,
+   "ai_universal_n": 4,
+   "ai_internal": 0.0,
+   "ai_internal_n": 2,
+   "direction": "ai-high"
+  },
+  "W-M6": {
+   "human_universal": [
+    0.08,
+    0.34
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.08,
+    0.45
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.02,
+   "ai_universal_n": 4,
+   "ai_internal": 0.0,
+   "ai_internal_n": 2,
+   "direction": "ai-high"
+  },
+  "W-M7": {
+   "human_universal": [
+    0.0,
+    0.0
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.0,
+    0.0
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.0,
+   "ai_universal_n": 4,
+   "ai_internal": 0.0,
+   "ai_internal_n": 2,
+   "direction": "ai-high"
+  },
+  "W-M8": {
+   "human_universal": [
+    0.12,
+    0.33
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.0,
+    1.25
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.1,
+   "ai_universal_n": 4,
+   "ai_internal": 1.48,
+   "ai_internal_n": 2,
+   "direction": "ai-high"
+  },
+  "W-M9": {
+   "human_universal": [
+    0.01,
+    0.34
+   ],
+   "human_universal_n": 4,
+   "human_internal": [
+    0.0,
+    0.06
+   ],
+   "human_internal_n": 5,
+   "ai_universal": 0.0,
+   "ai_universal_n": 4,
+   "ai_internal": 0.0,
+   "ai_internal_n": 2,
+   "direction": "ai-high"
+  }
+ }
+}

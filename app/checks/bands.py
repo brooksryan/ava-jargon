@@ -1,32 +1,104 @@
 """Baseline-band comparison for check output.
 
-Reads app/checks/baselines.json (built by app/scripts/build_baselines.py) and
-turns a run's per-rule counts into band positions. Direction matters: an
+Reads one band table by name, from app/bands/ or a project or personal
+.ava/bands/ directory, and turns a run's per-rule counts into band positions. Direction matters: an
 ai-high rule compares against both the human band and the AI reference; a
 human-high rule is a compliance dial and only ever compares against the human
 band, so its wording can never call a high rate AI evidence.
 """
 import json
 import os
+import re
+import sys
 from collections import Counter
+from pathlib import Path
+
+try:
+    from ..schema_check import validate_against
+except ImportError:  # flat script layout: the module sits one directory up
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from schema_check import validate_against
 
 MIN_WORDS = 300  # below this a rate is noise: one dash in 200 words reads 5/1k
 
-SURFACES = ("chat", "doc-shared", "doc-technical", "code")
+RULES_TO_BANDS = {"personal": "chat", "technical": "doc-technical"}
 
-# The default band surface for each rule set. westinghouse maps to no surface:
-# the caller names one with --surface or the footer explains how.
-RULES_TO_SURFACE = {"personal": "chat", "technical": "doc-technical"}
+SHIPPED_ROOT = Path(__file__).resolve().parent.parent / "bands"
+SCHEMA_PATH = SHIPPED_ROOT / "bands.schema.json"
+PROJECT_DIR = Path(".ava") / "bands"
+RULE_ID_RE = re.compile(r"^[WTP]-M[0-9]+$")
 
-_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "baselines.json")
+
+class BandsError(Exception):
+    """A table that fails the schema, or a name that resolves to nothing."""
 
 
-def load():
-    """Return the baselines document, or None when the file is absent."""
-    if not os.path.isfile(_PATH):
-        return None
-    with open(_PATH) as f:
-        return json.load(f)
+def schema():
+    return json.loads(SCHEMA_PATH.read_text())
+
+
+def personal_root():
+    return Path(os.environ.get("AVA_HOME") or Path.home() / ".ava") / "bands"
+
+
+def project_root():
+    """The nearest .ava/bands at or above the working directory, else ./.ava/bands."""
+    here = Path.cwd()
+    for d in (here, *here.parents):
+        if (d / PROJECT_DIR).is_dir():
+            return d / PROJECT_DIR
+    return here / PROJECT_DIR
+
+
+SCOPE_ROOTS = (("shipped", lambda: SHIPPED_ROOT),
+               ("project", project_root),
+               ("personal", personal_root))
+
+
+def catalog():
+    """Every table on this machine as (name, scope, path), in resolution order."""
+    rows = []
+    for scope, root_of in SCOPE_ROOTS:
+        root = root_of()
+        if root.is_dir():
+            rows += [(p.stem, scope, p) for p in sorted(root.glob("*.json"))
+                     if p.name != SCHEMA_PATH.name]
+    return rows
+
+
+def resolve(name):
+    """A table name resolves shipped first, then project, then personal."""
+    for scope, root_of in SCOPE_ROOTS:
+        candidate = root_of() / f"{name}.json"
+        if candidate.is_file() and candidate.name != SCHEMA_PATH.name:
+            return candidate, scope
+    known = ", ".join(sorted({n for n, _, _ in catalog()})) or "none"
+    raise BandsError(f"no band table named {name} (known: {known})")
+
+
+def validate(doc):
+    errors = []
+    validate_against(doc, schema(), schema(), "bands", errors)
+    for rule in (doc.get("rules") or {}):
+        if not RULE_ID_RE.match(rule):
+            errors.append(f"bands.rules: {rule!r} is not a rule id such as W-M1")
+    return errors
+
+
+def load(path):
+    try:
+        doc = json.loads(Path(path).read_text())
+    except json.JSONDecodeError as e:
+        raise BandsError(f"{path}: not JSON ({e.msg} at line {e.lineno})")
+    errors = validate(doc)
+    if errors:
+        raise BandsError(f"{path} fails the bands schema:\n  " + "\n  ".join(errors))
+    return doc
+
+
+def load_by_name(name):
+    path, scope = resolve(name)
+    return load(path), scope
 
 
 def rule_counts(findings):
@@ -68,27 +140,23 @@ def _fmt(v):
     return "0" if v == 0 else (f"{v:.2f}".rstrip("0").rstrip(".") if v < 10 else f"{v:.1f}")
 
 
-def summarize(findings, words, surface, rules_checked, color=False):
+def summarize(findings, words, bands_name, rules_checked, color=False):
     """Return (lines, data): the stderr footer lines and the --json object."""
-    base = load()
-    if base is None:
-        return (["bands: app/checks/baselines.json is absent, no band comparison"],
-                {"surface": surface, "available": False})
-    if surface is None:
-        return (["bands: pass --surface chat|doc-shared|doc-technical|code "
-                 "for band comparison"],
-                {"surface": None, "available": False})
+    if bands_name is None:
+        return (["bands: pass --bands NAME for band comparison (ava bands list)"],
+                {"bands": None, "available": False})
+    table, scope = load_by_name(bands_name)
     counts = rule_counts(findings)
-    data = {"surface": surface, "words": words, "available": True, "rules": {}}
+    data = {"bands": bands_name, "scope": scope, "words": words, "available": True,
+            "rules": {}}
     if words < MIN_WORDS:
         return ([f"bands: sample too small ({words} words < {MIN_WORDS}), "
                  "counts only, no band comparison"],
                 {**data, "guard": "small-sample"})
-    table = base["surfaces"].get(surface, {})
     show = sorted(set(counts) | ({"W-M1"} & set(rules_checked)))
-    lines = [f"band summary (surface: {surface}, {words:,} words):"]
+    lines = [f"band summary (bands: {bands_name}, {words:,} words):"]
     for rule in show:
-        entry = table.get(rule)
+        entry = table["rules"].get(rule)
         if entry is None:
             continue
         rate = round(1000 * counts.get(rule, 0) / words, 2)

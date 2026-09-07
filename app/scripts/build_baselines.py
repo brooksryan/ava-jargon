@@ -5,7 +5,7 @@ Implements the band computation from notes/baseline-bands-plan.md. Runs every
 checker (tier 1 + parser) over every mapped corpus (.txt only), then writes:
 
   audit/raw/baselines_run.json   per-corpus per-rule rates (page builder input)
-  app/checks/baselines.json      the bands ava check will read
+  app/bands/<name>.json          the band tables ava check will read
 
 Bands: human = [min, max] corpus-level rate per 1k words across that surface's
 human corpora; agent = median across its AI corpora. Universal (public) and
@@ -72,7 +72,7 @@ CORPORA = [
     ("code", "ai", "universal", "github-comments-ai-post2024", f"{C}/github-comments-ai-post2024"),
 ]
 
-# Direction of each rule's signal, embedded per rule in baselines.json.
+# Direction of each rule's signal, embedded per rule in each band table.
 # ai-high: an authorship signal - AI text runs high, a high rate is AI evidence.
 # human-high: a compliance dial - humans out-score AI on it everywhere, so a
 # high rate means style drift, never AI authorship.
@@ -175,20 +175,19 @@ def write_bands(run):
                     entry[f"{key}_n"] = len(vals)
             entry["direction"] = DIRECTIONS.get(r, "ai-high")
             bands[surface][r] = entry
-    out = {
-        "meta": {
-            "generated": "2026-08-25",
-            "script": "app/scripts/build_baselines.py",
-            "unit": "findings per 1,000 words, corpus-level",
-            "band_rule": "human = [min,max] across corpora; ai = median",
-            "min_words_guard": 300,
-            "excluded_format_artifacts": sorted([list(x) for x in EXCLUDE]),
-        },
-        "surfaces": bands,
+    meta = {
+        "generated": "2026-08-25",
+        "script": "app/scripts/build_baselines.py",
+        "unit": "findings per 1,000 words, corpus-level",
+        "band_rule": "human = [min,max] across corpora; ai = median",
+        "min_words_guard": 300,
+        "excluded_format_artifacts": sorted([list(x) for x in EXCLUDE]),
     }
-    with open("app/checks/baselines.json", "w") as f:
-        json.dump(out, f, indent=1)
-    print("wrote audit/raw/baselines_run.json + app/checks/baselines.json",
+    for surface, rules_of_surface in bands.items():
+        with open(f"app/bands/{surface}.json", "w") as f:
+            json.dump({"name": surface, "meta": meta, "rules": rules_of_surface}, f, indent=1)
+            f.write("\n")
+    print("wrote audit/raw/baselines_run.json + app/bands/<name>.json per surface",
           file=sys.stderr)
 
 

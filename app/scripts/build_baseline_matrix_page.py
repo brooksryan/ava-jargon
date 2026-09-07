@@ -8,7 +8,11 @@ import os
 BASE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(BASE))
 RUN = json.load(open(os.path.join(ROOT, "audit", "raw", "baselines_run.json")))
-BANDS = json.load(open(os.path.join(ROOT, "app", "checks", "baselines.json")))
+BANDS_DIR = os.path.join(ROOT, "app", "bands")
+_TABLES = {name[:-5]: json.load(open(os.path.join(BANDS_DIR, name)))
+           for name in sorted(os.listdir(BANDS_DIR)) if not name.endswith(".schema.json")}
+BANDS = {"meta": next(iter(_TABLES.values()))["meta"],
+         "surfaces": {name: table["rules"] for name, table in _TABLES.items()}}
 
 COLS = ["W-M1", "W-M2", "W-M3", "W-M4", "W-M6", "W-M7", "W-M8", "W-M9", "W-M11",
         "P-M1", "T-M1", "T-M2", "T-M3", "T-M4", "T-M5", "T-M7", "T-M8", "T-M9",
@@ -250,12 +254,12 @@ footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--rule);
 </style>
 <div class="wrap">
 <header>
-  <p class="eyebrow">voice-agents · baselines.json · 2026-08-25 · rev 2</p>
+  <p class="eyebrow">voice-agents · app/bands · 2026-08-25 · rev 2</p>
   <h1>Human vs AI, rule by rule, surface by surface</h1>
   <p>Findings per 1,000 words, .txt-only, parser tier included. Matched contrast pairs
   (same sub-surface, human then AI) sit adjacent with a connecting rule. Each section
   ends with the comparison block: the shipped raw bands from
-  <code>app/checks/baselines.json</code>, then the percentile rows - each side's median
+  <code>app/bands/</code>, then the percentile rows - each side's median
   ranked against every corpus in that rule column, so a 0.3-vs-12 gap and a
   0.05-vs-0.2 gap read on the same scale. Hover any cell for raw count and percentile.</p>
 </header>

@@ -380,10 +380,10 @@ def _import_checks():
     return C, B
 
 
-def _universal_lexicon(surface):
-    """Path of the universal lexicon for a surface: workspace copy, then packaged."""
+def _universal_lexicon(bands_name):
+    """Path of the universal lexicon named after a band table: workspace copy, then packaged."""
     here = Path(__file__).resolve().parent
-    name = f"universal-{surface}.json"
+    name = f"universal-{bands_name}.json"
     for auto in (here.parent / "lexicons" / name, here / "lexicons" / name):
         if auto.is_file():
             return auto
@@ -422,22 +422,28 @@ def cmd_check(args):
             print(f"error: {e}", file=sys.stderr)
             return 2
         # The voice fills what the flags left out; an explicit flag wins.
-        args.surface = args.surface or voice["surface"]
+        args.bands = args.bands or voice["surface"]
         args.extend = list(args.extend or []) + [
             e for e in voice.get("extend", []) if e not in (args.extend or [])]
         print(f"voice: {voice['name']} ({scope})", file=sys.stderr)
 
-    surface = args.surface or B.RULES_TO_SURFACE.get(args.rules)
+    bands_name = args.bands or B.RULES_TO_BANDS.get(args.rules)
+    if bands_name:
+        try:
+            B.load_by_name(bands_name)
+        except B.BandsError as e:
+            print(f"error: {e}", file=sys.stderr)
+            return 2
 
-    if lexicon is None and surface:
-        auto = _universal_lexicon(surface)
+    if lexicon is None and bands_name:
+        auto = _universal_lexicon(bands_name)
         if auto is not None:
             lexicon = J.load_lexicon(str(auto))
-            print(f"lexicon: universal-{surface} (auto; --lexicon overrides)",
+            print(f"lexicon: universal-{bands_name} (auto; --lexicon overrides)",
                   file=sys.stderr)
     if args.extend:
         if lexicon is None:
-            print("error: --extend needs a lexicon: pass --surface or --lexicon",
+            print("error: --extend needs a lexicon: pass --bands or --lexicon",
                   file=sys.stderr)
             return 2
         lexicon, _ = _apply_extensions(lexicon, args.extend)
@@ -481,7 +487,7 @@ def cmd_check(args):
     print(verdict, file=sys.stderr)
     color = (sys.stderr.isatty() and "NO_COLOR" not in os.environ
              and os.environ.get("TERM") != "dumb")
-    band_lines, band_data = B.summarize(findings, words, surface, rules_checked,
+    band_lines, band_data = B.summarize(findings, words, bands_name, rules_checked,
                                         color=color)
 
     if args.json:
@@ -501,6 +507,62 @@ def cmd_check(args):
         for line in band_lines:
             print(line, file=sys.stderr)
     return 1 if findings else 0
+
+
+# --- bands: one table per file, resolved by name -----------------------------
+
+
+def _bands_rows(table):
+    for rule, entry in table["rules"].items():
+        parts = [f"  {rule:<6}{entry['direction']:<11}"]
+        for key, label in (("human_universal", "human"), ("human_internal", "int")):
+            if entry.get(key):
+                lo, hi = entry[key]
+                parts.append(f"{label} {B_fmt(lo)}-{B_fmt(hi)}")
+        ai = entry.get("ai_universal", entry.get("ai_internal"))
+        if ai is not None and entry["direction"] != "human-high":
+            parts.append(f"ai ~{B_fmt(ai)}")
+        yield " · ".join(parts)
+
+
+def B_fmt(value):
+    _, B = _import_checks()
+    return B._fmt(value)
+
+
+def cmd_bands_list(args):
+    _, B = _import_checks()
+    for name, scope, path in B.catalog():
+        try:
+            rules = len(B.load(path)["rules"])
+        except B.BandsError:
+            rules = "?"
+        print(f"{name:<16} {scope:<9} {rules:>2} rules  {path}")
+
+
+def cmd_bands_show(args):
+    _, B = _import_checks()
+    try:
+        table, scope = B.load_by_name(args.name)
+    except B.BandsError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    meta = table.get("meta", {})
+    head = f"{table['name']} ({scope}): {len(table['rules'])} rules"
+    if meta.get("generated"):
+        head += f", generated {meta['generated']}"
+    if meta.get("unit"):
+        head += f", {meta['unit']}"
+    print(head)
+    if table.get("description"):
+        print(table["description"])
+    for row in _bands_rows(table):
+        print(row)
+
+
+def cmd_bands_schema(args):
+    _, B = _import_checks()
+    sys.stdout.write(B.SCHEMA_PATH.read_text())
 
 
 # --- voices: a named surface + extensions + rubric ---------------------------
@@ -827,11 +889,11 @@ def main():
     ck.add_argument("--rules", default="westinghouse", choices=rule_sets,
                     help="rule set; the non-westinghouse sets include the "
                          "Westinghouse rules (default: westinghouse)")
-    ck.add_argument("--surface", choices=("chat", "doc-shared",
-                                          "doc-technical", "code"),
-                    help="band surface for the rate summary (default: inferred "
-                         "from --rules: personal=chat, technical=doc-technical; "
-                         "westinghouse has no default)")
+    ck.add_argument("--bands", metavar="NAME",
+                    help="band table for the rate summary (ava bands list; default: "
+                         "inferred from --rules, none for westinghouse)")
+    ck.add_argument("--surface", dest="bands", metavar="NAME",
+                    help="alias of --bands, kept for one version")
     ck.add_argument("--json", action="store_true",
                     help="print one JSON object instead of one line per finding")
     ck.add_argument("--parser", action="store_true",
@@ -851,6 +913,16 @@ def main():
                          "extensions apply where the flags left them out")
     ck.add_argument("-o", "--out", help="write the report to this file")
     ck.set_defaults(fn=cmd_check)
+
+    bd = sub.add_parser("bands", help="the band tables: shipped, project, and personal")
+    bsub = bd.add_subparsers(dest="bcmd", required=True)
+    bl = bsub.add_parser("list", help="list the band tables on this machine")
+    bl.set_defaults(fn=cmd_bands_list)
+    bs = bsub.add_parser("show", help="print one band table, a row per rule")
+    bs.add_argument("name")
+    bs.set_defaults(fn=cmd_bands_show)
+    bh = bsub.add_parser("schema", help="print the bands JSON schema")
+    bh.set_defaults(fn=cmd_bands_schema)
 
     vc = sub.add_parser("voice", help="a named voice: surface, extensions, "
                                       "and a rubric a reviewer scores")
