@@ -16,10 +16,8 @@ corpus/
 # Audit data derives from internal Slack/transcripts - local only.
 audit/
 
-# Research lexicons and scratch specs stay local; only the universal
-# lexicons and the lexicon README ship.
+# Research lexicons stay local.
 lexicons/*
-!lexicons/universal-*.json
 !lexicons/README.md
 tmp/
 

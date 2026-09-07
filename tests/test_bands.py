@@ -8,7 +8,7 @@ from importlib.resources import files
 
 import pytest
 
-SHIPPED = files("ava_jargon") / "bands"
+SHIPPED = files("ava_jargon.fixtures") / "bands"
 SHIPPED_NAMES = ("chat", "code", "doc-shared", "doc-technical")
 # 440 words: over the 300-word guard. The check may report findings on it, so
 # a test reads the band summary and accepts exit code 0 or 1.

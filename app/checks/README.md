@@ -40,7 +40,7 @@ A rule set is a shorthand for a list of rule ids. A voice names the ids it runs,
 | `doc-technical` | design docs, specs, runbooks (the default for `--rules technical`) |
 | `code` | READMEs, code comments, docstrings, PR text, commit messages |
 
-A band table is one file under `app/bands/`, and a project or personal table under `.ava/bands/` resolves by name after the shipped four. `ava bands list` names them, and `ava bands show NAME` prints one.
+A band table is one file under `fixtures/bands/`, and a project or personal table under `.ava/bands/` resolves by name after the shipped four. `ava bands list` names them, and `ava bands show NAME` prints one.
 
 ## Bands
 

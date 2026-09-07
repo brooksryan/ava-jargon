@@ -73,7 +73,7 @@ I ran every checker over 17 corpora: 22 checkers, 8,634 documents, about 840k wo
 
 ### The baseline bands
 
-I ran every checker over 37 corpora mapped to four surfaces, a human or AI side, and a public or internal origin. The script is `app/scripts/build_baselines.py`, and the output is one band table per surface under `app/bands/`. The human band is the minimum and the maximum corpus-level rate across the human corpora of the surface. The AI reference is the median across the AI corpora. Public and internal bands compute separately. A sample under 300 words gets counts only, because one dash in 200 words reads as 5 per 1,000.
+I ran every checker over 37 corpora mapped to four surfaces, a human or AI side, and a public or internal origin. The script is `app/scripts/build_baselines.py`, and the output is one band table per surface under `fixtures/bands/`. The human band is the minimum and the maximum corpus-level rate across the human corpora of the surface. The AI reference is the median across the AI corpora. Public and internal bands compute separately. A sample under 300 words gets counts only, because one dash in 200 words reads as 5 per 1,000.
 
 ## Data
 
@@ -221,7 +221,7 @@ The T-* rules and W-M11 read backwards on every surface. Humans out-score AI on 
 2. One file per checker under `app/checks/`. Each file declares `RULE`, `SETS`, and `check`. A tier 1b file also declares `LIMIT`, the part the gate must still judge.
 3. Two rule sets. `westinghouse` holds W-M1 through W-M4 and W-M6 through W-M10 for every surface, and W-M5 stays a judgement rule. `technical` adds the T-* rules and W-M11 for documents and prose beside code.
 4. Bands per rule per surface. The matrix showed 5x to 10x rate differences between surfaces for one rule, so one band per rule was wrong. The surfaces are `chat`, `doc-shared`, `doc-technical`, and `code`.
-5. The human band is the minimum and maximum corpus-level rate, and the AI reference is the median. Public and internal bands ship side by side in each table under `app/bands/`.
+5. The human band is the minimum and maximum corpus-level rate, and the AI reference is the median. Public and internal bands ship side by side in each table under `fixtures/bands/`.
 6. Each rule carries a direction. An `ai-high` rule marks authorship, and a FAIL in the AI range says the text matches the AI pattern. A `human-high` rule is a form dial, and a FAIL there never claims authorship.
 7. The summary compares no sample under 300 words.
 8. Findings set the exit code. The band summary and the W-M10 density line are advisory.

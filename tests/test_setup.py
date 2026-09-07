@@ -1,7 +1,7 @@
 """`ava setup`: the harness install command, run from the installed package.
 
 Every test runs in an empty project directory with a fresh HOME. The packaged
-assets under `ava_jargon/assets` are the expected file contents.
+assets under `ava_jargon/fixtures/assets` are the expected file contents.
 """
 from importlib.resources import files
 
@@ -15,7 +15,7 @@ except ImportError:  # Python 3.10 and older
 
 from conftest import REPO, installed_version
 
-ASSETS = files("ava_jargon") / "assets"
+ASSETS = files("ava_jargon.fixtures") / "assets"
 SKILL_FILES = ("SKILL.md", "references/voices.md", "references/custom-lexicons.md")
 GATES = ("ava-prose-gate.md", "ava-technical-gate.md")
 CODEX_AGENTS = [f".codex/agents/{g[:-3]}.toml" for g in GATES]
@@ -178,5 +178,5 @@ def test_force_overwrites(ava, project):
                          + [f"agents/{g}" for g in GATES]
                          + [f"skills/ava/{f}" for f in SKILL_FILES])
 def test_the_packaged_asset_matches_the_repo_file(rel):
-    """The assets are symlinks in the repo; the wheel must carry real copies."""
+    """The plugin entries and installed assets have the same contents."""
     assert (ASSETS / rel).read_text() == (REPO / rel).read_text()

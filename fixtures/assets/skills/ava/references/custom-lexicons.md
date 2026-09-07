@@ -30,7 +30,6 @@ When the shipped lexicon fits but marks words your audience does use, add an ext
 ```
 ava jargon extend my-prompts prompts.jsonl --note "typed prompts, all projects"
 ava check spec.md --voice technical-docs --extend my-prompts
-ava jargon score spec.md -l lexicons/universal-doc-technical.json --extend my-prompts
 ```
 
 `--extend` overlays the extension on the lexicon in use. An extension adds to the approved side only. Every term the corpus uses in more than its dispersion share of documents joins the approved vocabulary, so the lexicon stops counting it as jargon. Pass the flag once per extension.

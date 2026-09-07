@@ -14,16 +14,18 @@ from pathlib import Path
 
 try:
     from ..schema_check import validate_against
+    from ..resources import FIXTURES
     from ..config import project_ancestors
     from ..checks import all_rule_ids, rule_ids_in_set
     from ..checks import bands as B
 except ImportError:
     from schema_check import validate_against
+    from resources import FIXTURES
     from config import project_ancestors
     from checks import all_rule_ids, rule_ids_in_set
     from checks import bands as B
 
-SCHEMA_PATH = Path(__file__).resolve().parent / "voice.schema.json"
+SCHEMA_PATH = FIXTURES / "voices" / "voice.schema.json"
 NAME_RE = re.compile(r"^[a-z0-9][a-z0-9._-]*$")
 PROJECT_DIR = Path(".ava") / "voices"
 
@@ -120,7 +122,7 @@ def validate(doc):
 
 # --- storage ----------------------------------------------------------------
 
-SHIPPED_ROOT = Path(__file__).resolve().parent / "shipped"
+SHIPPED_ROOT = FIXTURES / "voices" / "shipped"
 SCOPES = ("shipped", "project", "personal")
 
 

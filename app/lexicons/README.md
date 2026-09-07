@@ -23,12 +23,12 @@ Every rate divides by content words, the tokens left after the function-word lis
 
 The AI corpora write about AI, so terms such as `claude`, `ai`, and `seo` top these lists. Only the density signal separates the sides, so W-M10 is advisory.
 
-The files beside this document are the packaged copies. The `lexicons/` directory at the repository root holds the workspace copies.
+The maintained lexicons live in [`fixtures/lexicons/`](../../fixtures/lexicons/). Both a checkout and an installed command read this data.
 
 ## Score and compare
 
 ```bash
-ava jargon score draft.md -l app/lexicons/universal-code.json   # the three classes and coverage for one file
+ava jargon score draft.md -l fixtures/lexicons/universal-code.json   # the three classes and coverage for one file
 ava jargon score corpus/dir -l LEXICON --top 20                  # one row per document
 ava jargon delta before/ after/ -l LEXICON                       # A versus B density per class, with a bootstrap CI
 ```

@@ -110,7 +110,7 @@ def test_rules_accepts_rule_ids(ava, project):
 
 
 def test_a_voice_lexicon_may_be_a_path(ava, project):
-    (project / "lex.json").write_text((files("ava_jargon") / "lexicons" / "universal-code.json").read_text())
+    (project / "lex.json").write_text((files("ava_jargon.fixtures") / "lexicons" / "universal-code.json").read_text())
     write_voice(project, "mine", {"checks": ["W-M1", "W-M10"], "bands": "code",
                                   "lexicon": str(project / "lex.json")})
     (project / "doc.txt").write_text(DOC)

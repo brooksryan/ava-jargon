@@ -11,10 +11,12 @@ from pathlib import Path
 
 try:
     from .schema_check import validate_against
+    from .resources import FIXTURES
 except ImportError:
     from schema_check import validate_against
+    from resources import FIXTURES
 
-SCHEMA_PATH = Path(__file__).resolve().parent / "config.schema.json"
+SCHEMA_PATH = FIXTURES / "config.schema.json"
 PROJECT_FILE = Path(".ava") / "config.json"
 DEFAULT_FIELDS = ("voice", "extend", "bands")
 MIGRATIONS = ()

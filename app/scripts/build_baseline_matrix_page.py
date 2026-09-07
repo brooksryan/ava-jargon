@@ -254,12 +254,12 @@ footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--rule);
 </style>
 <div class="wrap">
 <header>
-  <p class="eyebrow">voice-agents · app/bands · 2026-08-25 · rev 2</p>
+  <p class="eyebrow">voice-agents · fixtures/bands · 2026-08-25 · rev 2</p>
   <h1>Human vs AI, rule by rule, surface by surface</h1>
   <p>Findings per 1,000 words, .txt-only, parser tier included. Matched contrast pairs
   (same sub-surface, human then AI) sit adjacent with a connecting rule. Each section
   ends with the comparison block: the shipped raw bands from
-  <code>app/bands/</code>, then the percentile rows - each side's median
+  <code>fixtures/bands/</code>, then the percentile rows - each side's median
   ranked against every corpus in that rule column, so a 0.3-vs-12 gap and a
   0.05-vs-0.2 gap read on the same scale. Hover any cell for raw count and percentile.</p>
 </header>

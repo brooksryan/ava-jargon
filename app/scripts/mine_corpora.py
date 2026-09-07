@@ -27,7 +27,7 @@ CORPORA = {
     "baselines": f"{C}/baseline-wikipedia-computing,{C}/baseline-workplace-email",
 }
 
-STOP = J.load_stoplist(os.path.join(ROOT, "app", "name_stoplist.txt"))
+STOP = J.load_stoplist(str(J.DEFAULT_STOPLIST_PATH))
 
 BUILDS = [
     ("analysis-customer-vs-internal", "customer", "internal-human"),

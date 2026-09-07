@@ -22,6 +22,11 @@ try:
 except ImportError:
     HAVE_WORDFREQ = False
 
+try:
+    from .resources import FIXTURES
+except ImportError:
+    from resources import FIXTURES
+
 TOKEN_RE = re.compile(r"[a-z][a-z0-9'\-]+")
 EMOJI_SHORTCODE_RE = re.compile(r":[a-z0-9_+'\-]+:")
 
@@ -405,7 +410,7 @@ def delta(a_path, b_path, lex, n_boot=2000, seed=7):
     return result
 
 
-DEFAULT_STOPLIST_PATH = Path(__file__).resolve().parent / "name_stoplist.txt"
+DEFAULT_STOPLIST_PATH = FIXTURES / "name_stoplist.txt"
 
 
 def load_lexicon(path):

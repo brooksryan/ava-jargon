@@ -13,11 +13,14 @@ ENV UV_LINK_MODE=copy \
 
 WORKDIR /src
 
-# The package, plus the files that the symlinks under app/assets/ point to.
+# The package and the maintained fixtures.
 COPY pyproject.toml README.md gate-contract.md ./
 COPY app ./app
+COPY fixtures ./fixtures
 COPY agents ./agents
 COPY skills ./skills
+COPY MANIFEST.in Dockerfile test ./
+COPY tests ./tests
 
 # The docs tests read the research directory beside the feature docs.
 COPY research ./research
@@ -27,8 +30,9 @@ COPY research ./research
 # source once shipped a stale asset. Every rebuild now starts with an empty
 # cache.
 ARG EXTRAS=dev
-RUN uv tool install "ava-jargon[${EXTRAS}] @ file:///src"
+RUN uv build --out-dir /artifacts && \
+    set -- /artifacts/*.whl && \
+    uv tool install "ava-jargon[${EXTRAS}] @ file://$1"
 
-# Tests come last, so an edit to a test does not rebuild the install.
-COPY tests ./tests
+ENV AVA_DIST_DIR=/artifacts
 ENTRYPOINT ["python", "-m", "pytest"]

@@ -26,11 +26,13 @@ try:
     from . import config as CFG
     from . import jargon as J  # installed package layout
     from . import voices as V
+    from .resources import FIXTURES
 except ImportError:  # flat script layout via the ./ava wrapper
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     import config as CFG
     import jargon as J
     import voices as V
+    from resources import FIXTURES
 
 
 def cmd_jargon_build(args):
@@ -401,21 +403,14 @@ def _lexicon_by_name(spec):
     p = Path(spec).expanduser()
     if p.suffix == ".json" and p.is_file():
         return p
-    here = Path(__file__).resolve().parent
-    for candidate in (here.parent / "lexicons" / f"{spec}.json", here / "lexicons" / f"{spec}.json"):
-        if candidate.is_file():
-            return candidate
-    return None
+    candidate = FIXTURES / "lexicons" / f"{spec}.json"
+    return candidate if candidate.is_file() else None
 
 
 def _universal_lexicon(bands_name):
-    """Path of the universal lexicon named after a band table: workspace copy, then packaged."""
-    here = Path(__file__).resolve().parent
-    name = f"universal-{bands_name}.json"
-    for auto in (here.parent / "lexicons" / name, here / "lexicons" / name):
-        if auto.is_file():
-            return auto
-    return None
+    """The shipped lexicon for the named bands."""
+    candidate = FIXTURES / "lexicons" / f"universal-{bands_name}.json"
+    return candidate if candidate.is_file() else None
 
 
 def cmd_check(args):
@@ -779,7 +774,7 @@ GATE_AGENT_FILES = ("ava-prose-gate.md", "ava-technical-gate.md")
 
 
 def _asset_root():
-    return Path(__file__).resolve().parent / "assets"
+    return FIXTURES / "assets"
 
 
 def _split_front_matter(text):
@@ -937,8 +932,8 @@ def main():
     b.add_argument("--zipf-gate", type=float, default=5.0,
                    help="skip unigrams at/above this general-English Zipf frequency")
     b.add_argument("--stoplist",
-                   default=str(Path(__file__).resolve().parent / "name_stoplist.txt"),
-                   help="terms never flagged as jargon (default: app/name_stoplist.txt; "
+                   default=str(J.DEFAULT_STOPLIST_PATH),
+                   help="terms never flagged as jargon (default: shipped name stoplist; "
                         "pass an empty string to disable)")
     b.set_defaults(fn=cmd_jargon_build)
 

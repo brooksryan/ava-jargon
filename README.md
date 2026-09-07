@@ -80,6 +80,7 @@ band summary (bands: doc-technical, 599 words):
 | Feature | Document |
 | --- | --- |
 | Rules, bands, and how to add a rule | [app/checks/README.md](app/checks/README.md); every rule in [app/checks/CHECKS.md](app/checks/CHECKS.md) |
+| Shipped data and setup text | [fixtures/README.md](fixtures/README.md) |
 | Lexicons: jargon scoring, extend, build | [app/lexicons/README.md](app/lexicons/README.md) |
 | Voices: checks, bands, lexicon, extensions, and a rubric | [app/voices/README.md](app/voices/README.md) |
 | Agents: the gates, the skill, harness setup | [agents/README.md](agents/README.md) |

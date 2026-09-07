@@ -1,6 +1,6 @@
 # Voices
 
-A voice is one JSON document you own by name. It records the checks that run, the band table and lexicon they run against, the extensions the audience accepts, and a rubric a reviewer scores where mechanics cannot decide. [voice.schema.json](voice.schema.json) defines the shape, and `ava voice schema` prints it.
+A voice is one JSON document you own by name. It records the checks that run, the band table and lexicon they run against, the extensions the audience accepts, and a rubric a reviewer scores where mechanics cannot decide. [voice.schema.json](../../fixtures/voices/voice.schema.json) defines the shape, and `ava voice schema` prints it.
 
 ## Shape
 

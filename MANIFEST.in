@@ -1,0 +1,7 @@
+include Dockerfile test gate-contract.md
+recursive-include tests *.py *.md
+recursive-include research *.md *.svg
+recursive-include agents *.md
+recursive-include skills *.md
+include fixtures/README.md
+include app/checks/README.md app/checks/CHECKS.md app/lexicons/README.md app/voices/README.md

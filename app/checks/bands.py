@@ -1,6 +1,6 @@
 """Baseline-band comparison for check output.
 
-Reads one band table by name, from app/bands/ or a project or personal
+Reads one band table by name, from fixtures/bands/ or a project or personal
 .ava/bands/ directory, and turns a run's per-rule counts into band positions. Direction matters: an
 ai-high rule compares against both the human band and the AI reference; a
 human-high rule is a compliance dial and only ever compares against the human
@@ -15,17 +15,19 @@ from pathlib import Path
 
 try:
     from ..schema_check import validate_against
+    from ..resources import FIXTURES
     from ..config import project_ancestors
 except ImportError:  # flat script layout: the module sits one directory up
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from schema_check import validate_against
+    from resources import FIXTURES
     from config import project_ancestors
 
 MIN_WORDS = 300  # below this a rate is noise: one dash in 200 words reads 5/1k
 
 RULES_TO_BANDS = {"personal": "chat", "technical": "doc-technical"}
 
-SHIPPED_ROOT = Path(__file__).resolve().parent.parent / "bands"
+SHIPPED_ROOT = FIXTURES / "bands"
 SCHEMA_PATH = SHIPPED_ROOT / "bands.schema.json"
 PROJECT_DIR = Path(".ava") / "bands"
 RULE_ID_RE = re.compile(r"^[WTP]-M[0-9]+$")
