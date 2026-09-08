@@ -17,4 +17,4 @@ On the first normal command, ava copies voices, lexicons, and band tables into t
 
 The `.fixtures.json` file records the hashes of managed copies. Each run fills missing defaults and refreshes copies whose bytes still match those hashes. Existing custom files and edited defaults keep their contents. A failed copy leaves the completion stamp unchanged so the next run can retry.
 
-Tests create their examples in temporary directories. Private research inputs stay in the ignored `corpus/`, `audit/`, and workspace `lexicons/` directories. The package data list in `pyproject.toml` selects the distributed fixtures. The archive tests verify their contents.
+Tests create their examples in temporary directories. Private research inputs and research scripts stay outside the repository. The ignore rules keep a local `corpus/`, `audit/`, or `notes/` directory out of the source. The package data list in `pyproject.toml` selects the distributed fixtures. The archive tests verify their contents.

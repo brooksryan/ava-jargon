@@ -5,5 +5,5 @@ recursive-include agents *.md
 recursive-include skills *.md
 include fixtures/README.md
 include app/checks/README.md app/checks/CHECKS.md app/lexicons/README.md app/voices/README.md
-include app/scripts/build_baselines.py
+recursive-include app/scripts *.py *.md
 recursive-include app/checks/personal *.py

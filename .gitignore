@@ -9,23 +9,15 @@ build/
 dist/*.whl
 dist/*.tar.gz
 
-# Corpora stay local: license notes say "local analysis only, never
-# redistributed", and several dirs hold customer/internal messages.
+# Local research inputs and outputs never enter the public source. The
+# research scripts live outside the checkout; see app/scripts/README.md.
 corpus/
-
-# Audit data derives from internal Slack/transcripts - local only.
 audit/
-
-# Research lexicons stay local.
 lexicons/*
 !lexicons/README.md
+notes/
 tmp/
 
-# Stray local analysis outputs at the root
-brooks_slack_vs_brooks_agents.json
-
-# Local-only: pre-git snapshots and working notes
+# Local-only: pre-git snapshots and the project store
 .bak/
 .ava/
-notes/
-BACKLOG.md

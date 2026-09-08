@@ -69,7 +69,7 @@ I ran every checker over 5,733 chat messages I typed. A rule that fires often on
 
 ### The check matrix
 
-I ran every checker over 17 corpora: 22 checkers, 8,634 documents, about 840k words. The script is `app/scripts/check_matrix.py`. The matrix reports findings per 1,000 words for each rule on each corpus.
+I ran every checker over 17 corpora with a local script: 22 checkers, 8,634 documents, about 840k words. The matrix reports findings per 1,000 words for each rule on each corpus.
 
 ### The baseline bands
 

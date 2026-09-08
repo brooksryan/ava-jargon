@@ -22,5 +22,6 @@
 | `test_jargon.py` | `ava jargon build`, `score`, and `delta`: the three classes, the stoplist on the approved side, and the content-word denominator |
 | `test_parser.py` | the tier 2 checkers; the module skips without spacy |
 | `test_docs.py` | the research directory: the index, both studies, and the links from the feature docs |
+| `test_scripts.py` | the release tools under `app/scripts`: the inventory, each documented path, the figures, and the Markdown unwrap |
 
 The tests call the installed `ava` script. Set `AVA_BIN` to test a different one.

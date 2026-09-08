@@ -87,4 +87,5 @@ Each run fills missing defaults, including stores that already carry the current
 | Voices: checks, bands, lexicon, extensions, and a rubric | [app/voices/README.md](app/voices/README.md) |
 | Agents: the gates, the skill, harness setup | [agents/README.md](agents/README.md) |
 | Tests: run the suite, what the image covers | [tests/README.md](tests/README.md) |
+| Release tools: calibration, figures, the Markdown hook | [app/scripts/README.md](app/scripts/README.md) |
 | Research: the studies behind the lexicons and the checks | [research/README.md](research/README.md) |

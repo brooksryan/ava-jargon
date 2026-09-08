@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Draw the figures of the research studies as static SVG files.
 
-  python app/scripts/build_research_figures.py
+  python app/scripts/build_research_figures.py [DIR]
 
-The script writes one file per figure into research/figures/. Each figure
+The script writes one file per figure into research/figures/, or into DIR
+when the call names one. Each figure
 holds the numbers the study reports. The figures therefore stay in step with
 the text, and the script needs no corpus on the machine. The style follows FiveThirtyEight: a
 gray panel, light solid gridlines, no spines, a bold title, and a source line.
@@ -13,6 +14,7 @@ SVG inside an image tag and loads no web font for it.
 import html
 import math
 import os
+import sys
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "research", "figures")
 
@@ -277,14 +279,14 @@ FIGURES = {
 }
 
 
-def main():
-    os.makedirs(OUT, exist_ok=True)
+def main(out=OUT):
+    os.makedirs(out, exist_ok=True)
     for name, draw in FIGURES.items():
-        path = os.path.join(OUT, name)
+        path = os.path.join(out, name)
         with open(path, "w") as f:
             f.write(draw())
         print(os.path.relpath(path))
 
 
 if __name__ == "__main__":
-    main()
+    main(*sys.argv[1:2])

@@ -10,9 +10,6 @@ Corpus dirs hold one .txt per document. Current metric groups:
            check, and a rubric a reviewer scores (new / list / rubric / set / rm / schema)
   bands    the band tables the summary compares against (list / show / schema)
   config   the store stamp and the run defaults (show / schema)
-
-Planned: cpidr, surface stats (word/sentence/paragraph) - the audit scripts in
-app/scripts/ are the basis and will fold in here.
 """
 import argparse
 import json
