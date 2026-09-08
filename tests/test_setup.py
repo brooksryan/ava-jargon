@@ -1,7 +1,7 @@
 """`ava setup`: the harness install command, run from the installed package.
 
 Every test runs in an empty project directory with a fresh HOME. The packaged
-assets under `ava_jargon/assets` are the expected file contents.
+assets under `ava_jargon/fixtures/assets` are the expected file contents.
 """
 from importlib.resources import files
 
@@ -15,11 +15,17 @@ except ImportError:  # Python 3.10 and older
 
 from conftest import REPO, installed_version
 
-ASSETS = files("ava_jargon") / "assets"
+ASSETS = files("ava_jargon.fixtures") / "assets"
 SKILL_FILES = ("SKILL.md", "references/voices.md", "references/custom-lexicons.md")
 GATES = ("ava-prose-gate.md", "ava-technical-gate.md")
 CODEX_AGENTS = [f".codex/agents/{g[:-3]}.toml" for g in GATES]
-STORE = [".ava/config.json"]
+STORE = [".ava/config.json", ".ava/.fixtures.json"]
+STORE += [f".ava/voices/{name}.json" for name in
+          ("code", "shared-docs", "technical-docs", "westinghouse")]
+STORE += [f".ava/bands/{name}.json" for name in
+          ("chat", "code", "doc-shared", "doc-technical")]
+STORE += [f".ava/lexicons/universal-{name}.json" for name in
+          ("chat", "code", "doc-shared", "doc-technical")]
 
 
 def store_note(home):
@@ -140,7 +146,7 @@ def test_agents_md_prints_the_contract_and_writes_nothing(ava, project, home):
     r = ava("setup", "agents-md")
     assert r.returncode == 0, r.stderr
     assert r.stdout == (ASSETS / "gate-contract.md").read_text()
-    assert written(project) == [] and written(home) == STORE
+    assert written(project) == [] and written(home) == sorted(STORE)
 
 
 def test_agents_md_refuses_global(ava):
@@ -178,5 +184,5 @@ def test_force_overwrites(ava, project):
                          + [f"agents/{g}" for g in GATES]
                          + [f"skills/ava/{f}" for f in SKILL_FILES])
 def test_the_packaged_asset_matches_the_repo_file(rel):
-    """The assets are symlinks in the repo; the wheel must carry real copies."""
+    """The plugin entries and installed assets have the same contents."""
     assert (ASSETS / rel).read_text() == (REPO / rel).read_text()

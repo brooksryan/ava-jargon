@@ -41,4 +41,4 @@ gemini extensions install https://github.com/brooksryan/ava-jargon
 ava setup skills                   # .agents/skills/ava only, for everything else
 ```
 
-The packaged copies of these files live in `app/assets/`.
+The maintained files live in [`fixtures/assets/`](../fixtures/assets/). The plugin entries link to these files, and the package includes their contents.

@@ -24,14 +24,15 @@ ava = "ava_jargon.cli:main"
 # The repo keeps its flat app/ layout; the package maps onto it. The
 # `personal` subpackage is deliberately absent from this list: the P-* rules
 # are per-author and do not ship (they return in v3).
-packages = ["ava_jargon", "ava_jargon.checks", "ava_jargon.checks.parser", "ava_jargon.voices"]
+packages = ["ava_jargon", "ava_jargon.checks", "ava_jargon.checks.parser", "ava_jargon.voices", "ava_jargon.fixtures"]
 include-package-data = false
 
 [tool.setuptools.package-dir]
 ava_jargon = "app"
+"ava_jargon.fixtures" = "fixtures"
 
 [tool.setuptools.package-data]
-ava_jargon = [
+"ava_jargon.fixtures" = [
     "name_stoplist.txt",
     "lexicons/*.json",
     "bands/*.json",

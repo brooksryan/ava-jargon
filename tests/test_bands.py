@@ -1,14 +1,13 @@
 """`ava bands` and `--bands`: one band table per file, resolved by name.
 
-A name resolves in this order: the shipped tables, `.ava/bands/NAME.json` in
-the project, `$AVA_HOME/bands/NAME.json` for the user.
+A name resolves in the project, then the personal store, then the package.
 """
 import json
 from importlib.resources import files
 
 import pytest
 
-SHIPPED = files("ava_jargon") / "bands"
+SHIPPED = files("ava_jargon.fixtures") / "bands"
 SHIPPED_NAMES = ("chat", "code", "doc-shared", "doc-technical")
 # 440 words: over the 300-word guard. The check may report findings on it, so
 # a test reads the band summary and accepts exit code 0 or 1.
@@ -42,14 +41,14 @@ def test_list_names_the_shipped_tables(ava):
     r = ava("bands", "list")
     assert r.returncode == 0, r.stderr
     for name in SHIPPED_NAMES:
-        assert f"{name:<16} shipped" in r.stdout
+        assert f"{name:<16} personal" in r.stdout
 
 
 @pytest.mark.parametrize("name", SHIPPED_NAMES)
 def test_show_prints_a_row_per_rule(ava, name):
     r = ava("bands", "show", name)
     assert r.returncode == 0, r.stderr
-    assert r.stdout.startswith(f"{name} (shipped): 22 rules")
+    assert r.stdout.startswith(f"{name} (personal): 22 rules")
     assert "  W-M1  " in r.stdout and "human " in r.stdout
 
 
@@ -78,12 +77,12 @@ def test_a_personal_table_resolves_under_the_home_ava_dir(ava, home):
     assert ava("bands", "show", "home-table").stdout.startswith("home-table (personal)")
 
 
-def test_a_shipped_name_wins_over_a_project_table(ava, project):
+def test_a_project_table_overrides_a_seeded_default(ava, project):
     write_table(project, "code", {**shipped_table("code"), "description": "MARKER"})
     r = ava("bands", "show", "code")
     assert r.returncode == 0, r.stderr
-    assert "MARKER" not in r.stdout
-    assert "code             shipped" in ava("bands", "list").stdout
+    assert "MARKER" in r.stdout
+    assert "code             project" in ava("bands", "list").stdout
 
 
 def test_a_project_table_wins_over_a_personal_one(ava, project, home):
@@ -127,5 +126,5 @@ def test_the_json_report_names_the_table(ava, project):
     r = ava(*CHECK, "--bands", "code", "--json")
     assert r.returncode in (0, 1), r.stderr
     bands = json.loads(r.stdout)["bands"]
-    assert bands["bands"] == "code" and bands["scope"] == "shipped" and bands["available"]
+    assert bands["bands"] == "code" and bands["scope"] == "personal" and bands["available"]
     assert "W-M1" in bands["rules"]

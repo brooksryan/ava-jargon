@@ -1,7 +1,7 @@
 """`ava voice` and `--voice`: a voice names its checks, bands, lexicon, and rubric.
 
-Four voices ship. A name resolves shipped first, then `.ava/voices/NAME.json`
-in the project, then `$AVA_HOME/voices/NAME.json`. A file from before this
+Four voices seed the personal store. A name resolves in the project, then
+the personal store, then the package. A file from before this
 schema, with `surface` and `rules`, still loads.
 """
 import json
@@ -58,8 +58,8 @@ def test_a_shipped_voice_names_its_checks_bands_and_lexicon(ava, name):
 def test_list_names_the_shipped_voices(ava):
     r = ava("voice", "list")
     assert r.returncode == 0, r.stderr
-    assert re.search(r"^code\s+shipped\s+code\s+21 checks\s+0 rubric", r.stdout, re.M)
-    assert re.search(r"^westinghouse\s+shipped\s+chat\s+9 checks", r.stdout, re.M)
+    assert re.search(r"^code\s+personal\s+code\s+21 checks\s+0 rubric", r.stdout, re.M)
+    assert re.search(r"^westinghouse\s+personal\s+chat\s+9 checks", r.stdout, re.M)
 
 
 def test_the_schema_requires_checks_and_bands(ava):
@@ -70,12 +70,13 @@ def test_the_schema_requires_checks_and_bands(ava):
     assert "rubric" in schema["properties"] and "rules" not in schema["properties"]
 
 
-def test_a_shipped_voice_refuses_set_and_rm(ava, project):
-    (project / "patch.json").write_text('{"bands": "chat"}')
-    r = ava("voice", "set", "code", "patch.json")
-    assert r.returncode == 2 and "shipped voice" in r.stderr
-    r = ava("voice", "rm", "code")
-    assert r.returncode == 2 and "shipped voice" in r.stderr
+def test_a_seeded_voice_can_be_edited_and_reset(ava, project, home):
+    (project / "patch.json").write_text('{"description": "My default voice"}')
+    assert ava("voice", "set", "code", "patch.json").returncode == 0
+    assert voice_json(ava, "code")["description"] == "My default voice"
+    assert ava("voice", "rm", "code").returncode == 0
+    assert not (home / ".ava/voices/code.json").exists()
+    assert voice_json(ava, "code")["description"] != "My default voice"
 
 
 # --- ava check under a voice ----------------------------------------------------
@@ -88,7 +89,7 @@ def test_a_voice_equals_its_flags(ava, project):
     assert by_voice.returncode == by_flags.returncode
     assert by_voice.stdout == by_flags.stdout
     assert verdict_line(by_voice.stderr) == verdict_line(by_flags.stderr)
-    assert "voice: code (shipped)" in by_voice.stderr
+    assert "voice: code (personal)" in by_voice.stderr
     assert "lexicon: universal-code (voice; --lexicon overrides)" in by_voice.stderr
     assert "band summary (bands: code, 440 words):" in by_voice.stderr
 
@@ -110,7 +111,7 @@ def test_rules_accepts_rule_ids(ava, project):
 
 
 def test_a_voice_lexicon_may_be_a_path(ava, project):
-    (project / "lex.json").write_text((files("ava_jargon") / "lexicons" / "universal-code.json").read_text())
+    (project / "lex.json").write_text((files("ava_jargon.fixtures") / "lexicons" / "universal-code.json").read_text())
     write_voice(project, "mine", {"checks": ["W-M1", "W-M10"], "bands": "code",
                                   "lexicon": str(project / "lex.json")})
     (project / "doc.txt").write_text(DOC)
@@ -130,7 +131,7 @@ def test_the_json_report_names_the_voice(ava, project):
     (project / "doc.txt").write_text(DOC)
     r = ava("check", "doc.txt", "--voice", "code", "--json")
     doc = json.loads(r.stdout)
-    assert doc["voice"]["name"] == "code" and doc["voice"]["scope"] == "shipped"
+    assert doc["voice"]["name"] == "code" and doc["voice"]["scope"] == "personal"
     assert doc["rules"] == "code"
 
 
@@ -209,12 +210,12 @@ def test_an_unknown_band_table_fails_the_voice(ava, project):
     assert r.returncode == 2 and "no band table named nope" in r.stderr
 
 
-def test_a_project_voice_wins_over_a_personal_one_but_not_over_a_shipped_one(ava, project, home):
+def test_a_project_voice_wins_over_personal_and_packaged_defaults(ava, project, home):
     write_voice(project, "mine", {"checks": ["W-M1"], "bands": "chat", "description": "PROJECT"})
     write_voice(home, "mine", {"checks": ["W-M1"], "bands": "chat", "description": "PERSONAL"})
     write_voice(project, "code", {"checks": ["W-M1"], "bands": "chat", "description": "MARKER"})
     assert voice_json(ava, "mine")["description"] == "PROJECT"
-    assert voice_json(ava, "code")["description"] != "MARKER"
+    assert voice_json(ava, "code")["description"] == "MARKER"
 
 
 def test_rubric_prints_the_settings_then_the_rules(ava, project):

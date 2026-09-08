@@ -23,12 +23,12 @@ Every rate divides by content words, the tokens left after the function-word lis
 
 The AI corpora write about AI, so terms such as `claude`, `ai`, and `seo` top these lists. Only the density signal separates the sides, so W-M10 is advisory.
 
-The files beside this document are the packaged copies. The `lexicons/` directory at the repository root holds the workspace copies.
+The maintained lexicons live in [`fixtures/lexicons/`](../../fixtures/lexicons/). The first normal command copies them into `~/.ava/lexicons/`. `AVA_HOME` moves the personal store. An explicit file path wins. A name resolves project first, then personal, then packaged. Project lexicons live in `.ava/lexicons/` in the working directory or a parent directory.
 
 ## Score and compare
 
 ```bash
-ava jargon score draft.md -l app/lexicons/universal-code.json   # the three classes and coverage for one file
+ava jargon score draft.md -l universal-code   # the three classes and coverage for one file
 ava jargon score corpus/dir -l LEXICON --top 20                  # one row per document
 ava jargon delta before/ after/ -l LEXICON                       # A versus B density per class, with a bootstrap CI
 ```
@@ -57,4 +57,6 @@ One document per `.txt` file, 30k+ tokens per side:
 ava jargon build corpus/AUDIENCE corpus/YOURS -o /abs/path/lexicons/mine.json
 ```
 
-Each side accepts several directories, comma-separated. Pass an absolute `-o` path. `ava jargon build -h` lists the keyness thresholds: the Dunning G2 floor, the Hardie log-ratio floor, the dispersion floors, and the Zipf gate. Before you trust a lexicon, score a sample of the audience's own writing with it. High density there marks a wrong lexicon for that audience. [The lexicon study](../../research/lexicons.md) gives the method, the value of each threshold, and the evidence behind it.
+Each side accepts several directories, comma-separated. Without `-o`, the build writes `~/.ava/lexicons/lexicon.json` and honors `AVA_HOME`. `--project` writes `.ava/lexicons/lexicon.json` in the project instead. An explicit `-o` path takes precedence. Use `-l lexicon` to score with the result.
+
+`ava jargon build -h` lists the keyness thresholds: the Dunning G2 floor, the Hardie log-ratio floor, the dispersion floors, and the Zipf gate. Before you trust a lexicon, score a sample of the audience's own writing with it. High density there marks a wrong lexicon for that audience. [The lexicon study](../../research/lexicons.md) gives the method, the value of each threshold, and the evidence behind it.

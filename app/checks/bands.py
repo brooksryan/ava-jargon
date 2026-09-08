@@ -1,13 +1,12 @@
 """Baseline-band comparison for check output.
 
-Reads one band table by name, from app/bands/ or a project or personal
+Reads one band table by name, from fixtures/bands/ or a project or personal
 .ava/bands/ directory, and turns a run's per-rule counts into band positions. Direction matters: an
 ai-high rule compares against both the human band and the AI reference; a
 human-high rule is a compliance dial and only ever compares against the human
 band, so its wording can never call a high rate AI evidence.
 """
 import json
-import os
 import re
 import sys
 from collections import Counter
@@ -15,17 +14,19 @@ from pathlib import Path
 
 try:
     from ..schema_check import validate_against
-    from ..config import project_ancestors
+    from ..resources import FIXTURES
+    from ..config import project_ancestors, personal_path
 except ImportError:  # flat script layout: the module sits one directory up
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from schema_check import validate_against
-    from config import project_ancestors
+    from resources import FIXTURES
+    from config import project_ancestors, personal_path
 
 MIN_WORDS = 300  # below this a rate is noise: one dash in 200 words reads 5/1k
 
 RULES_TO_BANDS = {"personal": "chat", "technical": "doc-technical"}
 
-SHIPPED_ROOT = Path(__file__).resolve().parent.parent / "bands"
+SHIPPED_ROOT = FIXTURES / "bands"
 SCHEMA_PATH = SHIPPED_ROOT / "bands.schema.json"
 PROJECT_DIR = Path(".ava") / "bands"
 RULE_ID_RE = re.compile(r"^[WTP]-M[0-9]+$")
@@ -40,7 +41,7 @@ def schema():
 
 
 def personal_root():
-    return Path(os.environ.get("AVA_HOME") or Path.home() / ".ava") / "bands"
+    return personal_path().parent / "bands"
 
 
 def project_root():
@@ -51,9 +52,9 @@ def project_root():
     return Path.cwd() / PROJECT_DIR
 
 
-SCOPE_ROOTS = (("shipped", lambda: SHIPPED_ROOT),
-               ("project", project_root),
-               ("personal", personal_root))
+SCOPE_ROOTS = (("project", project_root),
+               ("personal", personal_root),
+               ("shipped", lambda: SHIPPED_ROOT))
 
 
 def catalog():
@@ -68,7 +69,7 @@ def catalog():
 
 
 def resolve(name):
-    """A table name resolves shipped first, then project, then personal."""
+    """A table name resolves project first, then personal, then shipped."""
     for scope, root_of in SCOPE_ROOTS:
         candidate = root_of() / f"{name}.json"
         if candidate.is_file() and candidate.name != SCHEMA_PATH.name:

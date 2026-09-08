@@ -16,7 +16,7 @@ The jargon scorer (W-M10, `ava jargon score`) compares text to a lexicon. A lexi
 ava jargon build corpus/APPROVED corpus/CONTRAST -o /abs/path/lexicons/my-lexicon.json
 ```
 
-Each side accepts several directories, comma-separated. Pass an absolute `-o` path: the default resolves against your current directory.
+Each side accepts several directories, comma-separated. The default output is `~/.ava/lexicons/lexicon.json`; `AVA_HOME` moves the store. `--project` writes into the project `.ava/lexicons/` directory. An explicit `-o` path takes precedence.
 
 ## Extend a shipped lexicon instead
 
@@ -30,7 +30,6 @@ When the shipped lexicon fits but marks words your audience does use, add an ext
 ```
 ava jargon extend my-prompts prompts.jsonl --note "typed prompts, all projects"
 ava check spec.md --voice technical-docs --extend my-prompts
-ava jargon score spec.md -l lexicons/universal-doc-technical.json --extend my-prompts
 ```
 
 `--extend` overlays the extension on the lexicon in use. An extension adds to the approved side only. Every term the corpus uses in more than its dispersion share of documents joins the approved vocabulary, so the lexicon stops counting it as jargon. Pass the flag once per extension.

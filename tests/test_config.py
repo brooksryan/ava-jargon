@@ -82,14 +82,14 @@ def test_a_project_config_sets_the_default_voice(ava, project):
     by_config = ava("check", "doc.txt")
     by_flag = ava("check", "doc.txt", "--voice", "code")
     assert verdict_line(by_config.stderr) == verdict_line(by_flag.stderr)
-    assert "voice: code (shipped, from config)" in by_config.stderr
+    assert "voice: code (personal, from config)" in by_config.stderr
 
 
 def test_a_flag_beats_the_config_voice(ava, project):
     write_config(project, {"voice": "code"})
     (project / "doc.txt").write_text(DOC)
     r = ava("check", "doc.txt", "--voice", "westinghouse")
-    assert "voice: westinghouse (shipped)" in r.stderr and "from config" not in r.stderr
+    assert "voice: westinghouse (personal)" in r.stderr and "from config" not in r.stderr
 
 
 def test_the_project_config_wins_over_the_personal_one(ava, project, home):
@@ -97,7 +97,7 @@ def test_the_project_config_wins_over_the_personal_one(ava, project, home):
     write_config(project, {"voice": "code"})
     (project / "doc.txt").write_text(DOC)
     r = ava("check", "doc.txt")
-    assert "voice: code (shipped, from config)" in r.stderr
+    assert "voice: code (personal, from config)" in r.stderr
 
 
 def test_config_extend_and_bands_fill_the_flags(ava, project):

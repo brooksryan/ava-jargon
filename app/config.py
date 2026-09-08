@@ -5,16 +5,19 @@ later ava reads the stamp and migrates the files under it. A project config
 sets defaults for a repository and overrides the personal one.
 """
 import json
-import os
 import re
 from pathlib import Path
 
 try:
     from .schema_check import validate_against
+    from .resources import FIXTURES
+    from . import store
 except ImportError:
     from schema_check import validate_against
+    from resources import FIXTURES
+    import store
 
-SCHEMA_PATH = Path(__file__).resolve().parent / "config.schema.json"
+SCHEMA_PATH = FIXTURES / "config.schema.json"
 PROJECT_FILE = Path(".ava") / "config.json"
 DEFAULT_FIELDS = ("voice", "extend", "bands")
 MIGRATIONS = ()
@@ -29,7 +32,7 @@ def schema():
 
 
 def personal_path():
-    return Path(os.environ.get("AVA_HOME") or Path.home() / ".ava") / "config.json"
+    return store.root() / "config.json"
 
 
 def project_path():
@@ -68,26 +71,41 @@ def version_tuple(text):
 
 
 def _write(path, doc):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(doc, indent=2) + "\n")
+    store.write_bytes(path, store.encode(doc))
 
 
 def ensure_store(version):
-    """Stamp the personal store with `version`. Returns the notes for stderr."""
+    """Fill personal defaults. Stamp the store after all copies succeed."""
     path = personal_path()
-    if not path.is_file():
-        _write(path, {"ava": version})
-        return [f"wrote {path} (ava {version})"]
-    doc = load(path)
+    fresh = not path.is_file()
+    doc = {} if fresh else load(path)
     stored = doc.get("ava")
-    if version_tuple(stored) < version_tuple(version):
-        for _, migrate in MIGRATIONS:
-            migrate(path.parent)
-        doc["ava"] = version
-        _write(path, doc)
-        return [f"{path}: ava {stored} -> {version}"]
     if version_tuple(stored) > version_tuple(version):
         return [f"{path}: written by a newer ava ({stored}); this is ava {version}"]
+    try:
+        fixtures = store.seed(version)
+        if not fresh and version_tuple(stored) < version_tuple(version):
+            for _, migrate in MIGRATIONS:
+                migrate(path.parent)
+        manifest = path.parent / ".fixtures.json"
+        previous = manifest.read_bytes() if manifest.is_file() else None
+        _write(manifest, fixtures)
+        try:
+            if fresh or version_tuple(stored) < version_tuple(version):
+                doc["ava"] = version
+                _write(path, doc)
+        except (OSError, ValueError):
+            if previous is None:
+                manifest.unlink(missing_ok=True)
+            else:
+                store.write_bytes(manifest, previous)
+            raise
+    except (OSError, ValueError) as error:
+        raise ConfigError(f"cannot prepare {path.parent}: {error}") from error
+    if fresh:
+        return [f"wrote {path} (ava {version})"]
+    if version_tuple(stored) < version_tuple(version):
+        return [f"{path}: ava {stored} -> {version}"]
     return []
 
 

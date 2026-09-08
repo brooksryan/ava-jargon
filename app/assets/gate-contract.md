@@ -1,1 +1,0 @@
-../../gate-contract.md

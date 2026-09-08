@@ -77,7 +77,7 @@ A few smaller rules ride along:
 - A word needs at least five uses on the tested side, because the significance test rests on an approximation that wants roughly five expected uses.
 - Candidates are single words, two-word phrases, and three-word phrases. A phrase that starts or ends on a function word (a, the, of, and the like) doesn't count.
 - The *approved vocabulary* is every word the audience uses three or more times across at least two documents. The two-document floor keeps one writer's quirk from becoming "the audience's vocabulary".
-- Proper names never count as jargon. `app/name_stoplist.txt` holds the list.
+- Proper names never count as jargon. `fixtures/name_stoplist.txt` holds the list.
 
 The figure shows the tests at work on the technical-documents build. It draws twenty-seven words twice, once per side, sorted by the ratio test. In the middle the two bars match, and that is the shared vocabulary a frequency list would rank first. Moving left, the tested side's bar grows over an emptying audience bar until, past the 4x line, the word is jargon.
 

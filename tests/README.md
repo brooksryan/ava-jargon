@@ -1,6 +1,6 @@
 # Tests
 
-`./test` builds two Docker images and runs pytest inside each, with and without the `[parser]` extra. Each image installs the package with `uv tool install` from the working tree, the same path as the README. The suite therefore covers the wheel contents, the `ava` script, and every `ava setup` target.
+`./test` builds two Docker images and runs pytest inside each, with and without the `[parser]` extra. Each image builds a source archive and a wheel, then installs the wheel with `uv tool install`. The suite therefore covers the wheel contents, the `ava` script, and every `ava setup` target.
 
 | Command | Effect |
 | --- | --- |
@@ -12,8 +12,11 @@
 | --- | --- |
 | `test_checks.py` | the tier 1 checkers and the runner, as a library |
 | `test_cli.py` | `ava check` exit codes, the linter line, `--json`, the bundled lexicons, and `ava -v` |
+| `test_fixtures.py` | fixture contents, plugin links, and release archives |
 | `test_setup.py` | each `ava setup` target, `-g`, `--force`, and the packaged assets against the repo files |
 | `test_bands.py` | `ava bands` and `--bands`: the shipped tables, resolution across the three scopes, the alias, and the JSON report |
+| `test_store.py` | first-run defaults, version stamps, safe upgrades, failed writes, and retries |
+| `test_storage_paths.py` | personal and project build paths, explicit output, and named lexicon lookup |
 | `test_config.py` | the store stamp, the defaults from `.ava/config.json`, and the version in every run and every written file |
 | `test_voices.py` | `ava voice` and `--voice`: the shipped voices, a voice under `ava check`, the older file shape, and the edits |
 | `test_jargon.py` | `ava jargon build`, `score`, and `delta`: the three classes, the stoplist on the approved side, and the content-word denominator |

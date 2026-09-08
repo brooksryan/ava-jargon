@@ -5,7 +5,7 @@ Implements the band computation from notes/baseline-bands-plan.md. Runs every
 checker (tier 1 + parser) over every mapped corpus (.txt only), then writes:
 
   audit/raw/baselines_run.json   per-corpus per-rule rates (page builder input)
-  app/bands/<name>.json          the band tables ava check will read
+  fixtures/bands/<name>.json          the band tables ava check will read
 
 Bands: human = [min, max] corpus-level rate per 1k words across that surface's
 human corpora; agent = median across its AI corpora. Universal (public) and
@@ -184,10 +184,10 @@ def write_bands(run):
         "excluded_format_artifacts": sorted([list(x) for x in EXCLUDE]),
     }
     for surface, rules_of_surface in bands.items():
-        with open(f"app/bands/{surface}.json", "w") as f:
+        with open(f"fixtures/bands/{surface}.json", "w") as f:
             json.dump({"name": surface, "meta": meta, "rules": rules_of_surface}, f, indent=1)
             f.write("\n")
-    print("wrote audit/raw/baselines_run.json + app/bands/<name>.json per surface",
+    print("wrote audit/raw/baselines_run.json + fixtures/bands/<name>.json per surface",
           file=sys.stderr)
 
 
